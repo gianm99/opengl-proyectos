@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{14DD24F5-F689-4D2A-8AD3-DE164A059928}</ProjectGuid>
+    <ProjectGuid>{95002BC7-5FAD-4970-ACF4-DF6F2C8DBA10}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Practica2</RootNamespace>
+    <RootNamespace>Practica2Escena</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
