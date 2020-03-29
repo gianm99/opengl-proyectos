@@ -1,7 +1,6 @@
-/*
-Practica2.cpp
-Fichero principal
-*/
+// Practica1.cpp
+// Fichero principal 
+////////////////////////////////////////////////////
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -30,12 +29,60 @@ void Reshape(int width, int height)
 }
 
 // Función que visualiza la escena OpenGL
-void Display(void) 
+void Display(void)
 {
+	// Borramos la escena
+	glClear(GL_COLOR_BUFFER_BIT);
 
-	glFlush();
+	glMatrixMode(GL_MODELVIEW);      // To operate on Model-View matrix
+	glLoadIdentity();                // Reset the model-view matrix
+
+	// A continuación dibujamos los 4 cuadrados
+	// Cada grupo de 4 vértices es un cuadrado
+	// Cuadrante arriba-izquierda
+	glTranslatef(0.2f, 0.2f, 0.2f);
+	glBegin(GL_QUADS);
+		glColor3f(0.0f, 0.0f, 0.0f);		// negro
+		glVertex3f(-0.75f, 0.75f, 0.0f);	// arriba-izquierda
+		glVertex3f(-0.75f, 0.25f, 0.0f);	// abajo-izquierda
+		glVertex3f(-0.25f, 0.25f, 0.0f);	// abajo-derecha
+		glVertex3f(-0.25f, 0.75f, 0.0f);	// arriba-derecha
+	glEnd();
+	glLoadIdentity();
+	// Cuadrante abajo-izquierda
+	glRotatef(45.0f,-0.5f,-0.5f,0.0f);
+	glBegin(GL_QUADS);
+		glColor3f(1.0f, 0.0f, 0.0f);		// rojo
+		glVertex3f(-0.75f, -0.25f, 0.0f);	// arriba-izquierda
+		glVertex3f(-0.75f, -0.75f, 0.0f);	// abajo-izquierda
+		glVertex3f(-0.25f, -0.75f, 0.0f);	// abajo-derecha
+		glVertex3f(-0.25f, -0.25f, 0.0f);	// arriba-derecha
+	glEnd();
+	glLoadIdentity();
+	// Cuadrante abajo-derecha
+	glScissor();
+	glBegin(GL_QUADS);
+		glColor3f(0.0f, 1.0f, 0.0f);		// verde
+		glVertex3f(0.75f, -0.75f, 0.0f);	// arriba-izquierda
+		glVertex3f(0.75f, -0.25f, 0.0f);	// abajo-izquierda
+		glVertex3f(0.25f, -0.25f, 0.0f);	// abajo-derecha
+		glVertex3f(0.25f, -0.75f, 0.0f);	// arriba-derecha
+	glEnd();
+	glLoadIdentity();
+	// Cuadrante arriba-derecha
+	glBegin(GL_QUADS);
+		glColor3f(0.0f, 0.0f, 1.0f);		// azul
+		glVertex3f(0.75f, 0.25f, 0.0f);		// arriba-izquierda
+		glVertex3f(0.75f, 0.75f, 0.0f);		// abajo-izquierda
+		glVertex3f(0.25f, 0.75f, 0.0f);		// abajo-derecha
+		glVertex3f(0.25f, 0.25f, 0.0f);		// arriba-derecha
+	glEnd();
+	glLoadIdentity();
+
 	glutSwapBuffers();
+	glFlush();
 }
+
 
 // Función principal
 int main(int argc, char **argv)
@@ -51,13 +98,12 @@ int main(int argc, char **argv)
 	// Creamos la nueva ventana
 	glutCreateWindow("Escena 2D con transformaciones");
 
-	// Indicamos cuales son las funciones de redibujado e idle
+	// Indicamos cuales son las funciones de redibujado y reshape
 	glutDisplayFunc(Display);
 	glutReshapeFunc(Reshape);
 
-	// El color de fondo será el negro (RGBA, RGB + Alpha channel)
+	// El color de fondo será blanco opaco
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glOrtho(-1.0, 1.0f, -1.0, 1.0f, -1.0, 1.0f);
 
 	// Comienza la ejecución del core de GLUT
 	glutMainLoop();
