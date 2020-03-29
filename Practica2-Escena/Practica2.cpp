@@ -33,6 +33,8 @@ void Reshape(int width, int height)
 void Display(void) 
 {
 
+	glFlush();
+	glutSwapBuffers();
 }
 
 // Función principal
