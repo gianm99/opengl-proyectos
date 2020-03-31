@@ -1,4 +1,4 @@
-// Practica1.cpp
+// Practica2.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
 #include <GL/glut.h>
@@ -37,55 +37,34 @@ void Display(void)
 	glMatrixMode(GL_MODELVIEW);      // To operate on Model-View matrix
 	glLoadIdentity();                // Reset the model-view matrix
 
-	// A continuación dibujamos los 4 cuadrados
-	// Cada grupo de 4 vértices es un cuadrado
-	// Cuadrante arriba-izquierda
-	glTranslatef(0.2f, 0.2f, 0.2f);			// Translación
+	/*A continuación dibujamos los dos cuadrados sobre los que vamos a realizar 
+	transformaciones compuestas*/
+
+	// Rotación sobre el centro del cuadrado
+	glTranslatef(-0.5f, 0.0f, 0.0f);
+	glRotatef(45.0f,0.0f,0.0f,1.0f);
+	glTranslatef(0.5f, 0.0f, 0.0f);
 	glBegin(GL_QUADS);
-		glColor3f(0.0f, 0.0f, 0.0f);		// negro
-		glVertex3f(-0.75f, 0.75f, 0.0f);	// arriba-izquierda
-		glVertex3f(-0.75f, 0.25f, 0.0f);	// abajo-izquierda
-		glVertex3f(-0.25f, 0.25f, 0.0f);	// abajo-derecha
-		glVertex3f(-0.25f, 0.75f, 0.0f);	// arriba-derecha
+	glColor3f(0.73f, 0.17f , 0.15f );	// rojo
+	glVertex3f(-0.65f, 0.15f, 0.0f);	// arriba-izquierda
+	glVertex3f(-0.65f, -0.15f, 0.0f);	// abajo-izquierda
+	glColor3f(.08f, 0.4f,0.75f);		// azul
+	glVertex3f(-0.35f, -0.15f, 0.0f);	// abajo-derecha
+	glVertex3f(-0.35f, 0.15f, 0.0f);	// arriba-derecha
 	glEnd();
 	glLoadIdentity();
 
-	// Cuadrante abajo-izquierda
-	glRotatef(45.0f,-0.5f,-0.5f,0.0f);		// Rotación
+	// Escalado sobre la esquina inferior derecha del cuadrado
+	glTranslatef(0.65f, -0.15f, 0.0f);
+	glScalef(0.7f, 1.5f, 0.0f);
+	glTranslatef(-0.65f,0.15f,0.0f);
 	glBegin(GL_QUADS);
-		glColor3f(1.0f, 0.0f, 0.0f);		// rojo
-		glVertex3f(-0.75f, -0.25f, 0.0f);	// arriba-izquierda
-		glVertex3f(-0.75f, -0.75f, 0.0f);	// abajo-izquierda
-		glVertex3f(-0.25f, -0.75f, 0.0f);	// abajo-derecha
-		glVertex3f(-0.25f, -0.25f, 0.0f);	// arriba-derecha
-	glEnd();
-	glLoadIdentity();
-
-	// Cuadrante abajo-derecha
-	glScalef(1.5f, 1.5f, 0.0f);				// Escalado
-	glBegin(GL_QUADS);
-		glColor3f(0.0f, 1.0f, 0.0f);		// verde
-		glVertex3f(0.75f, -0.75f, 0.0f);	// arriba-izquierda
-		glVertex3f(0.75f, -0.25f, 0.0f);	// abajo-izquierda
-		glVertex3f(0.25f, -0.25f, 0.0f);	// abajo-derecha
-		glVertex3f(0.25f, -0.75f, 0.0f);	// arriba-derecha
-	glEnd();
-	glLoadIdentity();
-
-	// Cuadrante arriba-derecha
-	GLfloat m[16] = {
-		1.0f,-0.25f,0.0f,0.0f,
-		0.7f,1.0f,0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		0.0f,0.0f,0.0f,1.0f
-	};
-	glMultMatrixf(m);						// Cizallamiento
-	glBegin(GL_QUADS);
-		glColor3f(0.0f, 0.0f, 1.0f);		// azul
-		glVertex3f(0.75f, 0.25f, 0.0f);		// arriba-izquierda
-		glVertex3f(0.75f, 0.75f, 0.0f);		// abajo-izquierda
-		glVertex3f(0.25f, 0.75f, 0.0f);		// abajo-derecha
-		glVertex3f(0.25f, 0.25f, 0.0f);		// arriba-derecha
+	glColor3f(0.06f, 0.55f, 0.78f);		// azul
+	glVertex3f(0.35f, 0.15f, 0.0f);	// arriba-izquierda
+	glVertex3f(0.35f, -0.15f, 0.0f);	// abajo-izquierda
+	glColor3f(.94f, 0.56f, 0.22f);		// naranja
+	glVertex3f(0.65f, -0.15f, 0.0f);	// abajo-derecha
+	glVertex3f(0.65f, 0.15f, 0.0f);	// arriba-derecha
 	glEnd();
 	glLoadIdentity();
 
@@ -113,7 +92,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(Reshape);
 
 	// El color de fondo será blanco opaco
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 
 	// Comienza la ejecución del core de GLUT
 	glutMainLoop();
