@@ -8,10 +8,12 @@
 
 const int W_WIDTH = 640; // Tamaño incial de la ventana
 const int W_HEIGHT = 480;
-GLfloat fAnguloCentral,fAnguloInferior; // Ángulos de rotación de los ejes
+GLfloat fAnguloCentral = 90.0f,fAnguloInferior = 90.0f; // Ángulos de rotación de los ejes
 GLfloat fIncCentral, fIncInferior;
 const GLfloat MAX_ANGULO_CENTRAL = 120;
 const GLfloat MAX_ANGULO_INFERIOR= 120;
+GLfloat trayectoria[5000000];
+int npuntos = 0;
 
 // Función que controla la proporción al cambiar el tamaño
 void Reshape(int width, int height)
@@ -43,8 +45,9 @@ void Display(void)
 	glMatrixMode(GL_MODELVIEW);      // To operate on Model-View matrix
 	glLoadIdentity();                // Reset the model-view matrix
 
+	
 	/*A continuación dibujamos los rectángulos que representan el péndulo doble*/
-
+	GLfloat aux[16];
 	// Parte superior
 	glPushMatrix();
 	glRotatef(fAnguloCentral, 0.0f, 0.0f, 1.0f);
@@ -55,9 +58,7 @@ void Display(void)
 	glVertex3f(0.01f, -0.5f, 0.0f);	// INFERIOR DERECHA
 	glVertex3f(0.01f, 0.0f, 0.0f);	// SUPERIOR DERECHA
 	glEnd();
-
 	// Parte inferior
-	//glPushMatrix();
 	glTranslatef(0.0f, -0.5f, 0.0f);
 	glRotatef(fAnguloInferior, 0.0f, 0.0f, 1.0f);
 	glTranslatef(0.0f, 0.5f, 0.0f);
@@ -68,6 +69,26 @@ void Display(void)
 	glVertex3f(0.01f, -0.95f, 0.0f);	// INFERIOR DERECHA
 	glVertex3f(0.01f, -0.5f, 0.0f);	// SUPERIOR DERECHA
 	glEnd();
+	
+	
+	glGetFloatv(GL_MODELVIEW_MATRIX, aux);
+	trayectoria[npuntos++] = aux[0];
+	trayectoria[npuntos++] = aux[5];
+	trayectoria[npuntos++] = aux[10];
+
+	glBegin(GL_LINE);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < npuntos && npuntos>=6; i = i + 6) {
+		glVertex3d(trayectoria[i], trayectoria[i+1], trayectoria[i+2]);
+		glVertex3d(trayectoria[i+3], trayectoria[i+4], trayectoria[i+5]);
+	}
+	glEnd();
+	/*glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, trayectoria);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glDrawArrays(GL_LINE, 0, npuntos);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	*/
 	glPopMatrix();
 
 	glutSwapBuffers();
@@ -116,8 +137,8 @@ int main(int argc, char **argv)
 	glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 
 	// Indicamos la velocidad a la que gira
-	fIncCentral = 0.2f;
-	fIncInferior = 0.25f;
+	fIncCentral = sinf(fAnguloCentral)*0.08;
+	fIncInferior = sinf(fAnguloInferior)*0.1;
 	// Comienza la ejecución del core de GLUT
 	glutMainLoop();
 	return 0;
