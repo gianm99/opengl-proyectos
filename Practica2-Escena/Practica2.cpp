@@ -1,4 +1,4 @@
-// Practica1.cpp
+++// Practica1.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
 #include <GL/glut.h>
@@ -8,7 +8,7 @@ const int W_WIDTH = 500; // Tamaño incial de la ventana
 const int W_HEIGHT = 500;
 
 // Función que controla la proporción al cambiar el tamaño
-void Reshape(int width, int height)
+void reshape(int width, int height)
 {
 	const float ar_origin = (float)W_WIDTH / (float)W_HEIGHT;
 	const float ar_new = (float)width / (float)height;
@@ -29,7 +29,7 @@ void Reshape(int width, int height)
 }
 
 // Función que visualiza la escena OpenGL
-void Display(void)
+void display(void)
 {
 	// Borramos la escena
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -109,8 +109,8 @@ int main(int argc, char **argv)
 	glutCreateWindow("Escena 2D con transformaciones");
 
 	// Indicamos cuales son las funciones de redibujado y reshape
-	glutDisplayFunc(Display);
-	glutReshapeFunc(Reshape);
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
 
 	// El color de fondo será blanco opaco
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
