@@ -8,15 +8,10 @@
 
 const int W_WIDTH = 640; // Tamaño incial de la ventana
 const int W_HEIGHT = 480;
-GLfloat fAnguloCentral = 90.0f, fAnguloInferior = 90.0f; // Ángulos de rotación de los ejes
+GLfloat fAnguloCentral = 0.0f, fAnguloInferior = 0.0f; // Ángulos de rotación de los ejes
 GLfloat fIncCentral, fIncInferior;
 const GLfloat MAX_ANGULO_CENTRAL = 120;
 const GLfloat MAX_ANGULO_INFERIOR = 360;
-
-void init()
-{
-
-}
 
 // Función que dibuja la escena
 void display(void)
@@ -28,7 +23,6 @@ void display(void)
 	glLoadIdentity();                // Reset the model-view matrix
 
 
-	/*A continuación dibujamos los rectángulos que representan el péndulo doble*/
 	// Parte superior
 	glPushMatrix();
 	glRotatef(fAnguloCentral, 0.0f, 0.0f, 1.0f);
@@ -54,10 +48,9 @@ void display(void)
 	glColor3f(0.121f, 0.992f, 0.058f);	// verde
 	glVertex3f(0.01f, -0.50f, 0.0f);	// SUPERIOR DERECHA
 	glEnd();
-
 	glPopMatrix();
 
-	glutSwapBuffers();
+	glutSwapBuffers();	// Cambiar buffers
 	glFlush();
 }
 
@@ -75,7 +68,6 @@ void idle(void)
 	// Si es mayor que dos pi la decrementamos
 	if (fAnguloInferior > MAX_ANGULO_INFERIOR)
 		fAnguloInferior = 0;
-
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
@@ -107,23 +99,27 @@ int main(int argc, char **argv)
 	// Inicializamos la librería GLUT
 	glutInit(&argc, argv);
 
+	// Creamos la ventana
 	glutInitWindowSize(W_WIDTH, W_HEIGHT);
+	// Se situa en el centro de la pantalla
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - W_WIDTH) / 2,
 		(glutGet(GLUT_SCREEN_HEIGHT) - W_HEIGHT) / 2);
+	// Usamos doble buffer
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutCreateWindow("Escena 2D con transformaciones");
+	glutCreateWindow("Péndulo doble");
 
 	// Indicamos cuales son las funciones de redibujado y reshape
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutIdleFunc(idle);
 
-	// El color de fondo será blanco opaco
-	glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+	// El color de fondo será gris oscuro opaco
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	// Indicamos la velocidad a la que gira
-	fIncCentral = sinf(fAnguloCentral) * 2;
-	fIncInferior = sinf(fAnguloInferior) * 3;
+	// Indicamos la velocidad a la que gira en grados
+	fIncCentral = 3.0f;
+	fIncInferior = 4.0f;
+
 	// Comienza la ejecución del core de GLUT
 	glutMainLoop();
 	return 0;
