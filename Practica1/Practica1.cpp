@@ -9,7 +9,7 @@ const int W_HEIGHT = 500;
 GLfloat fAngulo; // Variable que indica el ángulo de rotación de los ejes. 
 
 // Función que controla la proporción al cambiar el tamaño
-void Reshape(int width, int height)
+void reshape(int width, int height)
 {
 	const float ar_origin = (float)W_WIDTH / (float)W_HEIGHT;
 	const float ar_new = (float)width / (float)height;
@@ -30,7 +30,7 @@ void Reshape(int width, int height)
 }
 
 // Función que visualiza la escena OpenGL
-void Display(void)
+void display(void)
 {
 	// Borramos la escena
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -72,7 +72,7 @@ void Display(void)
 }
 
 // Función que se ejecuta cuando el sistema no esta ocupado
-void Idle(void)
+void idle(void)
 {
 	// Incrementamos el ángulo
 	fAngulo += 0.3f;
@@ -98,9 +98,9 @@ int main(int argc, char **argv)
 	glutCreateWindow("Mi primera Ventana");
 
 	// Indicamos cuales son las funciones de redibujado e idle
-	glutDisplayFunc(Display);
-	glutIdleFunc(Idle);
-	glutReshapeFunc(Reshape);
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
+	glutReshapeFunc(reshape);
 
 	// El color de fondo será el negro (RGBA, RGB + Alpha channel)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
