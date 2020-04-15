@@ -73,24 +73,28 @@ void idle(void)
 }
 
 // Función que controla la relación de aspecto
-void reshape(int width, int height)
+void reshape(GLsizei width, GLsizei height)
 {
-	const float ar_origin = (float)W_WIDTH / (float)W_HEIGHT;
-	const float ar_new = (float)width / (float)height;
+	// Compute aspect ratio of the new window
+	if (height == 0) height = 1;                // To prevent divide by 0
+	GLfloat aspect = (GLfloat)width / (GLfloat)height;
 
-	float scale_w = (float)width / (float)W_WIDTH;
-	float scale_h = (float)height / (float)W_HEIGHT;
-	if (ar_new > ar_origin) {
-		scale_w = scale_h;
+	// Set the viewport to cover the new window
+	glViewport(0, 0, width, height);
+
+	// Set the aspect ratio of the clipping area to match the viewport
+	glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+	glLoadIdentity();             // Reset the projection matrix
+	if (width >= height) {
+		// aspect >= 1, set the height from -1 to 1, with larger width
+		//gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+		glOrtho(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0, -1.0,1.0);
 	}
 	else {
-		scale_h = scale_w;
+		// aspect < 1, set the width to -1 to 1, with larger height
+		glOrtho(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect, - 1.0, 1.0);
 	}
 
-	float margin_x = (width - W_WIDTH * scale_w) / 2;
-	float margin_y = (height - W_HEIGHT * scale_h) / 2;
-
-	glViewport(margin_x, margin_y, W_WIDTH * scale_w, W_HEIGHT * scale_h);
 }
 
 // Función principal
