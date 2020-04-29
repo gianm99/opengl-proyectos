@@ -73,24 +73,24 @@ void idle(void)
 }
 
 // Función que controla la relación de aspecto
-void reshape(int width, int height)
+void reshape(GLsizei width, GLsizei height)
 {
-	const float ar_origin = (float)W_WIDTH / (float)W_HEIGHT;
-	const float ar_new = (float)width / (float)height;
-
-	float scale_w = (float)width / (float)W_WIDTH;
-	float scale_h = (float)height / (float)W_HEIGHT;
-	if (ar_new > ar_origin) {
-		scale_w = scale_h;
+	double left, right, top, bottom, near, far;
+	// Calcular el aspect ratio de la nueva ventana
+	if (height == 0) height = 1;  // Para evitar dividir por cero
+	GLfloat aspect = (GLfloat)width / (GLfloat)height;
+	// Hacer que el viewport cubra la nueva ventana
+	glViewport(0, 0, width, height);
+	// Hacer que el aspect ratio del área de dibujado sea igual al del viewport
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (width >= height) {
+		glOrtho(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0, -1.0, 1.0);
 	}
 	else {
-		scale_h = scale_w;
+		glOrtho(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect, -1.0, 1.0);
 	}
-
-	float margin_x = (width - W_WIDTH * scale_w) / 2;
-	float margin_y = (height - W_HEIGHT * scale_h) / 2;
-
-	glViewport(margin_x, margin_y, W_WIDTH * scale_w, W_HEIGHT * scale_h);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 // Función principal
