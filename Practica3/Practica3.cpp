@@ -8,6 +8,8 @@
 #include <gl/glu.h>
 #include <math.h>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 // Dibuja la escena
 void display(void);
@@ -22,15 +24,46 @@ void referenciaEjes();
 void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
-
+//Inicializa los valores globales que necesitan de una función de generación aleatoria de números
+void initRandVars();
 // Indica si los ejes de referencia se tienen que dibujar
 bool ejesVisible;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible;
-// Indica la posición en el eje Z en la que se tiene que dibujar la tetera
-GLfloat posZ=0.0f;
-// Indica el incremento en el eje Z en el que posZ varia
+// Indica el ángulo de rotación de la tetera
+GLfloat AngRot = 0.0f;
+//Indican los vectores de cada eje para la función de rotación
+GLfloat AngX;
+GLfloat AngY;
+GLfloat AngZ;
+const GLfloat incRot = 0.1f;
+// Indican las posiciones en los ejes en la que se tiene que dibujar la tetera
+GLfloat posX = 0.0f;
+GLfloat posY = 0.0f;
+GLfloat posZ = 0.0f;
+// Indican los incrementos en los ejes en el que las posiciones varian
+GLfloat incX;
+GLfloat incY;
 GLfloat incZ = 0.003f;
+//Indican el tamaño inicial de la ventana
+GLsizei windowWidth = 640;
+GLsizei windowHeight = 480;
+
+void initRandVars() {
+	srand(time(NULL));
+	AngX = (float) 0.1*(rand() % 21 + (-10));
+	AngY = (float) 0.1*(rand() % 21 + (-10));
+	AngZ = (float) 0.1*(rand() % 21 + (-10));
+	incX = (float) 0.0001*(rand() % 10 + 3);
+	srand(time(NULL));
+	incY = (float) 0.0001*(rand() % 10 + 3);
+	if (rand() % 2 == 1) {
+		incX = -incX;
+	}
+	if (rand() % 2 == 1) {
+		incY = -incY;
+	}
+}
 
 void display(void)
 {
@@ -38,8 +71,8 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glTranslatef(0.0f,0.0f,posZ);
-	glRotatef(45.0f, 0.0f, 0.7f, 1.0f);
+	glTranslatef(posX,posY,posZ);
+	glRotatef(AngRot, AngX, AngY, AngZ);
 	glutSolidTeapot(0.1f);
 	if (ejesVisible)referenciaEjes();
 	if (planosVisible)referenciaPlanos();
@@ -71,7 +104,16 @@ void idle(void) {
 	{
 		incZ=-incZ;
 	}
-	posZ+=incZ;
+	if (posX > 0.93 || posX < -0.93) {
+		incX = -incX;
+	}
+	if (posY > 0.93 || posY < -0.93) {
+		incY = -incY;
+	}
+	posX += incX;
+	posY += incY;
+	posZ += incZ;
+	AngRot += incRot;
 	glutPostRedisplay();
 }
 
@@ -174,10 +216,11 @@ void init() {
 
 int main(int argc, char **argv)
 {
+	initRandVars();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowPosition(50,50);
-	glutInitWindowSize(640,480);
+	glutInitWindowSize(windowWidth,windowHeight);
 	glutCreateWindow("Escena 3D simple");
 	init();
 	glutDisplayFunc(display);
