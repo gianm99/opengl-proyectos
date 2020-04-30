@@ -184,20 +184,20 @@ void referenciaPlanos()
 {
 	glLoadIdentity();
 	glBegin(GL_QUADS);
-		// X / Y - Rojo 60%
+		// X / Y - Rojo 30%
 		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
 		glVertex3f(0.9f, 0.9f, 0.0f);
 		glVertex3f(-0.9f, 0.9f, 0.0f);
 		glVertex3f(-0.9f, -0.9f, 0.0f);
 		glVertex3f(0.9f, -0.9f, 0.0f);
-		// X / Z - Verde 60%
-		glColor4f(0.0f, 1.0f, 0.0f, 0.6f);
+		// X / Z - Verde 30%
+		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
 		glVertex3f(0.9f, 0.0f, 0.9f);
 		glVertex3f(-0.9f, 0.0f, 0.9f);
 		glVertex3f(-0.9f, 0.0f, -0.9f);
 		glVertex3f(0.9f, 0.0f, -0.9f);
-		// Y / Z - Azul 60%
-		glColor4f(0.0f, 0.0f, 1.0f, 0.6f);
+		// Y / Z - Azul 30%
+		glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
 		glVertex3f(0.0f, 0.9f, 0.9f);
 		glVertex3f(0.0f, -0.9f, 0.9f);
 		glVertex3f(0.0f, -0.9f, -0.9f);
