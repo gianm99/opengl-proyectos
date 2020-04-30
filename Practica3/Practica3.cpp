@@ -1,41 +1,20 @@
 //Practica3.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
-#define _USE_MATH_DEFINES
-#include <stdlib.h>
-#include <gl/glut.h>
-#include <gl/gl.h>
-#include <gl/glu.h>
-#include <math.h>
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include "Practica3.h"
 
-// Dibuja la escena
-void display(void);
-// Controla la relación de aspecto de la escena
-void reshape(GLsizei width, GLsizei height);
-// Anima la escena
-void idle(void);
-// Dibuja los ejes de coordenadas para poder usarlos como referencia
-void referenciaEjes();
-// Dibuja los planos formados por la intersección de los ejes de coordenadas 
-// para usarlos como referencia
-void referenciaPlanos();
-// Inicializa algunos valores del dibujado de la escena
-void init();
-//Inicializa los valores globales que necesitan de una función de generación aleatoria de números
-void initRandVars();
+// Indica si está en modo fullscreen
+bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible;
+bool ejesVisible=true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosVisible;
+bool planosVisible=true;
 // Indica el ángulo de rotación de la tetera
-GLfloat AngRot = 0.0f;
+GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
-GLfloat AngX;
-GLfloat AngY;
-GLfloat AngZ;
+GLfloat angX;
+GLfloat angY;
+GLfloat angZ;
 const GLfloat incRot = 0.1f;
 // Indican las posiciones en los ejes en la que se tiene que dibujar la tetera
 GLfloat posX = 0.0f;
@@ -47,13 +26,13 @@ GLfloat incY;
 GLfloat incZ = 0.003f;
 //Indican el tamaño inicial de la ventana
 GLsizei windowWidth = 640;
-GLsizei windowHeight = 480;
+GLsizei windowHeight = 640;
 
 void initRandVars() {
 	srand(time(NULL));
-	AngX = (float) 0.1*(rand() % 21 + (-10));
-	AngY = (float) 0.1*(rand() % 21 + (-10));
-	AngZ = (float) 0.1*(rand() % 21 + (-10));
+	angX = (float) 0.1*(rand() % 21 + (-10));
+	angY = (float) 0.1*(rand() % 21 + (-10));
+	angZ = (float) 0.1*(rand() % 21 + (-10));
 	incX = (float) 0.0001*(rand() % 10 + 3);
 	srand(time(NULL));
 	incY = (float) 0.0001*(rand() % 10 + 3);
@@ -72,7 +51,7 @@ void display(void)
 	glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glTranslatef(posX,posY,posZ);
-	glRotatef(AngRot, AngX, AngY, AngZ);
+	glRotatef(angRot, angX, angY, angZ);
 	glutSolidTeapot(0.1f);
 	if (ejesVisible)referenciaEjes();
 	if (planosVisible)referenciaPlanos();
@@ -99,6 +78,34 @@ void reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+		case 27:  // Escape
+			exit(0);
+			break;
+		case 'f':
+			fullscreen=!fullscreen;
+			if (!fullscreen)
+			{
+				glutReshapeWindow(windowWidth, windowHeight);
+				glutPositionWindow(100, 100);
+			}
+			else
+			{
+				glutFullScreen();
+			}
+			break;
+		case 'e':
+			ejesVisible=!ejesVisible;
+			break;
+		case 'p':
+			planosVisible=!planosVisible;
+			break;
+	}
+}
+
 void idle(void) {
 	if (posZ > 0.15f||posZ<-0.15f)
 	{
@@ -113,51 +120,8 @@ void idle(void) {
 	posX += incX;
 	posY += incY;
 	posZ += incZ;
-	AngRot += incRot;
+	angRot += incRot;
 	glutPostRedisplay();
-}
-
-void preguntarVisibilidad()
-{
-	char eleccion;
-	while (true)
-	{
-		std::cout << "Quieres que los ejes de referencia sean visibles? (s/n)" << std::endl;
-		std::cin >> eleccion;
-		if (eleccion == 's')
-		{
-			ejesVisible=true;
-			break;
-		}
-		else if(eleccion=='n')
-		{
-			ejesVisible=false;
-			break;
-		}
-		else
-		{
-			std::cout << "Por favor responde con 's' o 'n'." << std::endl;
-		}
-	}
-	while (true)
-	{
-		std::cout << "Quieres que los planos de referencia sean visibles? (s/n)" << std::endl;
-		std::cin >> eleccion;
-		if (eleccion == 's')
-		{
-			planosVisible = true;
-			return;
-		}
-		else if (eleccion == 'n')
-		{
-			planosVisible = false;
-			return;
-		}
-		else
-		{
-			std::cout << "Por favor responde con 's' o 'n'." << std::endl;
-		}
-	}
 }
 
 void referenciaEjes()
@@ -219,15 +183,14 @@ int main(int argc, char **argv)
 	initRandVars();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowPosition(50,50);
+	glutInitWindowPosition(100,100);
 	glutInitWindowSize(windowWidth,windowHeight);
 	glutCreateWindow("Escena 3D simple");
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
 	glutIdleFunc(idle);
-	// Preguntar al usuario si hay que dibujar los ejes y planos
-	preguntarVisibilidad();
 	glutMainLoop();
 	return 0;
 }
