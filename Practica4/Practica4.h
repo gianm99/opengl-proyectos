@@ -1,4 +1,4 @@
-//Practica3.h: Escena 3D simple
+//Practica4.h: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #pragma once
@@ -32,5 +32,4 @@ void init();
 // Inicializa los valores globales que necesitan de una función de generación 
 // aleatoria de números
 void initRandVars();
-
 void camaraFunc();

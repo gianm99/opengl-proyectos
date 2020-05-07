@@ -149,6 +149,9 @@
   <ItemGroup>
     <ClCompile Include="Practica4.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Practica4.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
