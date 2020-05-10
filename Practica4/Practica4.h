@@ -1,17 +1,20 @@
 //Practica4.h: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
-#pragma once
-
-#define _USE_MATH_DEFINES
 #include <stdlib.h>
+
 #include <gl/glut.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
 using namespace std;
 
 // Dibuja la escena
