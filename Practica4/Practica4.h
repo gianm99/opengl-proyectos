@@ -36,3 +36,7 @@ void init();
 // aleatoria de números
 void initRandVars();
 void camaraFunc();
+
+//Indican el tamaño inicial de la ventana
+const GLsizei windowWidth = 640;
+const GLsizei windowHeight = 640;

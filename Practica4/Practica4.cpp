@@ -3,14 +3,15 @@
 
 #include "Practica4.h"
 
-// Indica si está en modo fullscreen
+// Indica si está en fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
 bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
 // Indica si la camara debe cambiar de vista.
-bool camON = false;
+bool camON = false;  // HABRÍA QUE CAMBIAR ESTO
+
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -26,31 +27,14 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.003f;
-//Indican el tamaño inicial de la ventana
-GLsizei windowWidth = 640;
-GLsizei windowHeight = 640;
 //Indican los parámetros de la cámara
-GLfloat eyePos[3] = { 0,0,0 };
-GLfloat refPointPos[3] = { 0, 0, 0.9f };
-GLfloat vecPos[3] = { 0,1,0 };
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
+glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
 
-
-
-void initRandVars() {
-	srand(time(NULL));
-	angX = (float) 0.1*(rand() % 21 + (-10));
-	angY = (float) 0.1*(rand() % 21 + (-10));
-	angZ = (float) 0.1*(rand() % 21 + (-10));
-	incX = (float) 0.0001*(rand() % 10 + 3);
-	srand(time(NULL));
-	incY = (float) 0.0001*(rand() % 10 + 3);
-	if (rand() % 2 == 1) {
-		incX = -incX;
-	}
-	if (rand() % 2 == 1) {
-		incY = -incY;
-	}
-}
 
 void display(void)
 {
@@ -61,6 +45,9 @@ void display(void)
 	glTranslatef(posX, posY, posZ);
 	glRotatef(angRot, angX, angY, angZ);
 	glutSolidTeapot(0.1f);
+	//glutSolidIcosahedron();
+	//glColor3f(0.0f,0.0f,0.0f);
+	//glutWireIcosahedron();
 	if (ejesVisible)referenciaEjes();
 	if (planosVisible)referenciaPlanos();
 	if (camON) camaraFunc();
@@ -70,35 +57,24 @@ void display(void)
 
 void reshape(GLsizei width, GLsizei height)
 {
-	// Calcular el aspect ratio de la nueva ventana
-	if (height == 0) height = 1;  // Para evitar dividir por cero
-	GLfloat aspect = (GLfloat)width / (GLfloat)height;
-	// Hacer que el viewport cubra la nueva ventana
-	glViewport(0, 0, width, height);
-	// Hacer que el aspect ratio del área de dibujado sea igual al del viewport
+	glViewport(0, 0, width, height);  // El viewport cubre la ventana
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (width >= height) {
-		gluPerspective(45, 1, 10.0, 10.0);
-		gluLookAt(eyePos[0], eyePos[1], eyePos[2], refPointPos[0], refPointPos[1], refPointPos[2], vecPos[0], vecPos[1], vecPos[2]);
-	}
-	else {
-		gluPerspective(45, 1, 10.0, 10.0);
-		gluLookAt(eyePos[0], eyePos[1], eyePos[2], refPointPos[0], refPointPos[1], refPointPos[2], vecPos[0], vecPos[1], vecPos[2]);
-	}
+	gluPerspective(45, 1, 10.0, 10.0);
+	//gluLookAt(eyePos[0], eyePos[1], eyePos[2], refPointPos[0], refPointPos[1], refPointPos[2], vecPos[0], vecPos[1], vecPos[2]);
+	glm::lookAt(cameraPos,cameraDirection,cameraUp);
 	glMatrixMode(GL_MODELVIEW);
 }
 
 void camaraFunc() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45, 1, 10.0, 10.0);
-	gluLookAt(eyePos[0],eyePos[1],eyePos[2],refPointPos[0], refPointPos[1], refPointPos[2],vecPos[0], vecPos[1], vecPos[2]);
+	//gluPerspective(45, 1, 10.0, 10.0);
+	//glm::lookAt();
+	glm::lookAt(cameraPos, cameraDirection, cameraUp);
 	camON = false;
 	glMatrixMode(GL_MODELVIEW);
 }
-
-
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -108,53 +84,53 @@ void keyboard(unsigned char key, int x, int y)
 		exit(0);
 		break;
 
-	case 'a':
-		camON = true;
-		vecPos[0] += (sin(refPointPos[0])*0.05f); vecPos[1] += (sin(refPointPos[1])*0.05f); vecPos[2] += (sin(refPointPos[2])*0.05f);
-		break;
+	//case 'a':
+	//	camON = true;
+	//	vecPos[0] += (sin(refPointPos[0])*0.05f); vecPos[1] += (sin(refPointPos[1])*0.05f); vecPos[2] += (sin(refPointPos[2])*0.05f);
+	//	break;
 
-	/*case 'd':
-		camON = true;
-		eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-		refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-		vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-		break; 
+		/*case 'd':
+			camON = true;
+			eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
+			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
+			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
+			break;
 
-	case 'd':
-		camON = true;
-		eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-		refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-		vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-		break;
+		case 'd':
+			camON = true;
+			eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
+			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
+			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
+			break;
 
-	case 'd':
-		camON = true;
-		
-		refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-		vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-		break;
+		case 'd':
+			camON = true;
 
-	*/
+			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
+			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
+			break;
 
-	case '1':
-		camON = true;
-		eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-		refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-		vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-		break;
+		*/
 
-	case '2':
-		camON = true;
-		eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-		refPointPos[0] = 0; refPointPos[1] = 0.9f; refPointPos[2] = 0;
-		vecPos[0] = 1; vecPos[1] = 0; vecPos[2] = 0;
-		break;
-	case '3':
-		camON = true;
-		eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0.;
-		refPointPos[0] = 0; refPointPos[1] = 0; refPointPos[2] = 0.9f;
-		vecPos[0] = 0; vecPos[1] =1 ; vecPos[2] = 0;
-		break;
+	//case '1':
+	//	camON = true;
+	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
+	//	refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
+	//	vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
+	//	break;
+
+	//case '2':
+	//	camON = true;
+	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
+	//	refPointPos[0] = 0; refPointPos[1] = 0.9f; refPointPos[2] = 0;
+	//	vecPos[0] = 1; vecPos[1] = 0; vecPos[2] = 0;
+	//	break;
+	//case '3':
+	//	camON = true;
+	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0.;
+	//	refPointPos[0] = 0; refPointPos[1] = 0; refPointPos[2] = 0.9f;
+	//	vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
+	//	break;
 
 	case 'f':
 		fullscreen = !fullscreen;
@@ -173,25 +149,25 @@ void keyboard(unsigned char key, int x, int y)
 		ejesVisible = !ejesVisible;
 		break;
 
-			
+
 	case 'p':
 		planosVisible = !planosVisible;
 		break;
 
-	
+
 
 	}
 }
 
 void idle(void) {
-	if (posZ > 0.15f || posZ<-0.15f)
+	if (posZ > 0.7f || posZ < -0.7f)
 	{
 		incZ = -incZ;
 	}
-	if (posX > 0.93 || posX < -0.93) {
+	if (posX > 0.7f || posX < -0.7f) {
 		incX = -incX;
 	}
-	if (posY > 0.93 || posY < -0.93) {
+	if (posY > 0.7f || posY < -0.7f) {
 		incY = -incY;
 	}
 	posX += incX;
@@ -257,7 +233,7 @@ void init() {
 
 int main(int argc, char **argv)
 {
-	initRandVars();
+	//initRandVars();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowPosition(100, 100);
