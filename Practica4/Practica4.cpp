@@ -1,4 +1,4 @@
-//Practica3.cpp: Escena 3D simple
+//Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include "Practica4.h"
@@ -9,9 +9,8 @@ bool fullscreen;
 bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
-// Indica si la camara debe cambiar de vista.
-bool camON = false;  // HABRÍA QUE CAMBIAR ESTO
-
+// Representa la cámara
+Camara cam(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -26,15 +25,38 @@ GLfloat posZ = 0.0f;
 // Indican los incrementos en los ejes en el que las posiciones varian
 GLfloat incX;
 GLfloat incY;
-GLfloat incZ = 0.003f;
-//Indican los parámetros de la cámara
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
-glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+GLfloat incZ = 0.005f;
+// Indica si la cámara es libre o está fija
+bool camaraLibre = false;
+// Indica la vista fija seleccionada
+int vista = 0;
+// Representan las vistas fijas disponibles
+enum vistas
+{
+	isometrica,
+	caballera,
+	militar,
+	planta,
+	alzado,
+	perfil_izq,
+	perfil_der
+};
 
+int main(int argc, char **argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(windowWidth, windowHeight);
+	glutCreateWindow("Escena 3D simple");
+	init();
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
+	glutIdleFunc(idle);
+	glutMainLoop();
+	return 0;
+}
 
 void display(void)
 {
@@ -45,12 +67,8 @@ void display(void)
 	glTranslatef(posX, posY, posZ);
 	glRotatef(angRot, angX, angY, angZ);
 	glutSolidTeapot(0.1f);
-	//glutSolidIcosahedron();
-	//glColor3f(0.0f,0.0f,0.0f);
-	//glutWireIcosahedron();
-	if (ejesVisible)referenciaEjes();
-	if (planosVisible)referenciaPlanos();
-	if (camON) camaraFunc();
+	if (ejesVisible) referenciaEjes();
+	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
@@ -60,21 +78,13 @@ void reshape(GLsizei width, GLsizei height)
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45, 1, 10.0, 10.0);
-	//gluLookAt(eyePos[0], eyePos[1], eyePos[2], refPointPos[0], refPointPos[1], refPointPos[2], vecPos[0], vecPos[1], vecPos[2]);
-	glm::lookAt(cameraPos,cameraDirection,cameraUp);
+	gluPerspective(90, 1, 0.1, 20);
+	gluLookAt(cam.getEye(0), cam.getEye(1), cam.getEye(2),
+		cam.getCenter(0), cam.getCenter(1), cam.getCenter(2),
+		cam.getUp(0), cam.getUp(1), cam.getUp(2));
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void camaraFunc() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	//gluPerspective(45, 1, 10.0, 10.0);
-	//glm::lookAt();
-	glm::lookAt(cameraPos, cameraDirection, cameraUp);
-	camON = false;
-	glMatrixMode(GL_MODELVIEW);
-}
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -83,55 +93,6 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:  // Escape
 		exit(0);
 		break;
-
-	//case 'a':
-	//	camON = true;
-	//	vecPos[0] += (sin(refPointPos[0])*0.05f); vecPos[1] += (sin(refPointPos[1])*0.05f); vecPos[2] += (sin(refPointPos[2])*0.05f);
-	//	break;
-
-		/*case 'd':
-			camON = true;
-			eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-			break;
-
-		case 'd':
-			camON = true;
-			eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-			break;
-
-		case 'd':
-			camON = true;
-
-			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-			break;
-
-		*/
-
-	//case '1':
-	//	camON = true;
-	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-	//	refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-	//	vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-	//	break;
-
-	//case '2':
-	//	camON = true;
-	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-	//	refPointPos[0] = 0; refPointPos[1] = 0.9f; refPointPos[2] = 0;
-	//	vecPos[0] = 1; vecPos[1] = 0; vecPos[2] = 0;
-	//	break;
-	//case '3':
-	//	camON = true;
-	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0.;
-	//	refPointPos[0] = 0; refPointPos[1] = 0; refPointPos[2] = 0.9f;
-	//	vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-	//	break;
-
 	case 'f':
 		fullscreen = !fullscreen;
 		if (!fullscreen)
@@ -144,18 +105,47 @@ void keyboard(unsigned char key, int x, int y)
 			glutFullScreen();
 		}
 		break;
-
 	case 'e':
 		ejesVisible = !ejesVisible;
 		break;
-
-
 	case 'p':
 		planosVisible = !planosVisible;
 		break;
+	case 'l':
+		camaraLibre = !camaraLibre;
+	}
+	glutPostRedisplay();
+}
 
+void special(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_LEFT:
+		void;
+	}
+}
 
-
+void vistaFija(int vista)
+{
+	switch (vista)
+	{
+	case vistas::isometrica:
+		//glOrtho(10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f);
+		//gluLookAt();
+		break;
+	case vistas::caballera:
+		break;
+	case vistas::militar:
+		break;
+	case vistas::planta:
+		break;
+	case vistas::alzado:
+		break;
+	case vistas::perfil_izq:
+		break;
+	case vistas::perfil_der:
+		break;
 	}
 }
 
@@ -173,7 +163,6 @@ void idle(void) {
 	posX += incX;
 	posY += incY;
 	posZ += incZ;
-	angRot += incRot;
 	glutPostRedisplay();
 }
 
@@ -231,19 +220,3 @@ void init() {
 	glShadeModel(GL_SMOOTH);
 }
 
-int main(int argc, char **argv)
-{
-	//initRandVars();
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(windowWidth, windowHeight);
-	glutCreateWindow("Escena 3D simple");
-	init();
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
-	glutIdleFunc(idle);
-	glutMainLoop();
-	return 0;
-}
