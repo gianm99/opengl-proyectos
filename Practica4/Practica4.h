@@ -13,36 +13,7 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <ctime>
 using namespace std;
-
-// Dibuja la escena
-void display(void);
-// Controla la relación de aspecto de la escena
-void reshape(GLsizei width, GLsizei height);
-// Controla el input de teclado
-void keyboard(unsigned char key, int x, int y);
-// Controla el input especial de teclado
-void special(int key, int x, int y);
-// Anima la escena
-void idle(void);
-// Dibuja los ejes de coordenadas para poder usarlos como referencia
-void referenciaEjes();
-// Dibuja los planos formados por la intersección de los ejes de coordenadas 
-// para usarlos como referencia
-void referenciaPlanos();
-// Inicializa algunos valores del dibujado de la escena
-void init();
-// Inicializa los valores globales que necesitan de una función de generación 
-// aleatoria de números
-void initRandVars();
-// Cambia a la vista definida por el parámetro vista
-void vistaFija(int vista);
-// Indican el tamaño inicial de la ventana
-const GLsizei windowWidth = 640;
-const GLsizei windowHeight = 640;
-// Indica el número de vistas fijas disponibles
-const int nvistas = 7;
 
 // Representa una cámara, con los datos de posicion, dirección, etc.
 class Camara
@@ -67,30 +38,60 @@ public:
 		up[2] = upz;
 	}
 	// Getters
-	GLfloat getEye(int i)
+	GLfloat * getEye()
 	{
-		return eye[i];
+		return eye;
 	}
-	GLfloat getCenter(int i)
+	GLfloat * getCenter()
 	{
-		return center[i];
+		return center;
 	}
-	GLfloat getUp(int i)
+	GLfloat * getUp()
 	{
-		return up[i];
+		return up;
 	}
 	// Setters
-	void setEye(int i, GLfloat eye)
+	void setEye(GLfloat eyex, GLfloat eyey, GLfloat eyez)
 	{
-		this->eye[i] = eye;
+		this->eye[0] = eyex;
+		this->eye[1] = eyey;
+		this->eye[2] = eyez;
 	}
-	void setCenter(int i, GLfloat center)
+	void setCenter(GLfloat centerx, GLfloat centery, GLfloat centerz)
 	{
-		this->center[i] = center;
+		this->center[0] = centerx;
+		this->center[1] = centery;
+		this->center[2] = centerz;
 	}
-	void setUp(int i, GLfloat up)
+	void setUp(GLfloat upx, GLfloat upy, GLfloat upz)
 	{
-		this->up[i] = up;
+		this->up[0] = upx;
+		this->up[1] = upy;
+		this->up[2] = upz;
 	}
 
 };
+
+// Dibuja la escena
+void display(void);
+// Controla la relación de aspecto de la escena
+void reshape(GLsizei width, GLsizei height);
+// Controla el input de teclado
+void keyboard(unsigned char key, int x, int y);
+// Controla el input especial de teclado
+void special(int key, int x, int y);
+// Anima la escena
+void idle(void);
+// Dibuja los ejes de coordenadas para poder usarlos como referencia
+void referenciaEjes();
+// Dibuja los planos formados por la intersección de los ejes de coordenadas 
+// para usarlos como referencia
+void referenciaPlanos();
+// Inicializa algunos valores del dibujado de la escena
+void init();
+// Cambia a la vista definida por el parámetro cam
+void mirar(Camara cam);
+// Indican el tamaño inicial de la ventana
+const GLsizei windowWidth = 640;
+const GLsizei windowHeight = 640;
+

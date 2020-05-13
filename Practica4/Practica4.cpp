@@ -9,8 +9,11 @@ bool fullscreen;
 bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
+bool profundidad = true;
 // Representa la cámara
-Camara cam(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+Camara cam(0.0f, 0.0f, 1.0f,  // Eye
+	0.0f, 0.0f, 0.0f,  // Center 
+	0.0f, 1.0f, 0.0f); // Up
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -26,21 +29,6 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.005f;
-// Indica si la cámara es libre o está fija
-bool camaraLibre = false;
-// Indica la vista fija seleccionada
-int vista = 0;
-// Representan las vistas fijas disponibles
-enum vistas
-{
-	isometrica,
-	caballera,
-	militar,
-	planta,
-	alzado,
-	perfil_izq,
-	perfil_der
-};
 
 int main(int argc, char **argv)
 {
@@ -53,6 +41,7 @@ int main(int argc, char **argv)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
 	glutIdleFunc(idle);
 	glutMainLoop();
 	return 0;
@@ -76,13 +65,7 @@ void display(void)
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(90, 1, 0.1, 20);
-	gluLookAt(cam.getEye(0), cam.getEye(1), cam.getEye(2),
-		cam.getCenter(0), cam.getCenter(1), cam.getCenter(2),
-		cam.getUp(0), cam.getUp(1), cam.getUp(2));
-	glMatrixMode(GL_MODELVIEW);
+	mirar(cam);
 }
 
 
@@ -107,12 +90,23 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	case 'e':
 		ejesVisible = !ejesVisible;
-		break;
-	case 'p':
 		planosVisible = !planosVisible;
 		break;
-	case 'l':
-		camaraLibre = !camaraLibre;
+	case 'p':
+		profundidad = !profundidad;
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		if (profundidad)
+		{
+			gluPerspective(90, 1, 0.1, 20);
+		}
+		else
+		{
+			glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+		}
+		mirar(cam);
+		glMatrixMode(GL_MODELVIEW);
+		break;
 	}
 	glutPostRedisplay();
 }
@@ -121,30 +115,42 @@ void special(int key, int x, int y)
 {
 	switch (key)
 	{
-	case GLUT_KEY_LEFT:
-		void;
-	}
-}
-
-void vistaFija(int vista)
-{
-	switch (vista)
-	{
-	case vistas::isometrica:
-		//glOrtho(10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f);
-		//gluLookAt();
+		// alzado
+	case GLUT_KEY_F1:
+		cam.setEye(0.0f, 0.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
 		break;
-	case vistas::caballera:
+		// planta
+	case GLUT_KEY_F2:
+		cam.setEye(0.0f, 1.0f, 0.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, -1.0f);
+		mirar(cam);
 		break;
-	case vistas::militar:
+		// perfil izquierdo
+	case GLUT_KEY_F3:
+		cam.setEye(-1.0f, 0.0f, 0.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(1.0f, 1.0f, 0.0f);
+		mirar(cam);
 		break;
-	case vistas::planta:
+		// perfil derecho
+	case GLUT_KEY_F4:
+		cam.setEye(1.0f, 0.0f, 0.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(1.0f, 1.0f, 0.0f);
+		mirar(cam);
 		break;
-	case vistas::alzado:
+		// isométrica
+	case GLUT_KEY_F5:
 		break;
-	case vistas::perfil_izq:
+		// caballera
+	case GLUT_KEY_F6:
 		break;
-	case vistas::perfil_der:
+		// militar
+	case GLUT_KEY_F7:
 		break;
 	}
 }
@@ -164,6 +170,24 @@ void idle(void) {
 	posY += incY;
 	posZ += incZ;
 	glutPostRedisplay();
+}
+
+void mirar(Camara cam)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (profundidad)
+	{
+		gluPerspective(90, 1, 0.1, 20);
+	}
+	else
+	{
+		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+	}
+	gluLookAt(cam.getEye()[0], cam.getEye()[1], cam.getEye()[2],
+		cam.getCenter()[0], cam.getCenter()[0], cam.getCenter()[0],
+		cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void referenciaEjes()
