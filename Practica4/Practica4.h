@@ -2,15 +2,10 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
-
+# define _USE_MATH_DEFINES
 #include <gl/glut.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include <cmath>
 #include <cstdlib>
 using namespace std;
@@ -94,4 +89,3 @@ void mirar(Camara cam);
 // Indican el tamaño inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
-
