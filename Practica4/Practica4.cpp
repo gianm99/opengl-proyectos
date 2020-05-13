@@ -1,4 +1,4 @@
-//Practica3.cpp: Escena 3D simple
+//Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include "Practica4.h"
@@ -9,9 +9,11 @@ bool fullscreen;
 bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
-// Indica si la camara debe cambiar de vista.
-bool camON = false;  // HABRÍA QUE CAMBIAR ESTO
-
+bool profundidad = true;
+// Representa la cámara
+Camara cam(0.0f, 0.0f, 1.0f,  // Eye
+	0.0f, 0.0f, 0.0f,  // Center 
+	0.0f, 1.0f, 0.0f); // Up
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -26,31 +28,51 @@ GLfloat posZ = 0.0f;
 // Indican los incrementos en los ejes en el que las posiciones varian
 GLfloat incX;
 GLfloat incY;
-GLfloat incZ = 0.003f;
-//Indican los parámetros de la cámara
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
-glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+GLfloat incZ = 0.005f;
+// Indica el tipo de proyección que se usa
+int proyeccion = 0;
+double alpha = -45.0;
 
+int main(int argc, char **argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(windowWidth, windowHeight);
+	glutCreateWindow("Escena 3D simple");
+	init();
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
+	glutIdleFunc(idle);
+	glutMainLoop();
+	return 0;
+}
 
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glColor3f(1.0f, 1.0f, 1.0f);
+	float m[16]; // identity
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	float angle = (M_PI / 180.0f) * float(alpha);
+	if (proyeccion == 1) { // cavalier
+		m[2 * 4 + 0] = -cos(angle);
+		m[2 * 4 + 1] = sin(angle);
+	}
+	else if (proyeccion == 2) { // cabinet
+		m[2 * 4 + 0] = -cos(angle) / 2.0f;
+		m[2 * 4 + 1] = sin(angle) / 2.0f;
+	}
+	glMultMatrixf(m);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glTranslatef(posX, posY, posZ);
-	glRotatef(angRot, angX, angY, angZ);
 	glutSolidTeapot(0.1f);
-	//glutSolidIcosahedron();
-	//glColor3f(0.0f,0.0f,0.0f);
-	//glutWireIcosahedron();
-	if (ejesVisible)referenciaEjes();
-	if (planosVisible)referenciaPlanos();
-	if (camON) camaraFunc();
+	glTranslatef(-posX, -posY, -posZ);
+	if (ejesVisible) referenciaEjes();
+	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
@@ -58,23 +80,9 @@ void display(void)
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45, 1, 10.0, 10.0);
-	//gluLookAt(eyePos[0], eyePos[1], eyePos[2], refPointPos[0], refPointPos[1], refPointPos[2], vecPos[0], vecPos[1], vecPos[2]);
-	glm::lookAt(cameraPos,cameraDirection,cameraUp);
-	glMatrixMode(GL_MODELVIEW);
+	mirar(cam);
 }
 
-void camaraFunc() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	//gluPerspective(45, 1, 10.0, 10.0);
-	//glm::lookAt();
-	glm::lookAt(cameraPos, cameraDirection, cameraUp);
-	camON = false;
-	glMatrixMode(GL_MODELVIEW);
-}
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -83,55 +91,6 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:  // Escape
 		exit(0);
 		break;
-
-	//case 'a':
-	//	camON = true;
-	//	vecPos[0] += (sin(refPointPos[0])*0.05f); vecPos[1] += (sin(refPointPos[1])*0.05f); vecPos[2] += (sin(refPointPos[2])*0.05f);
-	//	break;
-
-		/*case 'd':
-			camON = true;
-			eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-			break;
-
-		case 'd':
-			camON = true;
-			eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-			break;
-
-		case 'd':
-			camON = true;
-
-			refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-			vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-			break;
-
-		*/
-
-	//case '1':
-	//	camON = true;
-	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-	//	refPointPos[0] = 0.9f; refPointPos[1] = 0; refPointPos[2] = 0;
-	//	vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-	//	break;
-
-	//case '2':
-	//	camON = true;
-	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0;
-	//	refPointPos[0] = 0; refPointPos[1] = 0.9f; refPointPos[2] = 0;
-	//	vecPos[0] = 1; vecPos[1] = 0; vecPos[2] = 0;
-	//	break;
-	//case '3':
-	//	camON = true;
-	//	eyePos[0] = 0; eyePos[1] = 0; eyePos[2] = 0.;
-	//	refPointPos[0] = 0; refPointPos[1] = 0; refPointPos[2] = 0.9f;
-	//	vecPos[0] = 0; vecPos[1] = 1; vecPos[2] = 0;
-	//	break;
-
 	case 'f':
 		fullscreen = !fullscreen;
 		if (!fullscreen)
@@ -144,18 +103,91 @@ void keyboard(unsigned char key, int x, int y)
 			glutFullScreen();
 		}
 		break;
-
 	case 'e':
 		ejesVisible = !ejesVisible;
-		break;
-
-
-	case 'p':
 		planosVisible = !planosVisible;
 		break;
+	case 'p':
+		profundidad = !profundidad;
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		if (profundidad)
+		{
+			gluPerspective(90, 1, 0.1, 20);
+		}
+		else
+		{
+			glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+		}
+		mirar(cam);
+		glMatrixMode(GL_MODELVIEW);
+		break;
+	}
+	glutPostRedisplay();
+}
 
-
-
+void special(int key, int x, int y)
+{
+	switch (key)
+	{
+		// alzado
+	case GLUT_KEY_F1:
+		proyeccion = 0;
+		cam.setEye(0.0f, 0.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
+		break;
+		// planta
+	case GLUT_KEY_F2:
+		proyeccion = 0;
+		cam.setEye(0.0f, 1.0f, 0.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, -1.0f);
+		mirar(cam);
+		break;
+		// perfil izquierdo
+	case GLUT_KEY_F3:
+		proyeccion = 0;
+		cam.setEye(-1.0f, 0.0f, 0.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(1.0f, 1.0f, 0.0f);
+		mirar(cam);
+		break;
+		// perfil derecho
+	case GLUT_KEY_F4:
+		proyeccion = 0;
+		cam.setEye(1.0f, 0.0f, 0.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(1.0f, 1.0f, 0.0f);
+		mirar(cam);
+		break;
+		// isométrica
+	case GLUT_KEY_F5:
+		proyeccion = 0;
+		cam.setEye(1.0f, 1.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
+		break;
+		// caballera
+	case GLUT_KEY_F6:
+		profundidad = false;
+		proyeccion=1;
+		cam.setEye(0.0f, 0.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
+		break;
+		// militar
+	case GLUT_KEY_F7:
+		profundidad = false;
+		proyeccion = 2;
+		cam.setEye(0.0f, 0.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
+		break;
 	}
 }
 
@@ -173,13 +205,30 @@ void idle(void) {
 	posX += incX;
 	posY += incY;
 	posZ += incZ;
-	angRot += incRot;
 	glutPostRedisplay();
+}
+
+void mirar(Camara cam)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (profundidad)
+	{
+		gluPerspective(90, 1, 0.1, 20);
+	}
+	else
+	{
+		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+	}
+	gluLookAt(cam.getEye()[0], cam.getEye()[1], cam.getEye()[2],
+		cam.getCenter()[0], cam.getCenter()[0], cam.getCenter()[0],
+		cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void referenciaEjes()
 {
-	glLoadIdentity();
+	glPushMatrix();
 	glBegin(GL_LINES);
 	// X
 	glColor3f(1.0f, 0.0f, 0.0f);  // Rojo
@@ -195,14 +244,15 @@ void referenciaEjes()
 	glVertex3f(0.0f, 0.0f, 1.0f);
 	glEnd();
 	glFlush();
+	glPopMatrix();
 }
 
 void referenciaPlanos()
 {
-	glLoadIdentity();
+	glPushMatrix();
 	glBegin(GL_QUADS);
-	// X / Y - Rojo 30%
-	glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
+	// X / Y - Azul 30%
+	glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
 	glVertex3f(0.9f, 0.9f, 0.0f);
 	glVertex3f(-0.9f, 0.9f, 0.0f);
 	glVertex3f(-0.9f, -0.9f, 0.0f);
@@ -214,12 +264,13 @@ void referenciaPlanos()
 	glVertex3f(-0.9f, 0.0f, -0.9f);
 	glVertex3f(0.9f, 0.0f, -0.9f);
 	// Y / Z - Azul 30%
-	glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
+	glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
 	glVertex3f(0.0f, 0.9f, 0.9f);
 	glVertex3f(0.0f, -0.9f, 0.9f);
 	glVertex3f(0.0f, -0.9f, -0.9f);
 	glVertex3f(0.0f, 0.9f, -0.9f);
 	glEnd();
+	glPopMatrix();
 }
 
 void init() {
@@ -231,19 +282,3 @@ void init() {
 	glShadeModel(GL_SMOOTH);
 }
 
-int main(int argc, char **argv)
-{
-	//initRandVars();
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(windowWidth, windowHeight);
-	glutCreateWindow("Escena 3D simple");
-	init();
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
-	glutIdleFunc(idle);
-	glutMainLoop();
-	return 0;
-}
