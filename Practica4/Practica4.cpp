@@ -173,13 +173,7 @@ void special(int key, int x, int y)
 		// caballera
 	case GLUT_KEY_F6:
 		profundidad = false;
-		if (proyeccion == 1) {
-			proyeccion = 0;
-		}
-		else
-		{
-			proyeccion = 1;
-		}
+		proyeccion=1;
 		cam.setEye(0.0f, 0.0f, 1.0f);
 		cam.setCenter(0.0f, 0.0f, 0.0f);
 		cam.setUp(0.0f, 1.0f, 0.0f);
@@ -188,13 +182,7 @@ void special(int key, int x, int y)
 		// militar
 	case GLUT_KEY_F7:
 		profundidad = false;
-		if (proyeccion == 2) {
-			proyeccion = 0;
-		}
-		else
-		{
-			proyeccion = 2;
-		}
+		proyeccion = 2;
 		cam.setEye(0.0f, 0.0f, 1.0f);
 		cam.setCenter(0.0f, 0.0f, 0.0f);
 		cam.setUp(0.0f, 1.0f, 0.0f);
