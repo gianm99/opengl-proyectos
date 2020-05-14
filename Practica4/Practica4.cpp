@@ -29,6 +29,9 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.005f;
+//Indica el ángulo para el tilt de la cámara
+GLfloat angle = 0.0f;
+GLfloat lx = 0.0f, lz = -1.0f;
 
 int main(int argc, char **argv)
 {
@@ -71,6 +74,7 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
+	float viewX, viewY, viewZ, cx, cy, cz, magnitude, speed= 0.01f;
 	switch (key)
 	{
 	case 27:  // Escape
@@ -107,12 +111,80 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		glMatrixMode(GL_MODELVIEW);
 		break;
+	case 'w':
+		viewX = cam.getCenter()[0] - cam.getEye()[0];
+		viewY = cam.getCenter()[1] - cam.getEye()[1];
+		viewZ = cam.getCenter()[2] - cam.getEye()[2];
+
+		cam.setEye(cam.getEye()[0]+viewX*speed, cam.getEye()[1] + viewY*speed, cam.getEye()[2] + viewZ*speed);
+		cam.setCenter(cam.getCenter()[0] + viewX*speed, cam.getCenter()[1] + viewY*speed, cam.getCenter()[2] + viewZ*speed);
+
+		mirar(cam);
+		break;
+	case 's':
+		viewX = cam.getCenter()[0] - cam.getEye()[0];
+		viewY = cam.getCenter()[1] - cam.getEye()[1];
+		viewZ = cam.getCenter()[2] - cam.getEye()[2];
+
+		cam.setEye(cam.getEye()[0] - viewX*speed, cam.getEye()[1] - viewY*speed, cam.getEye()[2] - viewZ*speed);
+		cam.setCenter(cam.getCenter()[0] - viewX*speed, cam.getCenter()[1] - viewY*speed, cam.getCenter()[2] - viewZ*speed);
+		mirar(cam);
+		break;
+	case 'a':
+		viewX = cam.getCenter()[0] - cam.getEye()[0];
+		viewY = cam.getCenter()[1] - cam.getEye()[1];
+		viewZ = cam.getCenter()[2] - cam.getEye()[2];
+
+		cx = ((viewY*cam.getUp()[2]) - (viewZ*cam.getUp()[1]));
+		cy = ((viewZ*cam.getUp()[0]) - (viewX*cam.getUp()[2]));
+		cz = ((viewX*cam.getUp()[1]) - (viewY*cam.getUp()[0]));
+
+		magnitude = sqrt((cx*cx) + (cy*cy) + (cz*cz));
+
+		cx /= magnitude;
+		cy /= magnitude;
+		cz /= magnitude;
+
+		cx *= speed;
+		cy *= speed;
+		cz *= speed;
+
+		cam.setEye(cam.getEye()[0]-cx, cam.getEye()[1] - cy, cam.getEye()[2] - cz);
+		cam.setCenter(cam.getCenter()[0] - cx, cam.getCenter()[1]-cy, cam.getCenter()[2]-cz);
+
+		mirar(cam);
+		break;
+	case 'd':
+		viewX = cam.getCenter()[0] - cam.getEye()[0];
+		viewY = cam.getCenter()[1] - cam.getEye()[1];
+		viewZ = cam.getCenter()[2] - cam.getEye()[2];
+
+		cx = ((viewY*cam.getUp()[2]) - (viewZ*cam.getUp()[1]));
+		cy = ((viewZ*cam.getUp()[0]) - (viewX*cam.getUp()[2]));
+		cz = ((viewX*cam.getUp()[1]) - (viewY*cam.getUp()[0]));
+
+		magnitude = sqrt((cx*cx) + (cy*cy) + (cz*cz));
+
+		cx /= magnitude;
+		cy /= magnitude;
+		cz /= magnitude;
+
+		cx *= speed;
+		cy *= speed;
+		cz *= speed;
+
+		cam.setEye(cam.getEye()[0] + cx, cam.getEye()[1] + cy, cam.getEye()[2] + cz);
+		cam.setCenter(cam.getCenter()[0] + cx, cam.getCenter()[1] + cy, cam.getCenter()[2] + cz);
+
+		mirar(cam);
+		break;
 	}
 	glutPostRedisplay();
 }
 
 void special(int key, int x, int y)
 {
+	GLfloat speed = 0.02f;
 	switch (key)
 	{
 		// alzado
@@ -152,6 +224,34 @@ void special(int key, int x, int y)
 		// militar
 	case GLUT_KEY_F7:
 		break;
+	case GLUT_KEY_RIGHT:
+		angle += speed;
+		lx = sin(angle);
+		lz = -cos(angle);
+		cam.setCenter(cam.getEye()[0] + lx, cam.getCenter()[1], cam.getEye()[2] + lz);
+		mirar(cam);
+		break;
+	case GLUT_KEY_LEFT:
+		angle -= speed;
+		lx = sin(angle);
+		lz = -cos(angle);
+		cam.setCenter(cam.getEye()[0] + lx, cam.getCenter()[1], cam.getEye()[2] + lz);
+		mirar(cam);
+		break;
+	case GLUT_KEY_UP:
+		if (cam.getCenter()[1] < 1.0f) {
+			cam.setCenter(cam.getCenter()[0], cam.getCenter()[1] + speed, cam.getCenter()[2]);
+			cam.setUp(cam.getUp()[0], cam.getUp()[1] + speed, cam.getUp()[2]);
+			mirar(cam);
+		}
+		break;
+	case GLUT_KEY_DOWN:
+		if (cam.getCenter()[1] > -1.0f) {
+			cam.setCenter(cam.getCenter()[0], cam.getCenter()[1] - speed, cam.getCenter()[2]);
+			cam.setUp(cam.getUp()[0], cam.getUp()[1] - speed, cam.getUp()[2]);
+			mirar(cam);
+		}
+		break;
 	}
 }
 
@@ -185,7 +285,7 @@ void mirar(Camara cam)
 		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
 	}
 	gluLookAt(cam.getEye()[0], cam.getEye()[1], cam.getEye()[2],
-		cam.getCenter()[0], cam.getCenter()[0], cam.getCenter()[0],
+		cam.getCenter()[0], cam.getCenter()[1], cam.getCenter()[2],
 		cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);
 	glMatrixMode(GL_MODELVIEW);
 }
