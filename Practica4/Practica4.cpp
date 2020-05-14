@@ -1,23 +1,23 @@
-//Practica4.cpp: Escena 3D simple
+ï»¿//Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include "Practica4.h"
 using namespace std;
 
-// Indica si está en fullscreen
+// Indica si estÃ¡ en fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
 bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
 bool profundidad = true;
-// Representa la cámara
+// Representa la camara
 Camara cam(0.0f, 0.0f, 1.0f,  // Eye
 	0.0f, 0.0f, 0.0f,  // Center 
 	0.0f, 1.0f, 0.0f); // Up
-// Indica el ángulo de rotación de la tetera
+// Indica el angulo de rotacion de la tetera
 GLfloat angRot = 0.0f;
-//Indican los vectores de cada eje para la función de rotación
+//Indican los vectores de cada eje para la funcion de rotacion
 GLfloat angX;
 GLfloat angY;
 GLfloat angZ;
@@ -30,7 +30,7 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.005f;
-// Indica el tipo de proyección que se usa
+// Indica el tipo de proyeccion que se usa
 int proyeccion = 0;
 double alpha = -45.0;
 
@@ -174,7 +174,7 @@ void special(int key, int x, int y)
 		cam.setUp(1.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
-		// isométrica
+		// isometrica
 	case GLUT_KEY_F5:
 		proyeccion = 0;
 		cam.setEye(1.0f, 1.0f, 1.0f);
