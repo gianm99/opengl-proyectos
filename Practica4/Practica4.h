@@ -2,16 +2,15 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
-
+# define _USE_MATH_DEFINES
 #include <gl/glut.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
-
 #include <cmath>
 #include <cstdlib>
 using namespace std;
 
-// Representa una cámara, con los datos de posicion, dirección, etc.
+// Representa una cÃ¡mara, con los datos de posicion, direcciÃ³n, etc.
 class Camara
 {
 	GLfloat eye[3];
@@ -70,7 +69,7 @@ public:
 
 // Dibuja la escena
 void display(void);
-// Controla la relación de aspecto de la escena
+// Controla la relaciÃ³n de aspecto de la escena
 void reshape(GLsizei width, GLsizei height);
 // Controla el input de teclado
 void keyboard(unsigned char key, int x, int y);
@@ -80,14 +79,13 @@ void special(int key, int x, int y);
 void idle(void);
 // Dibuja los ejes de coordenadas para poder usarlos como referencia
 void referenciaEjes();
-// Dibuja los planos formados por la intersección de los ejes de coordenadas 
+// Dibuja los planos formados por la intersecciÃ³n de los ejes de coordenadas 
 // para usarlos como referencia
 void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
-// Cambia a la vista definida por el parámetro cam
+// Cambia a la vista definida por el parÃ¡metro cam
 void mirar(Camara cam);
-// Indican el tamaño inicial de la ventana
+// Indican el tamaÃ±o inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
-

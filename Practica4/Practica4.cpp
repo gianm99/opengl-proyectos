@@ -3,20 +3,20 @@
 
 #include "Practica4.h"
 
-// Indica si est· en fullscreen
+// Indica si est√° en fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
 bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
 bool profundidad = true;
-// Representa la c·mara
+// Representa la c√°mara
 Camara cam(0.0f, 0.0f, 1.0f,  // Eye
 	0.0f, 0.0f, 0.0f,  // Center 
 	0.0f, 1.0f, 0.0f); // Up
-// Indica el ·ngulo de rotaciÛn de la tetera
+// Indica el √°ngulo de rotaci√≥n de la tetera
 GLfloat angRot = 0.0f;
-//Indican los vectores de cada eje para la funciÛn de rotaciÛn
+//Indican los vectores de cada eje para la funci√≥n de rotaci√≥n
 GLfloat angX;
 GLfloat angY;
 GLfloat angZ;
@@ -29,9 +29,12 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.005f;
-//Indica el ·ngulo para el tilt de la c·mara
+//Indica el √°ngulo para el tilt de la c√°mara
 GLfloat angle = 0.0f;
 GLfloat lx = 0.0f, lz = -1.0f;
+// Indica el tipo de proyecci√≥n que se usa
+int proyeccion = 0;
+double alpha = -45.0;
 
 int main(int argc, char **argv)
 {
@@ -55,10 +58,22 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glColor3f(1.0f, 1.0f, 1.0f);
+	float m[16]; // identity
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	float angle = (M_PI / 180.0f) * float(alpha);
+	if (proyeccion == 1) { // cavalier
+		m[2 * 4 + 0] = -cos(angle);
+		m[2 * 4 + 1] = sin(angle);
+	}
+	else if (proyeccion == 2) { // cabinet
+		m[2 * 4 + 0] = -cos(angle) / 2.0f;
+		m[2 * 4 + 1] = sin(angle) / 2.0f;
+	}
+	glMultMatrixf(m);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glTranslatef(posX, posY, posZ);
-	glRotatef(angRot, angX, angY, angZ);
 	glutSolidTeapot(0.1f);
+	glTranslatef(-posX, -posY, -posZ);
 	if (ejesVisible) referenciaEjes();
 	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
@@ -189,6 +204,7 @@ void special(int key, int x, int y)
 	{
 		// alzado
 	case GLUT_KEY_F1:
+		proyeccion = 0;
 		cam.setEye(0.0f, 0.0f, 1.0f);
 		cam.setCenter(0.0f, 0.0f, 0.0f);
 		cam.setUp(0.0f, 1.0f, 0.0f);
@@ -196,6 +212,7 @@ void special(int key, int x, int y)
 		break;
 		// planta
 	case GLUT_KEY_F2:
+		proyeccion = 0;
 		cam.setEye(0.0f, 1.0f, 0.0f);
 		cam.setCenter(0.0f, 0.0f, 0.0f);
 		cam.setUp(0.0f, 1.0f, -1.0f);
@@ -203,6 +220,7 @@ void special(int key, int x, int y)
 		break;
 		// perfil izquierdo
 	case GLUT_KEY_F3:
+		proyeccion = 0;
 		cam.setEye(-1.0f, 0.0f, 0.0f);
 		cam.setCenter(0.0f, 0.0f, 0.0f);
 		cam.setUp(1.0f, 1.0f, 0.0f);
@@ -210,19 +228,37 @@ void special(int key, int x, int y)
 		break;
 		// perfil derecho
 	case GLUT_KEY_F4:
+		proyeccion = 0;
 		cam.setEye(1.0f, 0.0f, 0.0f);
 		cam.setCenter(0.0f, 0.0f, 0.0f);
 		cam.setUp(1.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
-		// isomÈtrica
+		// isom√©trica
 	case GLUT_KEY_F5:
+		proyeccion = 0;
+		cam.setEye(1.0f, 1.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
 		break;
 		// caballera
 	case GLUT_KEY_F6:
+		profundidad = false;
+		proyeccion=1;
+		cam.setEye(0.0f, 0.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
 		break;
 		// militar
 	case GLUT_KEY_F7:
+		profundidad = false;
+		proyeccion = 2;
+		cam.setEye(0.0f, 0.0f, 1.0f);
+		cam.setCenter(0.0f, 0.0f, 0.0f);
+		cam.setUp(0.0f, 1.0f, 0.0f);
+		mirar(cam);
 		break;
 	case GLUT_KEY_RIGHT:
 		angle += speed;
@@ -292,7 +328,7 @@ void mirar(Camara cam)
 
 void referenciaEjes()
 {
-	glLoadIdentity();
+	glPushMatrix();
 	glBegin(GL_LINES);
 	// X
 	glColor3f(1.0f, 0.0f, 0.0f);  // Rojo
@@ -308,14 +344,15 @@ void referenciaEjes()
 	glVertex3f(0.0f, 0.0f, 1.0f);
 	glEnd();
 	glFlush();
+	glPopMatrix();
 }
 
 void referenciaPlanos()
 {
-	glLoadIdentity();
+	glPushMatrix();
 	glBegin(GL_QUADS);
-	// X / Y - Rojo 30%
-	glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
+	// X / Y - Azul 30%
+	glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
 	glVertex3f(0.9f, 0.9f, 0.0f);
 	glVertex3f(-0.9f, 0.9f, 0.0f);
 	glVertex3f(-0.9f, -0.9f, 0.0f);
@@ -327,12 +364,13 @@ void referenciaPlanos()
 	glVertex3f(-0.9f, 0.0f, -0.9f);
 	glVertex3f(0.9f, 0.0f, -0.9f);
 	// Y / Z - Azul 30%
-	glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
+	glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
 	glVertex3f(0.0f, 0.9f, 0.9f);
 	glVertex3f(0.0f, -0.9f, 0.9f);
 	glVertex3f(0.0f, -0.9f, -0.9f);
 	glVertex3f(0.0f, 0.9f, -0.9f);
 	glEnd();
+	glPopMatrix();
 }
 
 void init() {
