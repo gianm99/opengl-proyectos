@@ -2,6 +2,7 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include "Practica4.h"
+using namespace std;
 
 // Indica si está en fullscreen
 bool fullscreen;
@@ -32,6 +33,8 @@ GLfloat incZ = 0.005f;
 // Indica el tipo de proyección que se usa
 int proyeccion = 0;
 double alpha = -45.0;
+
+vector<GLfloat> trazo;
 
 int main(int argc, char **argv)
 {
@@ -68,6 +71,15 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	trazo.push_back(posX);
+	trazo.push_back(posY);
+	trazo.push_back(posZ);
+	glBegin(GL_LINE_STRIP);
+	for (auto i = trazo.begin(); i != trazo.end(); i=i+3)
+	{
+		glVertex3f(*i, *(i+1), *(i+2));
+	}
+	glEnd();
 	glTranslatef(posX, posY, posZ);
 	glutSolidTeapot(0.1f);
 	glTranslatef(-posX, -posY, -posZ);
@@ -221,7 +233,7 @@ void mirar(Camara cam)
 		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
 	}
 	gluLookAt(cam.getEye()[0], cam.getEye()[1], cam.getEye()[2],
-		cam.getCenter()[0], cam.getCenter()[0], cam.getCenter()[0],
+		cam.getCenter()[0], cam.getCenter()[1], cam.getCenter()[2],
 		cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);
 	glMatrixMode(GL_MODELVIEW);
 }

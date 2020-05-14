@@ -8,7 +8,7 @@
 #include <gl/glu.h>
 #include <cmath>
 #include <cstdlib>
-using namespace std;
+#include <vector>
 
 // Representa una cámara, con los datos de posicion, dirección, etc.
 class Camara
