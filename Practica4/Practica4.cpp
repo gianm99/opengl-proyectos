@@ -142,6 +142,7 @@ void keyboard(unsigned char key, int x, int y)
 
 void special(int key, int x, int y)
 {
+	glm::vec3 prueba;
 	float speed = 2.5f;
 	glm::vec3 front;
 	switch (key)
@@ -150,99 +151,85 @@ void special(int key, int x, int y)
 	case GLUT_KEY_F1:
 		proyeccion = 0;
 		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
+		cam.yaw=-90.0f;
+		cam.pitch=0.0f;
+		cam.girar();
 		mirar(cam);
 		break;
 		// planta
 	case GLUT_KEY_F2:
 		proyeccion = 0;
 		cam.pos=glm::vec3(0.0f, 1.0f, 0.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(0.0f, 1.0f, -1.0f);
+		cam.yaw = -90.0f;
+		cam.pitch = -90.0f;
+		cam.girar();
 		mirar(cam);
 		break;
 		// perfil izquierdo
 	case GLUT_KEY_F3:
 		proyeccion = 0;
 		cam.pos=glm::vec3(-1.0f, 0.0f, 0.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(1.0f, 1.0f, 0.0f);
+		cam.yaw = 0.0f;
+		cam.pitch = 0.0f;
+		cam.girar();
 		mirar(cam);
 		break;
-		// perfil derecho
+		// isométrica
 	case GLUT_KEY_F4:
 		proyeccion = 0;
 		cam.pos=glm::vec3(1.0f, 0.0f, 0.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(1.0f, 1.0f, 0.0f);
+		cam.yaw = 180.0f;
+		cam.pitch = 0.0f;
+		cam.girar();
 		mirar(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F5:
 		proyeccion = 0;
 		cam.pos=glm::vec3(1.0f, 1.0f, 1.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
+		cam.yaw = -135.0f;
+		cam.pitch = -glm::degrees(asin(1/sqrt(3)));
+		cam.girar();
 		mirar(cam);
 		break;
 		// caballera
 	case GLUT_KEY_F6:
 		profundidad = false;
 		proyeccion = 1;
-		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
+		cam.pos = glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.yaw = -90.0f;
+		cam.pitch = 0.0f;
+		cam.girar();
 		mirar(cam);
 		break;
 		// militar
 	case GLUT_KEY_F7:
 		profundidad = false;
 		proyeccion = 2;
-		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
-		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
+		cam.pos = glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.yaw = -90.0f;
+		cam.pitch = 0.0f;
+		cam.girar();
 		mirar(cam);
 		break;
 	case GLUT_KEY_RIGHT:
 		cam.yaw += speed;
-		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		front.y = sin(glm::radians(cam.pitch));
-		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		cam.front = glm::normalize(front);
+		cam.girar();
 		mirar(cam);
 		break;
 	case GLUT_KEY_LEFT:
 		cam.yaw -= speed;
-		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		front.y = sin(glm::radians(cam.pitch));
-		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		cam.front = glm::normalize(front);
+		cam.girar();
 		mirar(cam);
 		break;
 	case GLUT_KEY_UP:
 		cam.pitch += speed;
-		if (cam.pitch > 89.0f)
-		{
-			cam.pitch = 89.0f;
-		}
-		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		front.y = sin(glm::radians(cam.pitch));
-		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		cam.front = glm::normalize(front);
+		cam.girar();
 		mirar(cam);
 		break;
 	case GLUT_KEY_DOWN:
 		cam.pitch -= speed;
-		if (cam.pitch < -89.0f)
-		{
-			cam.pitch = -89.0f;
-		}
-		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		front.y = sin(glm::radians(cam.pitch));
-		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-		cam.front = glm::normalize(front);
+		cam.girar();
 		mirar(cam);
 		break;
 	}

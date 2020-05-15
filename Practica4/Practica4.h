@@ -30,7 +30,18 @@ public:
 	{
 		this->pos = eye;
 		this->front = front;
-		this->up=up;
+		this->up = up;
+	}
+
+	void girar()
+	{
+		if (pitch > 89.90f) pitch = 89.90f;
+		if (pitch < -89.90f) pitch = -89.90f;
+		glm::vec3 front;
+		front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		front.y = sin(glm::radians(pitch));
+		front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		this->front = glm::normalize(front);
 	}
 };
 
