@@ -33,8 +33,11 @@ GLfloat incZ = 0.005f;
 // Indica el tipo de proyeccion que se usa
 int proyeccion = 0;
 double alpha = -45.0;
-
-vector<GLfloat> trazo;
+// Tiempo entre el frame actual y el anterior
+float deltaTime=0.0f;
+// Tiempo del frame anterior
+float lastFrame=0.0f;
+//vector<GLfloat> trazo;
 
 int main(int argc, char **argv)
 {
@@ -71,15 +74,15 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	trazo.push_back(posX);
-	trazo.push_back(posY);
-	trazo.push_back(posZ);
-	glBegin(GL_LINE_STRIP);
-	for (auto i = trazo.begin(); i != trazo.end(); i=i+3)
-	{
-		glVertex3f(*i, *(i+1), *(i+2));
-	}
-	glEnd();
+	//trazo.push_back(posX);
+	//trazo.push_back(posY);
+	//trazo.push_back(posZ);
+	//glBegin(GL_LINE_STRIP);
+	//for (auto i = trazo.begin(); i != trazo.end(); i=i+3)
+	//{
+	//	glVertex3f(*i, *(i+1), *(i+2));
+	//}
+	//glEnd();
 	glTranslatef(posX, posY, posZ);
 	glutSolidTeapot(0.1f);
 	glTranslatef(-posX, -posY, -posZ);
@@ -125,7 +128,7 @@ void keyboard(unsigned char key, int x, int y)
 		glLoadIdentity();
 		if (profundidad)
 		{
-			gluPerspective(90, 1, 0.1, 20);
+			gluPerspective(90.0f, windowWidth/windowHeight, 0.1f, 100.0f);
 		}
 		else
 		{
