@@ -6,70 +6,48 @@
 #include <gl/glut.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 #include <cmath>
 #include <cstdlib>
-using namespace std;
+#include <vector>
 
-// Representa una cámara, con los datos de posicion, dirección, etc.
+// Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
 {
-	GLfloat eye[3];
-	GLfloat center[3];
-	GLfloat up[3];
 public:
+	glm::vec3 pos;
+	glm::vec3 front;
+	glm::vec3 up;
+	float yaw = -90.0f;
+	float pitch = 0.0f;
 	// Constructor
-	Camara(GLfloat eyex, GLfloat eyey, GLfloat eyez,
-		GLfloat centerx, GLfloat centery, GLfloat centerz,
-		GLfloat upx, GLfloat upy, GLfloat upz)
+	Camara(glm::vec3 eye, glm::vec3 front, glm::vec3 up)
 	{
-		eye[0] = eyex;
-		eye[1] = eyey;
-		eye[2] = eyez;
-		center[0] = centerx;
-		center[1] = centery;
-		center[2] = centerz;
-		up[0] = upx;
-		up[1] = upy;
-		up[2] = upz;
-	}
-	// Getters
-	GLfloat * getEye()
-	{
-		return eye;
-	}
-	GLfloat * getCenter()
-	{
-		return center;
-	}
-	GLfloat * getUp()
-	{
-		return up;
-	}
-	// Setters
-	void setEye(GLfloat eyex, GLfloat eyey, GLfloat eyez)
-	{
-		this->eye[0] = eyex;
-		this->eye[1] = eyey;
-		this->eye[2] = eyez;
-	}
-	void setCenter(GLfloat centerx, GLfloat centery, GLfloat centerz)
-	{
-		this->center[0] = centerx;
-		this->center[1] = centery;
-		this->center[2] = centerz;
-	}
-	void setUp(GLfloat upx, GLfloat upy, GLfloat upz)
-	{
-		this->up[0] = upx;
-		this->up[1] = upy;
-		this->up[2] = upz;
+		this->pos = eye;
+		this->front = front;
+		this->up = up;
 	}
 
+	void girar()
+	{
+		if (pitch > 89.90f) pitch = 89.90f;
+		if (pitch < -89.90f) pitch = -89.90f;
+		glm::vec3 front;
+		front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		front.y = sin(glm::radians(pitch));
+		front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		this->front = glm::normalize(front);
+	}
 };
 
 // Dibuja la escena
 void display(void);
-// Controla la relación de aspecto de la escena
+// Controla la relacion de aspecto de la escena
 void reshape(GLsizei width, GLsizei height);
 // Controla el input de teclado
 void keyboard(unsigned char key, int x, int y);
@@ -79,13 +57,13 @@ void special(int key, int x, int y);
 void idle(void);
 // Dibuja los ejes de coordenadas para poder usarlos como referencia
 void referenciaEjes();
-// Dibuja los planos formados por la intersección de los ejes de coordenadas 
+// Dibuja los planos formados por la interseccion de los ejes de coordenadas 
 // para usarlos como referencia
 void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
-// Cambia a la vista definida por el parámetro cam
+// Cambia a la vista definida por el parametro cam
 void mirar(Camara cam);
-// Indican el tamaño inicial de la ventana
+// Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
