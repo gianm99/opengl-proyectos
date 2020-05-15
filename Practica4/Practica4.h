@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <vector>
 
-// Representa una cámara, con los datos de posicion, dirección, etc.
+// Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
 {
 	GLfloat eye[3];
@@ -69,7 +69,7 @@ public:
 
 // Dibuja la escena
 void display(void);
-// Controla la relación de aspecto de la escena
+// Controla la relacion de aspecto de la escena
 void reshape(GLsizei width, GLsizei height);
 // Controla el input de teclado
 void keyboard(unsigned char key, int x, int y);
@@ -79,13 +79,13 @@ void special(int key, int x, int y);
 void idle(void);
 // Dibuja los ejes de coordenadas para poder usarlos como referencia
 void referenciaEjes();
-// Dibuja los planos formados por la intersección de los ejes de coordenadas 
+// Dibuja los planos formados por la interseccion de los ejes de coordenadas 
 // para usarlos como referencia
 void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
-// Cambia a la vista definida por el parámetro cam
+// Cambia a la vista definida por el parametro cam
 void mirar(Camara cam);
-// Indican el tamaño inicial de la ventana
+// Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
