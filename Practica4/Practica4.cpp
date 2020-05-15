@@ -1,4 +1,4 @@
-//Practica4.cpp: Escena 3D simple
+﻿//Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include "Practica4.h"
@@ -11,9 +11,9 @@ bool ejesVisible = true;
 bool planosVisible = true;
 bool profundidad = true;
 // Representa la cámara
-Camara cam(0.0f, 0.0f, 1.0f,  // Eye
-	0.0f, 0.0f, 0.0f,  // Center 
-	0.0f, 1.0f, 0.0f); // Up
+Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),
+	glm::vec3(0.0f, 0.0f, -1.0f),
+	glm::vec3(0.0f, 1.0f, 0.0f));
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -31,16 +31,16 @@ GLfloat incY;
 GLfloat incZ = 0.005f;
 //Indica el ángulo para el tilt de la cámara
 GLfloat angle = 0.0f;
-GLfloat lx = 0.0f, lz = -1.0f;
 // Indica el tipo de proyección que se usa
 int proyeccion = 0;
+// Variable para proyecciones oblicuas
 double alpha = -45.0;
 
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(50, 50);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Escena 3D simple");
 	init();
@@ -58,6 +58,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	// Activar la vista caballera o militar
 	float m[16]; // identity
 	glGetFloatv(GL_MODELVIEW_MATRIX, m);
 	float angle = (M_PI / 180.0f) * float(alpha);
@@ -89,10 +90,11 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	float viewX, viewY, viewZ, cx, cy, cz, magnitude, speed= 0.01f;
+	float speed = 0.1f;
 	switch (key)
 	{
-	case 27:  // Escape
+		// Escape
+	case 27:
 		exit(0);
 		break;
 	case 'f':
@@ -100,7 +102,7 @@ void keyboard(unsigned char key, int x, int y)
 		if (!fullscreen)
 		{
 			glutReshapeWindow(windowWidth, windowHeight);
-			glutPositionWindow(100, 100);
+			glutPositionWindow(50, 50);
 		}
 		else
 		{
@@ -115,82 +117,23 @@ void keyboard(unsigned char key, int x, int y)
 		profundidad = !profundidad;
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		if (profundidad)
-		{
-			gluPerspective(90, 1, 0.1, 20);
-		}
-		else
-		{
-			glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
-		}
 		mirar(cam);
 		glMatrixMode(GL_MODELVIEW);
 		break;
 	case 'w':
-		viewX = cam.getCenter()[0] - cam.getEye()[0];
-		viewY = cam.getCenter()[1] - cam.getEye()[1];
-		viewZ = cam.getCenter()[2] - cam.getEye()[2];
-
-		cam.setEye(cam.getEye()[0]+viewX*speed, cam.getEye()[1] + viewY*speed, cam.getEye()[2] + viewZ*speed);
-		cam.setCenter(cam.getCenter()[0] + viewX*speed, cam.getCenter()[1] + viewY*speed, cam.getCenter()[2] + viewZ*speed);
-
+		cam.pos += speed*cam.front;
 		mirar(cam);
 		break;
 	case 's':
-		viewX = cam.getCenter()[0] - cam.getEye()[0];
-		viewY = cam.getCenter()[1] - cam.getEye()[1];
-		viewZ = cam.getCenter()[2] - cam.getEye()[2];
-
-		cam.setEye(cam.getEye()[0] - viewX*speed, cam.getEye()[1] - viewY*speed, cam.getEye()[2] - viewZ*speed);
-		cam.setCenter(cam.getCenter()[0] - viewX*speed, cam.getCenter()[1] - viewY*speed, cam.getCenter()[2] - viewZ*speed);
+		cam.pos -= speed*cam.front;
 		mirar(cam);
 		break;
 	case 'a':
-		viewX = cam.getCenter()[0] - cam.getEye()[0];
-		viewY = cam.getCenter()[1] - cam.getEye()[1];
-		viewZ = cam.getCenter()[2] - cam.getEye()[2];
-
-		cx = ((viewY*cam.getUp()[2]) - (viewZ*cam.getUp()[1]));
-		cy = ((viewZ*cam.getUp()[0]) - (viewX*cam.getUp()[2]));
-		cz = ((viewX*cam.getUp()[1]) - (viewY*cam.getUp()[0]));
-
-		magnitude = sqrt((cx*cx) + (cy*cy) + (cz*cz));
-
-		cx /= magnitude;
-		cy /= magnitude;
-		cz /= magnitude;
-
-		cx *= speed;
-		cy *= speed;
-		cz *= speed;
-
-		cam.setEye(cam.getEye()[0]-cx, cam.getEye()[1] - cy, cam.getEye()[2] - cz);
-		cam.setCenter(cam.getCenter()[0] - cx, cam.getCenter()[1]-cy, cam.getCenter()[2]-cz);
-
+		cam.pos -= glm::normalize(glm::cross(cam.front,cam.up))*speed;
 		mirar(cam);
 		break;
 	case 'd':
-		viewX = cam.getCenter()[0] - cam.getEye()[0];
-		viewY = cam.getCenter()[1] - cam.getEye()[1];
-		viewZ = cam.getCenter()[2] - cam.getEye()[2];
-
-		cx = ((viewY*cam.getUp()[2]) - (viewZ*cam.getUp()[1]));
-		cy = ((viewZ*cam.getUp()[0]) - (viewX*cam.getUp()[2]));
-		cz = ((viewX*cam.getUp()[1]) - (viewY*cam.getUp()[0]));
-
-		magnitude = sqrt((cx*cx) + (cy*cy) + (cz*cz));
-
-		cx /= magnitude;
-		cy /= magnitude;
-		cz /= magnitude;
-
-		cx *= speed;
-		cy *= speed;
-		cz *= speed;
-
-		cam.setEye(cam.getEye()[0] + cx, cam.getEye()[1] + cy, cam.getEye()[2] + cz);
-		cam.setCenter(cam.getCenter()[0] + cx, cam.getCenter()[1] + cy, cam.getCenter()[2] + cz);
-
+		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
 		mirar(cam);
 		break;
 	}
@@ -199,94 +142,108 @@ void keyboard(unsigned char key, int x, int y)
 
 void special(int key, int x, int y)
 {
-	GLfloat speed = 0.02f;
+	float speed = 2.5f;
+	glm::vec3 front;
 	switch (key)
 	{
 		// alzado
 	case GLUT_KEY_F1:
 		proyeccion = 0;
-		cam.setEye(0.0f, 0.0f, 1.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(0.0f, 1.0f, 0.0f);
+		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
 		// planta
 	case GLUT_KEY_F2:
 		proyeccion = 0;
-		cam.setEye(0.0f, 1.0f, 0.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(0.0f, 1.0f, -1.0f);
+		cam.pos=glm::vec3(0.0f, 1.0f, 0.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(0.0f, 1.0f, -1.0f);
 		mirar(cam);
 		break;
 		// perfil izquierdo
 	case GLUT_KEY_F3:
 		proyeccion = 0;
-		cam.setEye(-1.0f, 0.0f, 0.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(1.0f, 1.0f, 0.0f);
+		cam.pos=glm::vec3(-1.0f, 0.0f, 0.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(1.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
 		// perfil derecho
 	case GLUT_KEY_F4:
 		proyeccion = 0;
-		cam.setEye(1.0f, 0.0f, 0.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(1.0f, 1.0f, 0.0f);
+		cam.pos=glm::vec3(1.0f, 0.0f, 0.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(1.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F5:
 		proyeccion = 0;
-		cam.setEye(1.0f, 1.0f, 1.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(0.0f, 1.0f, 0.0f);
+		cam.pos=glm::vec3(1.0f, 1.0f, 1.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
 		// caballera
 	case GLUT_KEY_F6:
 		profundidad = false;
-		proyeccion=1;
-		cam.setEye(0.0f, 0.0f, 1.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(0.0f, 1.0f, 0.0f);
+		proyeccion = 1;
+		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
 		// militar
 	case GLUT_KEY_F7:
 		profundidad = false;
 		proyeccion = 2;
-		cam.setEye(0.0f, 0.0f, 1.0f);
-		cam.setCenter(0.0f, 0.0f, 0.0f);
-		cam.setUp(0.0f, 1.0f, 0.0f);
+		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.front=glm::vec3(0.0f, 0.0f, 0.0f);
+		cam.up=glm::vec3(0.0f, 1.0f, 0.0f);
 		mirar(cam);
 		break;
 	case GLUT_KEY_RIGHT:
-		angle += speed;
-		lx = sin(angle);
-		lz = -cos(angle);
-		cam.setCenter(cam.getEye()[0] + lx, cam.getCenter()[1], cam.getEye()[2] + lz);
+		cam.yaw += speed;
+		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		front.y = sin(glm::radians(cam.pitch));
+		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		cam.front = glm::normalize(front);
 		mirar(cam);
 		break;
 	case GLUT_KEY_LEFT:
-		angle -= speed;
-		lx = sin(angle);
-		lz = -cos(angle);
-		cam.setCenter(cam.getEye()[0] + lx, cam.getCenter()[1], cam.getEye()[2] + lz);
+		cam.yaw -= speed;
+		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		front.y = sin(glm::radians(cam.pitch));
+		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		cam.front = glm::normalize(front);
 		mirar(cam);
 		break;
 	case GLUT_KEY_UP:
-		if (cam.getCenter()[1] < 1.0f) {
-			cam.setCenter(cam.getCenter()[0], cam.getCenter()[1] + speed, cam.getCenter()[2]);
-			cam.setUp(cam.getUp()[0], cam.getUp()[1] + speed, cam.getUp()[2]);
-			mirar(cam);
+		cam.pitch += speed;
+		if (cam.pitch > 89.0f)
+		{
+			cam.pitch = 89.0f;
 		}
+		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		front.y = sin(glm::radians(cam.pitch));
+		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		cam.front = glm::normalize(front);
+		mirar(cam);
 		break;
 	case GLUT_KEY_DOWN:
-		if (cam.getCenter()[1] > -1.0f) {
-			cam.setCenter(cam.getCenter()[0], cam.getCenter()[1] - speed, cam.getCenter()[2]);
-			cam.setUp(cam.getUp()[0], cam.getUp()[1] - speed, cam.getUp()[2]);
-			mirar(cam);
+		cam.pitch -= speed;
+		if (cam.pitch < -89.0f)
+		{
+			cam.pitch = -89.0f;
 		}
+		front.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		front.y = sin(glm::radians(cam.pitch));
+		front.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+		cam.front = glm::normalize(front);
+		mirar(cam);
 		break;
 	}
 }
@@ -320,9 +277,9 @@ void mirar(Camara cam)
 	{
 		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
 	}
-	gluLookAt(cam.getEye()[0], cam.getEye()[1], cam.getEye()[2],
-		cam.getCenter()[0], cam.getCenter()[1], cam.getCenter()[2],
-		cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);
+	gluLookAt(cam.pos.x, cam.pos.y, cam.pos.z,
+		cam.pos.x + cam.front.x, cam.pos.y + cam.front.y, cam.pos.z + cam.front.z,
+		cam.up.x, cam.up.y, cam.up.z);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -381,4 +338,3 @@ void init() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
 }
-
