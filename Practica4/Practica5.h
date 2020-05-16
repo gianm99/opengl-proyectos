@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 # define _USE_MATH_DEFINES
+# define SPACEBAR 32
 #include <gl/glut.h>
 #include <gl/gl.h>
 #include <gl/glu.h>

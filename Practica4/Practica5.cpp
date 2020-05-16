@@ -1,7 +1,7 @@
 ﻿//Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
-#include "Practica4.h"
+#include "Practica5.h"
 
 // Indica si está en fullscreen
 bool fullscreen;
@@ -10,6 +10,8 @@ bool ejesVisible = true;
 // Indica si los planos de referencia se tienen que dibujar
 bool planosVisible = true;
 bool profundidad = true;
+// Indica el tipo de sombreado que se pintará
+bool sombreado = true;
 // Representa la cámara
 Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),
 	glm::vec3(0.0f, 0.0f, -1.0f),
@@ -191,6 +193,15 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pitch = 89.999f;
 		cam.girar();
 		mirar(cam);
+		break;
+	case SPACEBAR:
+		if (sombreado) {
+			glShadeModel(GL_FLAT);
+		}
+		else {
+			glShadeModel(GL_SMOOTH);
+		}
+		sombreado = !sombreado;
 		break;
 	}
 	glutPostRedisplay();
