@@ -88,6 +88,7 @@ void reshape(GLsizei width, GLsizei height)
 }
 
 
+
 void keyboard(unsigned char key, int x, int y)
 {
 	float speed = 0.1f;
@@ -380,6 +381,22 @@ void referenciaPlanos()
 	glVertex3f(0.0f, -0.9f, 0.9f);
 	glVertex3f(0.0f, -0.9f, -0.9f);
 	glVertex3f(0.0f, 0.9f, -0.9f);
+	glEnd();
+	glPopMatrix();
+}
+
+void trazadoElem(std::queue <glm::vec3> cola) {
+	glm::vec3 aux = cola.front();
+	cola.pop();
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE);
+	while (!cola.empty()) {
+		glVertex3f(aux.x, aux.y, aux.z);
+		glVertex3f(cola.front().x, cola.front().y, cola.front().z);
+		aux = cola.front();
+		cola.pop();
+	}
 	glEnd();
 	glPopMatrix();
 }

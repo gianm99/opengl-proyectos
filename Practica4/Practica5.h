@@ -2,6 +2,7 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
+#include <queue>
 # define _USE_MATH_DEFINES
 # define SPACEBAR 32
 #include <gl/glut.h>
@@ -66,6 +67,8 @@ void referenciaPlanos();
 void init();
 // Cambia a la vista definida por el parametro cam
 void mirar(Camara cam);
+// Dibuja el trazado de un elemento pasando par parámetro una cola de puntos
+void trazadoElem(std::queue <glm::vec3> cola);
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
