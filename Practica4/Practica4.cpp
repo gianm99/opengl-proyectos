@@ -3,17 +3,17 @@
 
 #include "Practica4.h"
 
-// Indica si está en fullscreen
-bool fullscreen;
-// Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible = true;
-// Indica si los planos de referencia se tienen que dibujar
-bool planosVisible = true;
-bool profundidad = true;
-// Representa la cámara
-Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),  // pos
-	glm::vec3(0.0f, 0.0f, -1.0f),  // front
-	glm::vec3(0.0f, 1.0f, 0.0f));  // up
+bool fullscreen;  // Indica si está en pantalla completa
+bool ejesVisible = true;  // Indica si se dibujan los ejes
+bool planosVisible = true;  // Indica si se dibujan los planos
+bool profundidad = true;  // Indica si la escena tiene profundida
+float deltaTime = 0.0f;	 // Tiempo entre el anterior frame y este
+float lastFrame = 0.0f;  // Tiempo del frame anterior
+Camara cam(  // Cámara de la escena
+	glm::vec3(0.0f, 0.0f, 1.0f),
+	glm::vec3(0.0f, 0.0f, -1.0f),
+	glm::vec3(0.0f, 1.0f, 0.0f)
+);
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -99,17 +99,18 @@ void mirar(Camara cam)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	float speed = 0.1f;
-	float pitch_rotation=0.0f;
+	float speed = 3.0f*deltaTime;
+	float pitch_rotation = 0.0f;
 	glm::mat4 rotate_yaw_matrix = glm::mat4(1.f);
-	glm::mat4 rotate_pitch_matrix = glm::mat4(1.f);
+	glm::mat4 m = glm::mat4(1.f);  // Matriz para calculos
 	glm::vec3 camFocusVector;
 	switch (key)
 	{
-		// Escape
-	case 27:
+		// Cerrar la ventana
+	case ESC:
 		exit(0);
 		break;
+		// Pantalla completa
 	case 'f':
 		fullscreen = !fullscreen;
 		if (!fullscreen)
@@ -122,10 +123,12 @@ void keyboard(unsigned char key, int x, int y)
 			glutFullScreen();
 		}
 		break;
+		// Ejes y planos de referencia
 	case 'e':
 		ejesVisible = !ejesVisible;
 		planosVisible = !planosVisible;
 		break;
+		// Profundidad
 	case 'p':
 		profundidad = !profundidad;
 		glMatrixMode(GL_PROJECTION);
@@ -157,8 +160,8 @@ void keyboard(unsigned char key, int x, int y)
 	case 't':
 		pitch_rotation = -89.999f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -89.999f;
 		cam.girar();
 		mirar(cam);
@@ -167,18 +170,18 @@ void keyboard(unsigned char key, int x, int y)
 	case 'y':
 		pitch_rotation = -45.0f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -45.0f;
 		cam.girar();
 		mirar(cam);
 		break;
 		// Plano normal
 	case 'u':
-		pitch_rotation = - cam.pitch;
+		pitch_rotation = -cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 0.0f;
 		cam.girar();
 		mirar(cam);
@@ -187,8 +190,8 @@ void keyboard(unsigned char key, int x, int y)
 	case 'i':
 		pitch_rotation = 45.0f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 45.0f;
 		cam.girar();
 		mirar(cam);
@@ -197,8 +200,8 @@ void keyboard(unsigned char key, int x, int y)
 	case 'o':
 		pitch_rotation = 89.999f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 89.999f;
 		cam.girar();
 		mirar(cam);
@@ -303,6 +306,10 @@ void special(int key, int x, int y)
 }
 
 void idle(void) {
+	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
+	deltaTime = (currentFrame - lastFrame)/1000;
+	lastFrame = currentFrame;
+
 	if (posZ > 0.7f || posZ < -0.7f)
 	{
 		incZ = -incZ;

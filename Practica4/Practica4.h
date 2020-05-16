@@ -15,6 +15,9 @@
 #include <cstdlib>
 #include <vector>
 
+#define ESC 27
+#define SPACE 32
+
 // Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
 {
