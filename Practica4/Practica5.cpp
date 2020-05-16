@@ -12,6 +12,8 @@ bool planosVisible = true;
 bool profundidad = true;
 // Indica el tipo de sombreado que se pintará
 bool sombreado = true;
+float deltaTime = 0.0f;	 // Tiempo entre el anterior frame y este
+float lastFrame = 0.0f;  // Tiempo del frame anterior
 // Representa la cámara
 Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),
 	glm::vec3(0.0f, 0.0f, -1.0f),
@@ -35,6 +37,11 @@ GLfloat incZ = 0.005f;
 int proyeccion = 0;
 GLfloat angle = 0.0f;
 double alpha = -45.0;
+// Variables para los materiales
+GLfloat mspecular[] = { 1.0f,1.0f,1.0f,1.0f };
+GLfloat memission[] = { 0.0f,0.0f,0.0f,1.0f };
+// Luces
+Luz luces[5];
 
 int main(int argc, char **argv)
 {
@@ -90,10 +97,10 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	float speed = 0.1f;
-	float pitch_rotation=0.0f;
+	float speed = 3.0f*deltaTime;
+	float pitch_rotation = 0.0f;
 	glm::mat4 rotate_yaw_matrix = glm::mat4(1.f);
-	glm::mat4 rotate_pitch_matrix = glm::mat4(1.f);
+	glm::mat4 m = glm::mat4(1.f);  // Matriz para calculos
 	glm::vec3 camFocusVector;
 	switch (key)
 	{
@@ -144,56 +151,6 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
 		mirar(cam);
 		break;
-		// Plano cenital
-	case 't':
-		pitch_rotation = -89.999f - cam.pitch;
-		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
-		cam.pitch = -89.999f;
-		cam.girar();
-		mirar(cam);
-		break;
-		// Plano picado
-	case 'y':
-		pitch_rotation = -45.0f - cam.pitch;
-		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
-		cam.pitch = -45.0f;
-		cam.girar();
-		mirar(cam);
-		break;
-		// Plano normal
-	case 'u':
-		pitch_rotation = - cam.pitch;
-		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
-		cam.pitch = 0.0f;
-		cam.girar();
-		mirar(cam);
-		break;
-		// Plano contrapicado
-	case 'i':
-		pitch_rotation = 45.0f - cam.pitch;
-		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
-		cam.pitch = 45.0f;
-		cam.girar();
-		mirar(cam);
-		break;
-		// Plano nadir
-	case 'o':
-		pitch_rotation = 89.999f - cam.pitch;
-		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
-		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
-		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
-		cam.pitch = 89.999f;
-		cam.girar();
-		mirar(cam);
-		break;
 	case SPACEBAR:
 		if (sombreado) {
 			glShadeModel(GL_FLAT);
@@ -202,6 +159,111 @@ void keyboard(unsigned char key, int x, int y)
 			glShadeModel(GL_SMOOTH);
 		}
 		sombreado = !sombreado;
+		break;
+		// Plano cenital
+	case '1':
+		pitch_rotation = -89.999f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = -89.999f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano picado
+	case '2':
+		pitch_rotation = -45.0f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = -45.0f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano normal
+	case '3':
+		pitch_rotation = -cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = 0.0f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano contrapicado
+	case '4':
+		pitch_rotation = 45.0f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = 45.0f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano nadir
+	case '5':
+		pitch_rotation = 89.999f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = 89.999f;
+		cam.girar();
+		mirar(cam);
+		break;
+	case '6':
+		if (luces[1].on)
+		{
+			glDisable(GL_LIGHT1);
+		}
+		else
+		{
+			glEnable(GL_LIGHT1);
+		}
+		luces[1].on = !luces[2].on;
+		break;
+	case '7':
+		if (luces[2].on)
+		{
+			glDisable(GL_LIGHT2);
+		}
+		else
+		{
+			glEnable(GL_LIGHT2);
+		}
+		luces[2].on = !luces[2].on;
+		break;
+	case '8':
+		if (luces[3].on)
+		{
+			glDisable(GL_LIGHT3);
+		}
+		else
+		{
+			glEnable(GL_LIGHT3);
+		}
+		luces[3].on = !luces[3].on;
+		break;
+	case '9':
+		if (luces[4].on)
+		{
+			glDisable(GL_LIGHT4);
+		}
+		else
+		{
+			glEnable(GL_LIGHT4);
+		}
+		luces[4].on = !luces[4].on;
+		break;
+	case '0':
+		if (luces[0].on)
+		{
+			glDisable(GL_LIGHT0);
+		}
+		else
+		{
+			glEnable(GL_LIGHT0);
+		}
+		luces[0].on = !luces[0].on;
 		break;
 	}
 	glutPostRedisplay();
@@ -303,6 +365,10 @@ void special(int key, int x, int y)
 }
 
 void idle(void) {
+	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
+	deltaTime = (currentFrame - lastFrame) / 1000;
+	lastFrame = currentFrame;
+
 	if (posZ > 0.7f || posZ < -0.7f)
 	{
 		incZ = -incZ;
@@ -384,11 +450,40 @@ void referenciaPlanos()
 	glPopMatrix();
 }
 
-void init() {
+void init()
+{
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND); //Enable blending.
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set blending function.
+	glEnable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
+	configurarLuces();
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
+}
+
+void configurarLuces()
+{
+	GLfloat position0[] = { 1.0f,1.0f,0.0f,0.0f };
+	GLfloat position1[] = { 1.0f,1.0f,1.0f,0.0f };
+	GLfloat position2[] = { 1.0f,1.0f,0.0f,0.0f };
+	GLfloat position3[] = { 1.0f,1.0f,-1.0f,0.0f };
+	GLfloat position4[] = { 1.0f,0.0f,0.0f,0.0f };
+	GLfloat spot_direction0[] = { -1.0f,-1.0f,0.0f };
+	GLfloat spot_direction1[] = { -1.0f,-1.0f,-1.0f,0.0f };
+	GLfloat spot_direction2[] = { -1.0f,-1.0f,0.0f,0.0f };
+	GLfloat spot_direction3[] = { -1.0f,-1.0f,1.0f,0.0f };
+	GLfloat spot_direction4[] = { -1.0f,0.0f,0.0f,0.0f };
+	GLfloat ambient[] = { 0.0f,0.0f,0.0f,1.0f };
+	GLfloat diffuse[] = { 1.0f,1.0f,1.0f,1.0f };
+	GLfloat specular[] = { 1.0f,1.0f,1.0f,1.0f };
+	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, ambient, diffuse, specular);
+	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, ambient, diffuse, specular);
+	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, ambient, diffuse, specular);
+	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, ambient, diffuse, specular);
+	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4, ambient, diffuse, specular);
 }

@@ -154,7 +154,7 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		break;
 		// Plano cenital
-	case 't':
+	case '1':
 		pitch_rotation = -89.999f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
 		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
@@ -164,7 +164,7 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		break;
 		// Plano picado
-	case 'y':
+	case '2':
 		pitch_rotation = -45.0f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
 		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
@@ -174,7 +174,7 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		break;
 		// Plano normal
-	case 'u':
+	case '3':
 		pitch_rotation = -cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
 		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
@@ -184,7 +184,7 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		break;
 		// Plano contrapicado
-	case 'i':
+	case '4':
 		pitch_rotation = 45.0f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
 		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);
@@ -194,7 +194,7 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		break;
 		// Plano nadir
-	case 'o':
+	case '5':
 		pitch_rotation = 89.999f - cam.pitch;
 		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
 		m = glm::rotate(m, glm::radians(pitch_rotation), cam.right);

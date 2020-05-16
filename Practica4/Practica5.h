@@ -12,7 +12,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include <cmath>
 #include <cstdlib>
 #include <vector>
@@ -47,6 +46,37 @@ public:
 	}
 };
 
+// Representa una luz
+class Luz
+{
+public:
+	GLfloat *pos;
+	GLfloat *spot_direction;
+	GLfloat *ambient;
+	GLfloat *diffuse;
+	GLfloat *specular;
+	bool on;
+	Luz(GLenum n, GLfloat *pos, GLfloat *spot_direction,
+		GLfloat *ambient, GLfloat *diffuse, GLfloat *specular)
+	{
+		this->pos = pos;
+		this->spot_direction = spot_direction;
+		this->ambient = ambient;
+		this->diffuse = diffuse;
+		this->specular = specular;
+		this->on = true;
+		glEnable(n);
+		glLightfv(n, GL_POSITION, pos);
+		glLightfv(n, GL_SPOT_DIRECTION, spot_direction);
+		glLightfv(n, GL_AMBIENT, ambient);
+		glLightfv(n, GL_DIFFUSE, diffuse);
+		glLightfv(n, GL_SPECULAR, specular);
+	}
+	Luz()
+	{
+	}
+};
+
 // Dibuja la escena
 void display(void);
 // Controla la relacion de aspecto de la escena
@@ -66,6 +96,8 @@ void referenciaPlanos();
 void init();
 // Cambia a la vista definida por el parametro cam
 void mirar(Camara cam);
+// Inicializa los valores de las luces
+void configurarLuces();
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
