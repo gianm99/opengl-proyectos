@@ -1,36 +1,48 @@
 //Practica3.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
-#define _USE_MATH_DEFINES
-#include <stdlib.h>
-#include <gl/glut.h>
-#include <gl/gl.h>
-#include <gl/glu.h>
-#include <math.h>
-#include <iostream>
+#include "Practica3.h"
 
-// Dibuja la escena
-void display(void);
-// Controla la relación de aspecto de la escena
-void reshape(GLsizei width, GLsizei height);
-// Anima la escena
-void idle(void);
-// Dibuja los ejes de coordenadas para poder usarlos como referencia
-void referenciaEjes();
-// Dibuja los planos formados por la intersección de los ejes de coordenadas 
-// para usarlos como referencia
-void referenciaPlanos();
-// Inicializa algunos valores del dibujado de la escena
-void init();
-
+// Indica si está en modo fullscreen
+bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible;
+bool ejesVisible=true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosVisible;
-// Indica la posición en el eje Z en la que se tiene que dibujar la tetera
-GLfloat posZ=0.0f;
-// Indica el incremento en el eje Z en el que posZ varia
+bool planosVisible=true;
+// Indica el ángulo de rotación de la tetera
+GLfloat angRot = 0.0f;
+//Indican los vectores de cada eje para la función de rotación
+GLfloat angX;
+GLfloat angY;
+GLfloat angZ;
+const GLfloat incRot = 0.1f;
+// Indican las posiciones en los ejes en la que se tiene que dibujar la tetera
+GLfloat posX = 0.0f;
+GLfloat posY = 0.0f;
+GLfloat posZ = 0.0f;
+// Indican los incrementos en los ejes en el que las posiciones varian
+GLfloat incX;
+GLfloat incY;
 GLfloat incZ = 0.003f;
+//Indican el tamaño inicial de la ventana
+GLsizei windowWidth = 640;
+GLsizei windowHeight = 640;
+
+void initRandVars() {
+	srand(time(NULL));
+	angX = (float) 0.1*(rand() % 21 + (-10));
+	angY = (float) 0.1*(rand() % 21 + (-10));
+	angZ = (float) 0.1*(rand() % 21 + (-10));
+	incX = (float) 0.0001*(rand() % 10 + 3);
+	srand(time(NULL));
+	incY = (float) 0.0001*(rand() % 10 + 3);
+	if (rand() % 2 == 1) {
+		incX = -incX;
+	}
+	if (rand() % 2 == 1) {
+		incY = -incY;
+	}
+}
 
 void display(void)
 {
@@ -38,8 +50,8 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glTranslatef(0.0f,0.0f,posZ);
-	glRotatef(45.0f, 0.0f, 0.7f, 1.0f);
+	glTranslatef(posX,posY,posZ);
+	glRotatef(angRot, angX, angY, angZ);
 	glutSolidTeapot(0.1f);
 	if (ejesVisible)referenciaEjes();
 	if (planosVisible)referenciaPlanos();
@@ -66,56 +78,50 @@ void reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+		case 27:  // Escape
+			exit(0);
+			break;
+		case 'f':
+			fullscreen=!fullscreen;
+			if (!fullscreen)
+			{
+				glutReshapeWindow(windowWidth, windowHeight);
+				glutPositionWindow(100, 100);
+			}
+			else
+			{
+				glutFullScreen();
+			}
+			break;
+		case 'e':
+			ejesVisible=!ejesVisible;
+			break;
+		case 'p':
+			planosVisible=!planosVisible;
+			break;
+	}
+}
+
 void idle(void) {
 	if (posZ > 0.15f||posZ<-0.15f)
 	{
 		incZ=-incZ;
 	}
-	posZ+=incZ;
+	if (posX > 0.93 || posX < -0.93) {
+		incX = -incX;
+	}
+	if (posY > 0.93 || posY < -0.93) {
+		incY = -incY;
+	}
+	posX += incX;
+	posY += incY;
+	posZ += incZ;
+	angRot += incRot;
 	glutPostRedisplay();
-}
-
-void preguntarVisibilidad()
-{
-	char eleccion;
-	while (true)
-	{
-		std::cout << "Quieres que los ejes de referencia sean visibles? (s/n)" << std::endl;
-		std::cin >> eleccion;
-		if (eleccion == 's')
-		{
-			ejesVisible=true;
-			break;
-		}
-		else if(eleccion=='n')
-		{
-			ejesVisible=false;
-			break;
-		}
-		else
-		{
-			std::cout << "Por favor responde con 's' o 'n'." << std::endl;
-		}
-	}
-	while (true)
-	{
-		std::cout << "Quieres que los planos de referencia sean visibles? (s/n)" << std::endl;
-		std::cin >> eleccion;
-		if (eleccion == 's')
-		{
-			planosVisible = true;
-			return;
-		}
-		else if (eleccion == 'n')
-		{
-			planosVisible = false;
-			return;
-		}
-		else
-		{
-			std::cout << "Por favor responde con 's' o 'n'." << std::endl;
-		}
-	}
 }
 
 void referenciaEjes()
@@ -142,20 +148,20 @@ void referenciaPlanos()
 {
 	glLoadIdentity();
 	glBegin(GL_QUADS);
-		// X / Y - Rojo 60%
+		// X / Y - Rojo 30%
 		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
 		glVertex3f(0.9f, 0.9f, 0.0f);
 		glVertex3f(-0.9f, 0.9f, 0.0f);
 		glVertex3f(-0.9f, -0.9f, 0.0f);
 		glVertex3f(0.9f, -0.9f, 0.0f);
-		// X / Z - Verde 60%
-		glColor4f(0.0f, 1.0f, 0.0f, 0.6f);
+		// X / Z - Verde 30%
+		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
 		glVertex3f(0.9f, 0.0f, 0.9f);
 		glVertex3f(-0.9f, 0.0f, 0.9f);
 		glVertex3f(-0.9f, 0.0f, -0.9f);
 		glVertex3f(0.9f, 0.0f, -0.9f);
-		// Y / Z - Azul 60%
-		glColor4f(0.0f, 0.0f, 1.0f, 0.6f);
+		// Y / Z - Azul 30%
+		glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
 		glVertex3f(0.0f, 0.9f, 0.9f);
 		glVertex3f(0.0f, -0.9f, 0.9f);
 		glVertex3f(0.0f, -0.9f, -0.9f);
@@ -174,17 +180,17 @@ void init() {
 
 int main(int argc, char **argv)
 {
+	initRandVars();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowPosition(50,50);
-	glutInitWindowSize(640,480);
+	glutInitWindowPosition(100,100);
+	glutInitWindowSize(windowWidth,windowHeight);
 	glutCreateWindow("Escena 3D simple");
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
 	glutIdleFunc(idle);
-	// Preguntar al usuario si hay que dibujar los ejes y planos
-	preguntarVisibilidad();
 	glutMainLoop();
 	return 0;
 }

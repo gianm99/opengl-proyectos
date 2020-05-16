@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0BB8D98D-A229-4F3E-9E12-ADB19235A904}</ProjectGuid>
+    <ProjectGuid>{40A8433A-6316-4B03-AC34-2FA629EA73AB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Practica3</RootNamespace>
+    <RootNamespace>Practica4</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,6 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\gianm\Documents\3-INFO\Informática Gráfica\Descargas\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -147,10 +148,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Practica3.cpp" />
+    <ClCompile Include="Practica4.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Practica3.h" />
+    <ClInclude Include="Practica4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
