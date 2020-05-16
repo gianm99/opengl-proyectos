@@ -29,11 +29,9 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.005f;
-//Indica el ángulo para el tilt de la cámara
-GLfloat angle = 0.0f;
-// Indica el tipo de proyección que se usa
+// Variables para la gestión de las vistas oblicuas
 int proyeccion = 0;
-// Variable para proyecciones oblicuas
+GLfloat angle = 0.0f;
 double alpha = -45.0;
 
 int main(int argc, char **argv)
@@ -61,12 +59,12 @@ void display(void)
 	// Activar la vista caballera o militar
 	float m[16]; // identity
 	glGetFloatv(GL_MODELVIEW_MATRIX, m);
-	float angle = (M_PI / 180.0f) * float(alpha);
-	if (proyeccion == 1) { // cavalier
+	float angle = glm::radians(float(alpha));
+	if (proyeccion == 1) { // caballera
 		m[2 * 4 + 0] = -cos(angle);
 		m[2 * 4 + 1] = sin(angle);
 	}
-	else if (proyeccion == 2) { // cabinet
+	else if (proyeccion == 2) { // militar
 		m[2 * 4 + 0] = -cos(angle) / 2.0f;
 		m[2 * 4 + 1] = sin(angle) / 2.0f;
 	}
@@ -102,6 +100,10 @@ void mirar(Camara cam)
 void keyboard(unsigned char key, int x, int y)
 {
 	float speed = 0.1f;
+	float pitch_rotation=0.0f;
+	glm::mat4 rotate_yaw_matrix = glm::mat4(1.f);
+	glm::mat4 rotate_pitch_matrix = glm::mat4(1.f);
+	glm::vec3 camFocusVector;
 	switch (key)
 	{
 		// Escape
@@ -131,20 +133,74 @@ void keyboard(unsigned char key, int x, int y)
 		mirar(cam);
 		glMatrixMode(GL_MODELVIEW);
 		break;
+		// Dolly in
 	case 'w':
 		cam.pos += speed*cam.front;
 		mirar(cam);
 		break;
+		// Dolly out
 	case 's':
 		cam.pos -= speed*cam.front;
 		mirar(cam);
 		break;
+		// Travelling izquierda
 	case 'a':
-		cam.pos -= glm::normalize(glm::cross(cam.front,cam.up))*speed;
+		cam.pos -= glm::normalize(glm::cross(cam.front, cam.up))*speed;
 		mirar(cam);
 		break;
+		// Travelling derecha
 	case 'd':
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
+		mirar(cam);
+		break;
+		// Plano cenital
+	case 't':
+		pitch_rotation = -89.999f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = -89.999f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano picado
+	case 'y':
+		pitch_rotation = -45.0f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = -45.0f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano normal
+	case 'u':
+		pitch_rotation = - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = 0.0f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano contrapicado
+	case 'i':
+		pitch_rotation = 45.0f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = 45.0f;
+		cam.girar();
+		mirar(cam);
+		break;
+		// Plano nadir
+	case 'o':
+		pitch_rotation = 89.999f - cam.pitch;
+		cam.right = glm::normalize(glm::cross(cam.front, cam.up));
+		rotate_pitch_matrix = glm::rotate(rotate_pitch_matrix, glm::radians(pitch_rotation), cam.right);
+		cam.pos = glm::vec3(rotate_pitch_matrix*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
+		cam.pitch = 89.999f;
+		cam.girar();
 		mirar(cam);
 		break;
 	}
@@ -161,16 +217,16 @@ void special(int key, int x, int y)
 		// alzado
 	case GLUT_KEY_F1:
 		proyeccion = 0;
-		cam.pos=glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.yaw=-90.0f;
-		cam.pitch=0.0f;
+		cam.pos = glm::vec3(0.0f, 0.0f, 1.0f);
+		cam.yaw = -90.0f;
+		cam.pitch = 0.0f;
 		cam.girar();
 		mirar(cam);
 		break;
 		// planta
 	case GLUT_KEY_F2:
 		proyeccion = 0;
-		cam.pos=glm::vec3(0.0f, 1.0f, 0.0f);
+		cam.pos = glm::vec3(0.0f, 1.0f, 0.0f);
 		cam.yaw = -90.0f;
 		cam.pitch = -90.0f;
 		cam.girar();
@@ -179,7 +235,7 @@ void special(int key, int x, int y)
 		// perfil izquierdo
 	case GLUT_KEY_F3:
 		proyeccion = 0;
-		cam.pos=glm::vec3(-1.0f, 0.0f, 0.0f);
+		cam.pos = glm::vec3(-1.0f, 0.0f, 0.0f);
 		cam.yaw = 0.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
@@ -188,7 +244,7 @@ void special(int key, int x, int y)
 		// isométrica
 	case GLUT_KEY_F4:
 		proyeccion = 0;
-		cam.pos=glm::vec3(1.0f, 0.0f, 0.0f);
+		cam.pos = glm::vec3(1.0f, 0.0f, 0.0f);
 		cam.yaw = 180.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
@@ -197,9 +253,9 @@ void special(int key, int x, int y)
 		// isométrica
 	case GLUT_KEY_F5:
 		proyeccion = 0;
-		cam.pos=glm::vec3(1.0f, 1.0f, 1.0f);
+		cam.pos = glm::vec3(1.0f, 1.0f, 1.0f);
 		cam.yaw = -135.0f;
-		cam.pitch = -glm::degrees(asin(1/sqrt(3)));
+		cam.pitch = -glm::degrees(asin(1 / sqrt(3)));
 		cam.girar();
 		mirar(cam);
 		break;

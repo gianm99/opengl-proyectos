@@ -22,6 +22,7 @@ public:
 	glm::vec3 pos;
 	glm::vec3 front;
 	glm::vec3 up;
+	glm::vec3 right;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -34,8 +35,8 @@ public:
 
 	void girar()
 	{
-		if (pitch > 89.90f) pitch = 89.90f;
-		if (pitch < -89.90f) pitch = -89.90f;
+		if (pitch > 89.999f) pitch = 89.999f;
+		if (pitch < -89.999f) pitch = -89.999f;
 		glm::vec3 front;
 		front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 		front.y = sin(glm::radians(pitch));
