@@ -11,9 +11,9 @@ bool ejesVisible = true;
 bool planosVisible = true;
 bool profundidad = true;
 // Representa la cámara
-Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),
-	glm::vec3(0.0f, 0.0f, -1.0f),
-	glm::vec3(0.0f, 1.0f, 0.0f));
+Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),  // pos
+	glm::vec3(0.0f, 0.0f, -1.0f),  // front
+	glm::vec3(0.0f, 1.0f, 0.0f));  // up
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -81,12 +81,23 @@ void display(void)
 	glFlush();
 }
 
-void reshape(GLsizei width, GLsizei height)
+void mirar(Camara cam)
 {
-	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	mirar(cam);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (profundidad)
+	{
+		gluPerspective(90, 1, 0.1, 20);
+	}
+	else
+	{
+		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+	}
+	gluLookAt(cam.pos.x, cam.pos.y, cam.pos.z,
+		cam.pos.x + cam.front.x, cam.pos.y + cam.front.y, cam.pos.z + cam.front.z,
+		cam.up.x, cam.up.y, cam.up.z);
+	glMatrixMode(GL_MODELVIEW);
 }
-
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -252,24 +263,6 @@ void idle(void) {
 	glutPostRedisplay();
 }
 
-void mirar(Camara cam)
-{
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	if (profundidad)
-	{
-		gluPerspective(90, 1, 0.1, 20);
-	}
-	else
-	{
-		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
-	}
-	gluLookAt(cam.pos.x, cam.pos.y, cam.pos.z,
-		cam.pos.x + cam.front.x, cam.pos.y + cam.front.y, cam.pos.z + cam.front.z,
-		cam.up.x, cam.up.y, cam.up.z);
-	glMatrixMode(GL_MODELVIEW);
-}
-
 void referenciaEjes()
 {
 	glPushMatrix();
@@ -324,4 +317,10 @@ void init() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set blending function.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
+}
+
+void reshape(GLsizei width, GLsizei height)
+{
+	glViewport(0, 0, width, height);  // El viewport cubre la ventana
+	mirar(cam);
 }
