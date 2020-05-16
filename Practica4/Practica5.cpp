@@ -41,7 +41,7 @@ double alpha = -45.0;
 GLfloat mspecular[] = { 1.0f,1.0f,1.0f,1.0f };
 GLfloat memission[] = { 0.0f,0.0f,0.0f,1.0f };
 // Luces
-Luz luces[5];
+Luz luces[4];
 
 int main(int argc, char **argv)
 {
@@ -219,7 +219,7 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			glEnable(GL_LIGHT1);
 		}
-		luces[1].on = !luces[2].on;
+		luces[1].on = !luces[1].on;
 		break;
 	case '7':
 		if (luces[2].on)
@@ -242,17 +242,6 @@ void keyboard(unsigned char key, int x, int y)
 			glEnable(GL_LIGHT3);
 		}
 		luces[3].on = !luces[3].on;
-		break;
-	case '9':
-		if (luces[4].on)
-		{
-			glDisable(GL_LIGHT4);
-		}
-		else
-		{
-			glEnable(GL_LIGHT4);
-		}
-		luces[4].on = !luces[4].on;
 		break;
 	case '0':
 		if (luces[0].on)
@@ -469,15 +458,13 @@ void init()
 void configurarLuces()
 {
 	GLfloat position0[] = { 1.0f,1.0f,0.0f,0.0f };
-	GLfloat position1[] = { 1.0f,1.0f,1.0f,0.0f };
-	GLfloat position2[] = { 1.0f,1.0f,0.0f,0.0f };
-	GLfloat position3[] = { 1.0f,1.0f,-1.0f,0.0f };
-	GLfloat position4[] = { 1.0f,0.0f,0.0f,0.0f };
+	GLfloat position1[] = { 1.0f,1.0f,0.0f,0.0f };
+	GLfloat position2[] = { 1.0f,1.0f,-1.0f,0.0f };
+	GLfloat position3[] = { 1.0f,0.0f,0.0f,0.0f };
 	GLfloat spot_direction0[] = { -1.0f,-1.0f,0.0f };
-	GLfloat spot_direction1[] = { -1.0f,-1.0f,-1.0f,0.0f };
-	GLfloat spot_direction2[] = { -1.0f,-1.0f,0.0f,0.0f };
-	GLfloat spot_direction3[] = { -1.0f,-1.0f,1.0f,0.0f };
-	GLfloat spot_direction4[] = { -1.0f,0.0f,0.0f,0.0f };
+	GLfloat spot_direction1[] = { -1.0f,-1.0f,0.0f };
+	GLfloat spot_direction2[] = { -1.0f,-1.0f,1.0f };
+	GLfloat spot_direction3[] = { -1.0f,0.0f,0.0f };
 	GLfloat ambient[] = { 0.0f,0.0f,0.0f,1.0f };
 	GLfloat diffuse[] = { 1.0f,1.0f,1.0f,1.0f };
 	GLfloat specular[] = { 1.0f,1.0f,1.0f,1.0f };
@@ -485,5 +472,4 @@ void configurarLuces()
 	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, ambient, diffuse, specular);
 	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, ambient, diffuse, specular);
 	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, ambient, diffuse, specular);
-	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4, ambient, diffuse, specular);
 }
