@@ -131,10 +131,7 @@ void keyboard(unsigned char key, int x, int y)
 		// Profundidad
 	case 'p':
 		profundidad = !profundidad;
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
 		mirar(cam);
-		glMatrixMode(GL_MODELVIEW);
 		break;
 		// Dolly in
 	case 'w':
