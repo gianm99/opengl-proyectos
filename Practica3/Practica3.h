@@ -5,6 +5,7 @@
 
 #define _USE_MATH_DEFINES
 #include <stdlib.h>
+#include <deque>
 #include <gl/glut.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
@@ -24,6 +25,7 @@ public:
 	glm::vec3 pos;
 	glm::vec3 inc;
 	float velocidad = 0.1f;
+	std::deque<glm::vec3> posiciones;
 
 	// Constructor
 
@@ -67,6 +69,8 @@ void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
 // Funciones de movimiento y dibujado de los objetos
-void transTetera();
-void transEsfera();
-void transCubo();
+void dibujarTetera();
+void dibujarEsfera();
+void dibujarCubo();
+// Función para el dibujado de la trayectoria
+void trazadoElem(std::deque <glm::vec3> pos);

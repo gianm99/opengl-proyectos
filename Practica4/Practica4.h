@@ -2,6 +2,7 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
+#include <deque>
 # define _USE_MATH_DEFINES
 #include <gl/glut.h>
 #include <gl/gl.h>
@@ -26,6 +27,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
+	std::deque<glm::vec3> posiciones;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -54,6 +56,7 @@ public:
 	glm::vec3 pos;
 	glm::vec3 inc;
 	float velocidad = 0.1f;
+	std::deque<glm::vec3> posiciones;
 
 	// Constructor
 
@@ -102,9 +105,11 @@ void init();
 // Cambia a la vista definida por el parametro cam
 void mirar(Camara cam);
 // Funciones de movimiento y dibujado de los objetos
-void transTetera();
-void transEsfera();
-void transCubo();
+void dibujarTetera();
+void dibujarEsfera();
+void dibujarCubo();
+// Función para el dibujado de la trayectoria
+void trazadoElem(std::deque <glm::vec3> pos);
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
