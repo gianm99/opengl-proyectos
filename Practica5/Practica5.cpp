@@ -99,36 +99,30 @@ void display(void)
 }
 
 void dibujarTetera() {
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Tet.pos.x, Tet.pos.y, Tet.pos.z);
 	glutSolidTeapot(0.1f);
-	glTranslatef(-Tet.pos.x, -Tet.pos.y, -Tet.pos.z);
 
 	glPopMatrix();
 }
 
 void dibujarEsfera() {
 
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Esf.pos.x, Esf.pos.y, Esf.pos.z);
 	glutSolidSphere(0.1f, 100, 100);
-	glTranslatef(-Esf.pos.x, -Esf.pos.y, -Esf.pos.z);
 
 	glPopMatrix();
 }
 
 void dibujarCubo() {
 
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Cub.pos.x, Cub.pos.y, Cub.pos.z);
 	glutSolidCube(0.1);
-	glTranslatef(-Cub.pos.x, -Cub.pos.y, -Cub.pos.z);
 
 	glPopMatrix();
 
