@@ -85,6 +85,7 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f, 1.0f, 1.0f);
+	trazadoElem(Tet.cola);
 	transTetera();
 	transEsfera();
 	transCubo();
@@ -445,6 +446,11 @@ void idle(void) {
 	Tet.pos.y += Tet.inc.y;
 	Tet.pos.z += Tet.inc.z;
 
+	Tet.cola.push(glm::vec3(0.1f, 0.1f, 0.1f));
+	Tet.cola.push(glm::vec3(0.1f, 0.2f, 0.1f));
+	Tet.cola.push(glm::vec3(0.1f, 0.3f, 0.1f));
+	Tet.cola.push(glm::vec3(0.1f, 0.4f, 0.1f));
+	Tet.cola.push(glm::vec3(0.1f, 0.5f, 0.1f));
 	//esfera
 	if (Esf.pos.z > 0.7f || Esf.pos.z < -0.7f)
 	{
@@ -459,6 +465,7 @@ void idle(void) {
 	Esf.pos.x += Esf.inc.x;
 	Esf.pos.y += Esf.inc.y;
 	Esf.pos.z += Esf.inc.z;
+
 
 	//cubo
 

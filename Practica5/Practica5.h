@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <vector>
 
+
+
 // Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
 {
@@ -25,6 +27,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
+	std::queue <glm::vec3> cola;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -88,38 +91,7 @@ public:
 	}
 };
 
-class Objeto
-{
-public:
-	glm::vec3 pos;
-	glm::vec3 inc;
-	float velocidad = 0.1f;
 
-	// Constructor
-
-	Objeto(glm::vec3 pos, glm::vec3 inc)
-	{
-		this->pos = pos;
-		this->inc = inc;
-	}
-	void setPos(glm::vec3 posicion) {
-		this->pos = pos;
-	}
-
-	void setInc(glm::vec3 incremento) {
-		this->inc = incremento;
-	}
-
-	glm::vec3 getPos() {
-		return pos;
-	}
-
-	glm::vec3 setInc() {
-
-		return inc;
-	}
-
-};
 
 // Dibuja la escena
 void display(void);
@@ -149,3 +121,28 @@ void transCubo();
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
+void trazadoElem(std::queue <glm::vec3> cola);
+
+
+
+
+
+
+
+class Objeto
+{
+public:
+	glm::vec3 pos;
+	glm::vec3 inc;
+	float velocidad = 0.1f;
+	std::queue <glm::vec3> cola;
+
+	// Constructor
+
+	Objeto(glm::vec3 pos, glm::vec3 inc)
+	{
+		this->pos = pos;
+		this->inc = inc;
+	}
+
+};
