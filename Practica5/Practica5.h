@@ -2,7 +2,7 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
-#include <queue>
+#include <deque>
 # define _USE_MATH_DEFINES
 # define SPACEBAR 32
 #include <gl/glut.h>
@@ -25,6 +25,8 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
+	std::deque<glm::vec3> posiciones;
+
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -94,6 +96,7 @@ public:
 	glm::vec3 pos;
 	glm::vec3 inc;
 	float velocidad = 0.1f;
+	std::deque<glm::vec3> posiciones;
 
 	// Constructor
 
@@ -143,9 +146,11 @@ void mirar(Camara cam);
 // Inicializa los valores de las luces
 void configurarLuces();
 // Funciones de movimiento y dibujado de los objetos
-void transTetera();
-void transEsfera();
-void transCubo();
+void dibujarTetera();
+void dibujarEsfera();
+void dibujarCubo();
+// Función para el dibujado de la trayectoria
+void trazadoElem(std::deque <glm::vec3> pos);
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;

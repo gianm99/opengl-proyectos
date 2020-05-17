@@ -85,16 +85,20 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	transTetera();
-	transEsfera();
-	transCubo();
+	trazadoElem(cam.posiciones);
+	trazadoElem(Tet.posiciones);
+	trazadoElem(Esf.posiciones);
+	trazadoElem(Cub.posiciones);
+	dibujarTetera();
+	dibujarEsfera();
+	dibujarCubo();
 	if (ejesVisible) referenciaEjes();
 	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
-void transTetera() {
+void dibujarTetera() {
 	glLoadIdentity();
 	glPushMatrix();
 
@@ -105,7 +109,7 @@ void transTetera() {
 	glPopMatrix();
 }
 
-void transEsfera() {
+void dibujarEsfera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -117,7 +121,7 @@ void transEsfera() {
 	glPopMatrix();
 }
 
-void transCubo() {
+void dibujarCubo() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -307,7 +311,7 @@ void keyboard(unsigned char key, int x, int y)
 		position[1] = 0.0f;
 		position[2] = 1.0f;
 		position[3] = 1.0f;
-		luces[0].mover((GLenum) GL_LIGHT0,position);
+		luces[0].mover((GLenum)GL_LIGHT0, position);
 		break;
 		// Mover luz 0 a posición 2
 	case 'x':
@@ -428,6 +432,27 @@ void idle(void) {
 	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
+
+	// Guardar posicion de la camara
+	if (cam.posiciones.size() == 50)
+	{
+		cam.posiciones.pop_front();
+	}
+	cam.posiciones.push_back(cam.pos);
+	// Guardar posiciones de objetos
+	if (Tet.posiciones.size() == 50)
+	{
+		Tet.posiciones.pop_front();
+	}
+	Tet.posiciones.push_back(Tet.pos);
+	if (Esf.posiciones.size() == 50) {
+		Esf.posiciones.pop_front();
+	}
+	Esf.posiciones.push_back(Esf.pos);
+	if (Cub.posiciones.size() == 50) {
+		Cub.posiciones.pop_front();
+	}
+	Cub.posiciones.push_back(Cub.pos);
 
 	//tetera
 	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
@@ -560,17 +585,13 @@ void init()
 	glShadeModel(GL_SMOOTH);
 }
 
-void trazadoElem(std::queue <glm::vec3> cola) {
-	glm::vec3 aux = cola.front();
-	cola.pop();
+void trazadoElem(std::deque <glm::vec3> pos) {
 	glPushMatrix();
 	glLoadIdentity();
-	glBegin(GL_LINE);
-	while (!cola.empty()) {
-		glVertex3f(aux.x, aux.y, aux.z);
-		glVertex3f(cola.front().x, cola.front().y, cola.front().z);
-		aux = cola.front();
-		cola.pop();
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
 	}
 	glEnd();
 	glPopMatrix();
