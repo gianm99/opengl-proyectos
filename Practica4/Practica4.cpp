@@ -1,7 +1,7 @@
 //Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
-#include "Practica5.h"
+#include "Practica4.h"
 
 // Indica si está en fullscreen
 bool fullscreen;
@@ -28,11 +28,15 @@ GLfloat posZ = 0.0f;
 // Indican los incrementos en los ejes en el que las posiciones varian
 GLfloat incX;
 GLfloat incY;
-GLfloat incZ = 0.005f;
+GLfloat incZ = 0.00f;
 // Variables para la gestión de las vistas oblicuas
 int proyeccion = 0;
 GLfloat angle = 0.0f;
 double alpha = -45.0;
+Objeto Tet( glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0050f));
+Objeto Esf( glm::vec3(0.6f, 0.6f, 0.0f), glm::vec3(0.005f, 0.0f, 0.0f));
+Objeto Cub( glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec3(0.0f, 0.005f, 0.0f));
+
 
 int main(int argc, char **argv)
 {
@@ -69,22 +73,59 @@ void display(void)
 		m[2 * 4 + 1] = sin(angle) / 2.0f;
 	}
 	glMultMatrixf(m);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glTranslatef(posX, posY, posZ);
-	glutSolidTeapot(0.1f);
-	glTranslatef(-posX, -posY, -posZ);
+	transTetera();
+	transEsfera();
+	transCubo();
 	if (ejesVisible) referenciaEjes();
 	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
+void transTetera() {
+
+	glLoadIdentity();
+	glPushMatrix();
+	
+	glTranslatef(Tet.pos.x, Tet.pos.y, Tet.pos.z);
+	glutSolidTeapot(0.1f);
+	glTranslatef(-Tet.pos.x, -Tet.pos.y, -Tet.pos.z);
+
+	glPopMatrix();
+}
+
+void transEsfera() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Esf.pos.x, Esf.pos.y, Esf.pos.z);
+	glutSolidSphere(0.1f, 100, 100);
+	glTranslatef(-Esf.pos.x, -Esf.pos.y, -Esf.pos.z);
+
+	glPopMatrix();
+}
+
+void transCubo() {
+	
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Cub.pos.x, Cub.pos.y, Cub.pos.z);
+	glutSolidCube(0.1);
+	glTranslatef(-Cub.pos.x, -Cub.pos.y, -Cub.pos.z);
+
+	glPopMatrix();
+	
+}
+
+
+
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
 	mirar(cam);
 }
-
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -292,20 +333,59 @@ void special(int key, int x, int y)
 }
 
 void idle(void) {
-	if (posZ > 0.7f || posZ < -0.7f)
+
+	//tetera
+	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
 	{
-		incZ = -incZ;
+		Tet.inc.z = -Tet.inc.z;
 	}
-	if (posX > 0.7f || posX < -0.7f) {
-		incX = -incX;
+	if (Tet.pos.x > 0.7f || Tet.pos.x < -0.7f) {
+		Tet.inc.x = -Tet.inc.x;
 	}
-	if (posY > 0.7f || posY < -0.7f) {
-		incY = -incY;
+	if (Tet.pos.y > 0.7f || Tet.pos.y < -0.7f) {
+		Tet.inc.y = -Tet.inc.y;
 	}
-	posX += incX;
-	posY += incY;
-	posZ += incZ;
+	Tet.pos.x += Tet.inc.x;
+	Tet.pos.y += Tet.inc.y;
+	Tet.pos.z += Tet.inc.z;
+
+	//esfera
+	if (Esf.pos.z > 0.7f || Esf.pos.z < -0.7f)
+	{
+		Esf.inc.z = -Esf.inc.z;
+	}
+	if (Esf.pos.x > 0.7f || Esf.pos.x < -0.7f) {
+		Esf.inc.x = -Esf.inc.x;
+	}
+	if (Esf.pos.y > 0.7f || Esf.pos.y < -0.7f) {
+		Esf.inc.y = -Esf.inc.y;
+	}
+	Esf.pos.x += Esf.inc.x;
+	Esf.pos.y += Esf.inc.y;
+	Esf.pos.z += Esf.inc.z;
+
+	//cubo
+
+	if (Cub.pos.z > 0.7f || Cub.pos.z < -0.7f)
+	{
+		Cub.inc.z = -Cub.inc.z;
+	}
+	if (Cub.pos.x > 0.7f || Cub.pos.x < -0.7f) {
+		Cub.inc.x = -Cub.inc.x;
+	}
+	if (Cub.pos.y > 0.7f || Cub.pos.y < -0.7f) {
+		Cub.inc.y = -Cub.inc.y;
+	}
+	Cub.pos.x += Cub.inc.x;
+	Cub.pos.y += Cub.inc.y;
+	Cub.pos.z += Cub.inc.z;
+
 	glutPostRedisplay();
+}
+
+void moverObjeto(Objeto ob) {
+
+	
 }
 
 void mirar(Camara cam)
