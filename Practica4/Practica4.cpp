@@ -73,16 +73,20 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f,1.0f,1.0f);
-	transTetera();
-	transEsfera();
-	transCubo();
+	trazadoElem(cam.posiciones);
+	trazadoElem(Tet.posiciones);
+	trazadoElem(Esf.posiciones);
+	trazadoElem(Cub.posiciones);
+	dibujarTetera();
+	dibujarEsfera();
+	dibujarCubo();
 	if (ejesVisible) referenciaEjes();
 	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
-void transTetera() {
+void dibujarTetera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -94,7 +98,7 @@ void transTetera() {
 	glPopMatrix();
 }
 
-void transEsfera() {
+void dibujarEsfera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -106,7 +110,7 @@ void transEsfera() {
 	glPopMatrix();
 }
 
-void transCubo() {
+void dibujarCubo() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -347,6 +351,28 @@ void idle(void) {
 	deltaTime = (currentFrame - lastFrame)/1000;
 	lastFrame = currentFrame;
 
+	// Guardar posicion de la camara
+	if (cam.posiciones.size() == 50)
+	{
+		cam.posiciones.pop_front();
+	}
+	cam.posiciones.push_back(cam.pos);
+	// Guardar posiciones de objetos
+	if (Tet.posiciones.size() == 50)
+	{
+		Tet.posiciones.pop_front();
+	}
+	Tet.posiciones.push_back(Tet.pos);
+	if (Esf.posiciones.size() == 50) {
+		Esf.posiciones.pop_front();
+	}
+	Esf.posiciones.push_back(Esf.pos);
+	if (Cub.posiciones.size() == 50) {
+		Cub.posiciones.pop_front();
+	}
+	Cub.posiciones.push_back(Cub.pos);
+
+
 	//tetera
 	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
 	{
@@ -456,4 +482,16 @@ void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
 	mirar(cam);
+}
+
+void trazadoElem(std::deque <glm::vec3> pos) {
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
+	}
+	glEnd();
+	glPopMatrix();
 }
