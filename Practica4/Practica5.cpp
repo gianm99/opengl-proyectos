@@ -1,19 +1,23 @@
 ﻿//Practica4.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
-#include "Practica4.h"
+#include "Practica5.h"
 
-bool fullscreen;  // Indica si está en pantalla completa
-bool ejesVisible = true;  // Indica si se dibujan los ejes
-bool planosVisible = true;  // Indica si se dibujan los planos
-bool profundidad = true;  // Indica si la escena tiene profundida
+// Indica si está en fullscreen
+bool fullscreen;
+// Indica si los ejes de referencia se tienen que dibujar
+bool ejesVisible = true;
+// Indica si los planos de referencia se tienen que dibujar
+bool planosVisible = true;
+bool profundidad = true;
+// Indica el tipo de sombreado que se pintará
+bool sombreado = true;
 float deltaTime = 0.0f;	 // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f;  // Tiempo del frame anterior
-Camara cam(  // Cámara de la escena
-	glm::vec3(0.0f, 0.0f, 1.0f),
+// Representa la cámara
+Camara cam(glm::vec3(0.0f, 0.0f, 1.0f),
 	glm::vec3(0.0f, 0.0f, -1.0f),
-	glm::vec3(0.0f, 1.0f, 0.0f)
-);
+	glm::vec3(0.0f, 1.0f, 0.0f));
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -33,6 +37,13 @@ GLfloat incZ = 0.005f;
 int proyeccion = 0;
 GLfloat angle = 0.0f;
 double alpha = -45.0;
+// Variable para el modelo de luz
+GLfloat globalAmbient[] = { 0.4f,0.4f,0.4f,1.0f };
+// Variables para los materiales
+GLfloat mspecular[] = { 1.0f,1.0f,1.0f,1.0f };
+GLfloat memission[] = { 0.0f,0.0f,0.0f,1.0f };
+// Luces
+Luz luces[4];
 
 int main(int argc, char **argv)
 {
@@ -79,23 +90,12 @@ void display(void)
 	glFlush();
 }
 
-void mirar(Camara cam)
+void reshape(GLsizei width, GLsizei height)
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	if (profundidad)
-	{
-		gluPerspective(90, 1, 0.1, 20);
-	}
-	else
-	{
-		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
-	}
-	gluLookAt(cam.pos.x, cam.pos.y, cam.pos.z,
-		cam.pos.x + cam.front.x, cam.pos.y + cam.front.y, cam.pos.z + cam.front.z,
-		cam.up.x, cam.up.y, cam.up.z);
-	glMatrixMode(GL_MODELVIEW);
+	glViewport(0, 0, width, height);  // El viewport cubre la ventana
+	mirar(cam);
 }
+
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -104,13 +104,13 @@ void keyboard(unsigned char key, int x, int y)
 	glm::mat4 rotate_yaw_matrix = glm::mat4(1.f);
 	glm::mat4 m = glm::mat4(1.f);  // Matriz para calculos
 	glm::vec3 camFocusVector;
+	GLfloat position[4];
 	switch (key)
 	{
-		// Cerrar la ventana
-	case ESC:
+		// Escape
+	case 27:
 		exit(0);
 		break;
-		// Pantalla completa
 	case 'f':
 		fullscreen = !fullscreen;
 		if (!fullscreen)
@@ -123,15 +123,16 @@ void keyboard(unsigned char key, int x, int y)
 			glutFullScreen();
 		}
 		break;
-		// Ejes y planos de referencia
 	case 'e':
 		ejesVisible = !ejesVisible;
 		planosVisible = !planosVisible;
 		break;
-		// Profundidad
 	case 'p':
 		profundidad = !profundidad;
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 		mirar(cam);
+		glMatrixMode(GL_MODELVIEW);
 		break;
 		// Dolly in
 	case 'w':
@@ -152,6 +153,15 @@ void keyboard(unsigned char key, int x, int y)
 	case 'd':
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
 		mirar(cam);
+		break;
+	case SPACEBAR:
+		if (sombreado) {
+			glShadeModel(GL_FLAT);
+		}
+		else {
+			glShadeModel(GL_SMOOTH);
+		}
+		sombreado = !sombreado;
 		break;
 		// Plano cenital
 	case '1':
@@ -202,6 +212,78 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pitch = 89.999f;
 		cam.girar();
 		mirar(cam);
+		break;
+		// Luz 0
+	case '6':
+		if (luces[0].on)
+		{
+			glDisable(GL_LIGHT0);
+		}
+		else
+		{
+			glEnable(GL_LIGHT0);
+		}
+		luces[0].on = !luces[0].on;
+		break;
+		// Luz 1
+	case '7':
+		if (luces[1].on)
+		{
+			glDisable(GL_LIGHT1);
+		}
+		else
+		{
+			glEnable(GL_LIGHT1);
+		}
+		luces[1].on = !luces[1].on;
+		break;
+		// Luz 2
+	case '8':
+		if (luces[2].on)
+		{
+			glDisable(GL_LIGHT2);
+		}
+		else
+		{
+			glEnable(GL_LIGHT2);
+		}
+		luces[2].on = !luces[2].on;
+		break;
+		// Luz 3
+	case '9':
+		if (luces[3].on)
+		{
+			glDisable(GL_LIGHT3);
+		}
+		else
+		{
+			glEnable(GL_LIGHT3);
+		}
+		luces[3].on = !luces[3].on;
+		break;
+		// Mover luz 0 a posición 1
+	case 'z':
+		position[0] = -1.0f;
+		position[1] = 0.0f;
+		position[2] = 1.0f;
+		position[3] = 1.0f;
+		luces[0].mover((GLenum) GL_LIGHT0,position);
+		break;
+		// Mover luz 0 a posición 2
+	case 'x':
+		position[0] = -1.0f;
+		position[1] = 1.0f;
+		position[2] = 1.0f;
+		position[3] = 1.0f;
+		luces[0].mover((GLenum)GL_LIGHT0, position);
+		break;
+		// Mover luz 0 a posición 3
+	case 'c':
+		position[0] = -1.0f;
+		position[1] = 1.0f;
+		position[2] = 0.0f;
+		position[3] = 1.0f;
+		luces[0].mover((GLenum)GL_LIGHT0, position);
 		break;
 	}
 	glutPostRedisplay();
@@ -304,7 +386,7 @@ void special(int key, int x, int y)
 
 void idle(void) {
 	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
-	deltaTime = (currentFrame - lastFrame)/1000;
+	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
 
 	if (posZ > 0.7f || posZ < -0.7f)
@@ -321,6 +403,24 @@ void idle(void) {
 	posY += incY;
 	posZ += incZ;
 	glutPostRedisplay();
+}
+
+void mirar(Camara cam)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (profundidad)
+	{
+		gluPerspective(90, 1, 0.1, 20);
+	}
+	else
+	{
+		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+	}
+	gluLookAt(cam.pos.x, cam.pos.y, cam.pos.z,
+		cam.pos.x + cam.front.x, cam.pos.y + cam.front.y, cam.pos.z + cam.front.z,
+		cam.up.x, cam.up.y, cam.up.z);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void referenciaEjes()
@@ -370,17 +470,38 @@ void referenciaPlanos()
 	glPopMatrix();
 }
 
-void init() {
+void init()
+{
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND); //Enable blending.
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set blending function.
+	glEnable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
+	glLightModelfv(GL_AMBIENT, globalAmbient);
+	configurarLuces();
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
 }
 
-void reshape(GLsizei width, GLsizei height)
+void configurarLuces()
 {
-	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	mirar(cam);
+	GLfloat position0[] = { 0.0f,0.0f,1.0f,1.0f };
+	GLfloat position1[] = { 1.0f,1.0f,0.0f,1.0f };
+	GLfloat position2[] = { 1.0f,1.0f,-1.0f,1.0f };
+	GLfloat position3[] = { 1.0f,0.0f,0.0f,1.0f };
+	GLfloat spot_direction0[] = { 0.0f,0.0f,-1.0f };
+	GLfloat spot_direction1[] = { -1.0f,-1.0f,0.0f };
+	GLfloat spot_direction2[] = { -1.0f,-1.0f,1.0f };
+	GLfloat spot_direction3[] = { -1.0f,0.0f,0.0f };
+	GLfloat ambient[] = { 0.0f,0.0f,0.0f,1.0f };
+	GLfloat diffuse[] = { 1.0f,1.0f,1.0f,1.0f };
+	GLfloat specular[] = { 1.0f,1.0f,1.0f,1.0f };
+	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, ambient, diffuse, specular);
+	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, ambient, diffuse, specular);
+	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, ambient, diffuse, specular);
+	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, ambient, diffuse, specular);
 }

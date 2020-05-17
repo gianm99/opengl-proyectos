@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{40A8433A-6316-4B03-AC34-2FA629EA73AB}</ProjectGuid>
+    <ProjectGuid>{4130FB97-F0E1-4580-B3C7-536C98C9DA34}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Practica4</RootNamespace>
+    <RootNamespace>Practica5</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,10 +148,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Practica4.cpp" />
+    <ClCompile Include="..\Practica4\Practica5.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Practica4.h" />
+    <ClInclude Include="..\Practica4\Practica5.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
