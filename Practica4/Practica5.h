@@ -1,7 +1,8 @@
-//Practica4.h: Escena 3D simple
+//Practica5.h: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
+#include <queue>
 # define _USE_MATH_DEFINES
 # define SPACEBAR 32
 #include <gl/glut.h>

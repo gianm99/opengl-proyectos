@@ -487,6 +487,22 @@ void init()
 	glShadeModel(GL_SMOOTH);
 }
 
+void trazadoElem(std::queue <glm::vec3> cola) {
+	glm::vec3 aux = cola.front();
+	cola.pop();
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE);
+	while (!cola.empty()) {
+		glVertex3f(aux.x, aux.y, aux.z);
+		glVertex3f(cola.front().x, cola.front().y, cola.front().z);
+		aux = cola.front();
+		cola.pop();
+	}
+	glEnd();
+	glPopMatrix();
+}
+
 void configurarLuces()
 {
 	GLfloat position0[] = { 0.0f,0.0f,1.0f,1.0f };
