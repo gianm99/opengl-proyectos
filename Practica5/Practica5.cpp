@@ -95,7 +95,6 @@ void display(void)
 }
 
 void transTetera() {
-
 	glLoadIdentity();
 	glPushMatrix();
 
