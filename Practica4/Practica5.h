@@ -64,16 +64,26 @@ public:
 		this->ambient = ambient;
 		this->diffuse = diffuse;
 		this->specular = specular;
-		this->on = true;
-		glEnable(n);
+		this->on = false;
 		glLightfv(n, GL_POSITION, pos);
 		glLightfv(n, GL_SPOT_DIRECTION, spot_direction);
 		glLightfv(n, GL_AMBIENT, ambient);
 		glLightfv(n, GL_DIFFUSE, diffuse);
 		glLightfv(n, GL_SPECULAR, specular);
 	}
+	
 	Luz()
 	{
+	}
+
+	void mover(GLenum n, GLfloat pos[4])
+	{
+		GLfloat position[] = { 0.0f,0.0f,0.0f,1.0f };
+		GLfloat spot_direction[]={-pos[0],-pos[1],-pos[2]};
+		glPushMatrix();
+		glLightfv(n, GL_POSITION,pos);
+		glLightfv(n, GL_SPOT_DIRECTION, spot_direction);
+		glPopMatrix();
 	}
 };
 

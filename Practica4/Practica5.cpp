@@ -37,6 +37,8 @@ GLfloat incZ = 0.005f;
 int proyeccion = 0;
 GLfloat angle = 0.0f;
 double alpha = -45.0;
+// Variable para el modelo de luz
+GLfloat globalAmbient[] = { 0.4f,0.4f,0.4f,1.0f };
 // Variables para los materiales
 GLfloat mspecular[] = { 1.0f,1.0f,1.0f,1.0f };
 GLfloat memission[] = { 0.0f,0.0f,0.0f,1.0f };
@@ -102,6 +104,7 @@ void keyboard(unsigned char key, int x, int y)
 	glm::mat4 rotate_yaw_matrix = glm::mat4(1.f);
 	glm::mat4 m = glm::mat4(1.f);  // Matriz para calculos
 	glm::vec3 camFocusVector;
+	GLfloat position[4];
 	switch (key)
 	{
 		// Escape
@@ -210,7 +213,20 @@ void keyboard(unsigned char key, int x, int y)
 		cam.girar();
 		mirar(cam);
 		break;
+		// Luz 0
 	case '6':
+		if (luces[0].on)
+		{
+			glDisable(GL_LIGHT0);
+		}
+		else
+		{
+			glEnable(GL_LIGHT0);
+		}
+		luces[0].on = !luces[0].on;
+		break;
+		// Luz 1
+	case '7':
 		if (luces[1].on)
 		{
 			glDisable(GL_LIGHT1);
@@ -221,7 +237,8 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		luces[1].on = !luces[1].on;
 		break;
-	case '7':
+		// Luz 2
+	case '8':
 		if (luces[2].on)
 		{
 			glDisable(GL_LIGHT2);
@@ -232,7 +249,8 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		luces[2].on = !luces[2].on;
 		break;
-	case '8':
+		// Luz 3
+	case '9':
 		if (luces[3].on)
 		{
 			glDisable(GL_LIGHT3);
@@ -243,16 +261,29 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		luces[3].on = !luces[3].on;
 		break;
-	case '0':
-		if (luces[0].on)
-		{
-			glDisable(GL_LIGHT0);
-		}
-		else
-		{
-			glEnable(GL_LIGHT0);
-		}
-		luces[0].on = !luces[0].on;
+		// Mover luz 0 a posición 1
+	case 'z':
+		position[0] = -1.0f;
+		position[1] = 0.0f;
+		position[2] = 1.0f;
+		position[3] = 1.0f;
+		luces[0].mover((GLenum) GL_LIGHT0,position);
+		break;
+		// Mover luz 0 a posición 2
+	case 'x':
+		position[0] = -1.0f;
+		position[1] = 1.0f;
+		position[2] = 1.0f;
+		position[3] = 1.0f;
+		luces[0].mover((GLenum)GL_LIGHT0, position);
+		break;
+		// Mover luz 0 a posición 3
+	case 'c':
+		position[0] = -1.0f;
+		position[1] = 1.0f;
+		position[2] = 0.0f;
+		position[3] = 1.0f;
+		luces[0].mover((GLenum)GL_LIGHT0, position);
 		break;
 	}
 	glutPostRedisplay();
@@ -448,6 +479,7 @@ void init()
 	glEnable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
+	glLightModelfv(GL_AMBIENT, globalAmbient);
 	configurarLuces();
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -457,11 +489,11 @@ void init()
 
 void configurarLuces()
 {
-	GLfloat position0[] = { 1.0f,1.0f,0.0f,0.0f };
-	GLfloat position1[] = { 1.0f,1.0f,0.0f,0.0f };
-	GLfloat position2[] = { 1.0f,1.0f,-1.0f,0.0f };
-	GLfloat position3[] = { 1.0f,0.0f,0.0f,0.0f };
-	GLfloat spot_direction0[] = { -1.0f,-1.0f,0.0f };
+	GLfloat position0[] = { 0.0f,0.0f,1.0f,1.0f };
+	GLfloat position1[] = { 1.0f,1.0f,0.0f,1.0f };
+	GLfloat position2[] = { 1.0f,1.0f,-1.0f,1.0f };
+	GLfloat position3[] = { 1.0f,0.0f,0.0f,1.0f };
+	GLfloat spot_direction0[] = { 0.0f,0.0f,-1.0f };
 	GLfloat spot_direction1[] = { -1.0f,-1.0f,0.0f };
 	GLfloat spot_direction2[] = { -1.0f,-1.0f,1.0f };
 	GLfloat spot_direction3[] = { -1.0f,0.0f,0.0f };
