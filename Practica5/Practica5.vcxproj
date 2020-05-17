@@ -18,6 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Practica5.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Practica5.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4130FB97-F0E1-4580-B3C7-536C98C9DA34}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -147,12 +153,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Practica4\Practica5.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Practica4\Practica5.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,7 +1,8 @@
-//Practica4.h: Escena 3D simple
+//Practica5.h: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
+#include <queue>
 # define _USE_MATH_DEFINES
 # define SPACEBAR 32
 #include <gl/glut.h>
@@ -87,6 +88,39 @@ public:
 	}
 };
 
+class Objeto
+{
+public:
+	glm::vec3 pos;
+	glm::vec3 inc;
+	float velocidad = 0.1f;
+
+	// Constructor
+
+	Objeto(glm::vec3 pos, glm::vec3 inc)
+	{
+		this->pos = pos;
+		this->inc = inc;
+	}
+	void setPos(glm::vec3 posicion) {
+		this->pos = pos;
+	}
+
+	void setInc(glm::vec3 incremento) {
+		this->inc = incremento;
+	}
+
+	glm::vec3 getPos() {
+		return pos;
+	}
+
+	glm::vec3 setInc() {
+
+		return inc;
+	}
+
+};
+
 // Dibuja la escena
 void display(void);
 // Controla la relacion de aspecto de la escena
@@ -108,6 +142,10 @@ void init();
 void mirar(Camara cam);
 // Inicializa los valores de las luces
 void configurarLuces();
+// Funciones de movimiento y dibujado de los objetos
+void transTetera();
+void transEsfera();
+void transCubo();
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;

@@ -44,6 +44,10 @@ GLfloat mspecular[] = { 1.0f,1.0f,1.0f,1.0f };
 GLfloat memission[] = { 0.0f,0.0f,0.0f,1.0f };
 // Luces
 Luz luces[4];
+// Objetos
+Objeto Tet(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0050f));
+Objeto Esf(glm::vec3(0.6f, 0.6f, 0.0f), glm::vec3(0.005f, 0.0f, 0.0f));
+Objeto Cub(glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec3(0.0f, 0.005f, 0.0f));
 
 int main(int argc, char **argv)
 {
@@ -80,14 +84,51 @@ void display(void)
 		m[2 * 4 + 1] = sin(angle) / 2.0f;
 	}
 	glMultMatrixf(m);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glTranslatef(posX, posY, posZ);
-	glutSolidTeapot(0.1f);
-	glTranslatef(-posX, -posY, -posZ);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	transTetera();
+	transEsfera();
+	transCubo();
 	if (ejesVisible) referenciaEjes();
 	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
+}
+
+void transTetera() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Tet.pos.x, Tet.pos.y, Tet.pos.z);
+	glutSolidTeapot(0.1f);
+	glTranslatef(-Tet.pos.x, -Tet.pos.y, -Tet.pos.z);
+
+	glPopMatrix();
+}
+
+void transEsfera() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Esf.pos.x, Esf.pos.y, Esf.pos.z);
+	glutSolidSphere(0.1f, 100, 100);
+	glTranslatef(-Esf.pos.x, -Esf.pos.y, -Esf.pos.z);
+
+	glPopMatrix();
+}
+
+void transCubo() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Cub.pos.x, Cub.pos.y, Cub.pos.z);
+	glutSolidCube(0.1);
+	glTranslatef(-Cub.pos.x, -Cub.pos.y, -Cub.pos.z);
+
+	glPopMatrix();
+
 }
 
 void reshape(GLsizei width, GLsizei height)
@@ -389,19 +430,52 @@ void idle(void) {
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
 
-	if (posZ > 0.7f || posZ < -0.7f)
+	//tetera
+	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
 	{
-		incZ = -incZ;
+		Tet.inc.z = -Tet.inc.z;
 	}
-	if (posX > 0.7f || posX < -0.7f) {
-		incX = -incX;
+	if (Tet.pos.x > 0.7f || Tet.pos.x < -0.7f) {
+		Tet.inc.x = -Tet.inc.x;
 	}
-	if (posY > 0.7f || posY < -0.7f) {
-		incY = -incY;
+	if (Tet.pos.y > 0.7f || Tet.pos.y < -0.7f) {
+		Tet.inc.y = -Tet.inc.y;
 	}
-	posX += incX;
-	posY += incY;
-	posZ += incZ;
+	Tet.pos.x += Tet.inc.x;
+	Tet.pos.y += Tet.inc.y;
+	Tet.pos.z += Tet.inc.z;
+
+	//esfera
+	if (Esf.pos.z > 0.7f || Esf.pos.z < -0.7f)
+	{
+		Esf.inc.z = -Esf.inc.z;
+	}
+	if (Esf.pos.x > 0.7f || Esf.pos.x < -0.7f) {
+		Esf.inc.x = -Esf.inc.x;
+	}
+	if (Esf.pos.y > 0.7f || Esf.pos.y < -0.7f) {
+		Esf.inc.y = -Esf.inc.y;
+	}
+	Esf.pos.x += Esf.inc.x;
+	Esf.pos.y += Esf.inc.y;
+	Esf.pos.z += Esf.inc.z;
+
+	//cubo
+
+	if (Cub.pos.z > 0.7f || Cub.pos.z < -0.7f)
+	{
+		Cub.inc.z = -Cub.inc.z;
+	}
+	if (Cub.pos.x > 0.7f || Cub.pos.x < -0.7f) {
+		Cub.inc.x = -Cub.inc.x;
+	}
+	if (Cub.pos.y > 0.7f || Cub.pos.y < -0.7f) {
+		Cub.inc.y = -Cub.inc.y;
+	}
+	Cub.pos.x += Cub.inc.x;
+	Cub.pos.y += Cub.inc.y;
+	Cub.pos.z += Cub.inc.z;
+
 	glutPostRedisplay();
 }
 
@@ -485,6 +559,22 @@ void init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
+}
+
+void trazadoElem(std::queue <glm::vec3> cola) {
+	glm::vec3 aux = cola.front();
+	cola.pop();
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE);
+	while (!cola.empty()) {
+		glVertex3f(aux.x, aux.y, aux.z);
+		glVertex3f(cola.front().x, cola.front().y, cola.front().z);
+		aux = cola.front();
+		cola.pop();
+	}
+	glEnd();
+	glPopMatrix();
 }
 
 void configurarLuces()
