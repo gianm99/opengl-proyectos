@@ -1,26 +1,28 @@
 //Practica6.h: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
-
-#include <stdlib.h>
+#include <windows.h>
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include <deque>
-# define _USE_MATH_DEFINES
-# define SPACEBAR 32
-#include <gl/glut.h>
-#include <gl/gl.h>
-#include <gl/glu.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
+#include "Model_OBJ.h"
+#define _USE_MATH_DEFINES
 #include <cmath>
-#include <cstdlib>
-#include <vector>
 
+#define KEY_ESCAPE 27
+#define KEY_SPACE 32
+
+using namespace std;
 // Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
 {
@@ -79,6 +81,7 @@ public:
 		glLightfv(n, GL_SPECULAR, specular);
 	}
 
+	// Constructor
 	Luz()
 	{
 	}

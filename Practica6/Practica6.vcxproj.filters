@@ -18,12 +18,15 @@
     <ClCompile Include="Practica6.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Model_OBJ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Practica6.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Model_OBJ.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

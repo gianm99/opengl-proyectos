@@ -49,22 +49,10 @@ Objeto Tet(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0050f));
 Objeto Esf(glm::vec3(0.6f, 0.6f, 0.0f), glm::vec3(0.005f, 0.0f, 0.0f));
 Objeto Cub(glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec3(0.0f, 0.005f, 0.0f));
 
-int main(int argc, char **argv)
-{
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowPosition(50, 50);
-	glutInitWindowSize(windowWidth, windowHeight);
-	glutCreateWindow("Escena 3D simple");
-	init();
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
-	glutSpecialFunc(special);
-	glutIdleFunc(idle);
-	glutMainLoop();
-	return 0;
-}
+/*
+Código del programa
+*/
+Model_OBJ obj;
 
 void display(void)
 {
@@ -85,13 +73,14 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	trazadoElem(cam.posiciones);
-	trazadoElem(Tet.posiciones);
-	trazadoElem(Esf.posiciones);
-	trazadoElem(Cub.posiciones);
-	dibujarTetera();
-	dibujarEsfera();
-	dibujarCubo();
+	obj.Draw();
+	//trazadoElem(cam.posiciones);
+	//trazadoElem(Tet.posiciones);
+	//trazadoElem(Esf.posiciones);
+	//trazadoElem(Cub.posiciones);
+	//dibujarTetera();
+	//dibujarEsfera();
+	//dibujarCubo();
 	if (ejesVisible) referenciaEjes();
 	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
@@ -131,7 +120,6 @@ void dibujarCubo() {
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	mirar(cam);
 }
 
 
@@ -145,8 +133,7 @@ void keyboard(unsigned char key, int x, int y)
 	GLfloat position[4];
 	switch (key)
 	{
-		// Escape
-	case 27:
+	case KEY_ESCAPE:
 		exit(0);
 		break;
 	case 'f':
@@ -192,7 +179,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
 		mirar(cam);
 		break;
-	case SPACEBAR:
+	case KEY_SPACE:
 		if (sombreado) {
 			glShadeModel(GL_FLAT);
 		}
@@ -503,7 +490,7 @@ void mirar(Camara cam)
 	glLoadIdentity();
 	if (profundidad)
 	{
-		gluPerspective(90, 1, 0.1, 20);
+		gluPerspective(90, 1, 0.1, 100);
 	}
 	else
 	{
@@ -577,13 +564,15 @@ void init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
+	glEnable(GL_LIGHT0);
+	mirar(cam);
 }
 
 void trazadoElem(std::deque <glm::vec3> pos) {
 	glPushMatrix();
 	glLoadIdentity();
 	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i < pos.size(); i++)
+	for (unsigned int i = 0; i < pos.size(); i++)
 	{
 		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
 	}
@@ -608,4 +597,22 @@ void configurarLuces()
 	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, ambient, diffuse, specular);
 	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, ambient, diffuse, specular);
 	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, ambient, diffuse, specular);
+}
+
+int main(int argc, char **argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutInitWindowPosition(50, 50);
+	glutInitWindowSize(windowWidth, windowHeight);
+	glutCreateWindow("Escena 3D simple");
+	init();
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
+	glutIdleFunc(idle);
+	obj.Load("Modelos/arabian.obj");
+	glutMainLoop();
+	return 0;
 }
