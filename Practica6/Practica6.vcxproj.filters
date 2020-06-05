@@ -21,12 +21,30 @@
     <ClCompile Include="Model_OBJ.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Luz.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Objeto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Practica6.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model_OBJ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Luz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camara.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objeto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

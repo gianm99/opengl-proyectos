@@ -27,7 +27,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
-	std::deque<glm::vec3> posiciones;
+	std::deque<glm::vec3> trail;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -103,7 +103,7 @@ void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
 // Cambia a la vista definida por el parametro cam
-void mirar(Camara cam);
+void look(Camara cam);
 // Funciones de movimiento y dibujado de los objetos
 void dibujarTetera();
 void dibujarEsfera();
