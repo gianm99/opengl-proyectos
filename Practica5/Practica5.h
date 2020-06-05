@@ -25,7 +25,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
-	std::deque<glm::vec3> posiciones;
+	std::deque<glm::vec3> trayectoria;
 
 	float yaw = -90.0f;
 	float pitch = 0.0f;
@@ -54,20 +54,20 @@ class Luz
 {
 public:
 	GLfloat *pos;
-	GLfloat *spot_direction;
+	GLfloat *direction;
 	GLfloat *ambient;
 	GLfloat *diffuse;
 	GLfloat *specular;
-	bool on;
+	bool encendida;
 	Luz(GLenum n, GLfloat *pos, GLfloat *spot_direction,
 		GLfloat *ambient, GLfloat *diffuse, GLfloat *specular)
 	{
 		this->pos = pos;
-		this->spot_direction = spot_direction;
+		this->direction = spot_direction;
 		this->ambient = ambient;
 		this->diffuse = diffuse;
 		this->specular = specular;
-		this->on = false;
+		this->encendida = false;
 		glLightfv(n, GL_POSITION, pos);
 		glLightfv(n, GL_SPOT_DIRECTION, spot_direction);
 		glLightfv(n, GL_AMBIENT, ambient);
@@ -142,7 +142,7 @@ void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
 // Cambia a la vista definida por el parametro cam
-void mirar(Camara cam);
+void look(Camara cam);
 // Inicializa los valores de las luces
 void configurarLuces();
 // Funciones de movimiento y dibujado de los objetos

@@ -6,9 +6,9 @@
 // Indica si está en modo fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible=true;
+bool ejesRef=true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosVisible=true;
+bool planosRef=true;
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -44,8 +44,8 @@ void display(void)
 	dibujarTetera();
 	dibujarEsfera();
 	dibujarCubo();
-	if (ejesVisible) referenciaEjes();
-	if (planosVisible) referenciaPlanos();
+	if (ejesRef) referenciaEjes();
+	if (planosRef) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
@@ -126,10 +126,10 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		case 'e':
-			ejesVisible=!ejesVisible;
+			ejesRef=!ejesRef;
 			break;
 		case 'p':
-			planosVisible=!planosVisible;
+			planosRef=!planosRef;
 			break;
 	}
 }
