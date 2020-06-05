@@ -321,7 +321,7 @@ void init()
 {
 	GLfloat mspecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat memission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
+	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
