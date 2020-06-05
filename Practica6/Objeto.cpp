@@ -1,25 +1,68 @@
 #include "Objeto.h"
 
-Objeto::Objeto(glm::vec3 pos, glm::vec3 inc)
+Objeto::Objeto(Model_OBJ obj, glm::vec3 pos, bool trayectoriaVisible)
 {
+	this->obj = obj;
 	this->pos = pos;
-	this->inc = inc;
+	this->trayectoriaVisible = trayectoriaVisible;
 }
 
 Objeto::Objeto() {}
 
-void Objeto::setPos(glm::vec3 posicion) {
-	this->pos = pos;
+void Objeto::setTrayectoriaVisible(bool trayectoriaVisible)
+{
+	this->trayectoriaVisible = trayectoriaVisible;
 }
 
-void Objeto::setInc(glm::vec3 incremento) {
-	this->inc = incremento;
+void Objeto::setPos(glm::vec3 pos)
+{
+	this->pos = pos;
 }
 
 glm::vec3 Objeto::getPos() {
 	return pos;
 }
 
-glm::vec3 Objeto::setInc() {
-	return inc;
+void Objeto::dibujar()
+{
+	glPushMatrix();
+	glTranslatef(pos.x, pos.y, pos.z);
+	obj.Draw();
+	if (trayectoriaVisible)
+	{
+		dibujarTrayectoria();
+	}
+	glPopMatrix();
+}
+
+void Objeto::guardarTrayectoria()
+{
+	if (trayectoria.size() == 100)
+	{
+		trayectoria.pop_front();
+	}
+	trayectoria.push_back(pos);
+}
+
+void Objeto::dibujarTrayectoria()
+{
+	glBegin(GL_LINE_STRIP);
+	for (unsigned int i = 0; i < trayectoria.size(); i++)
+	{
+		glVertex3f(trayectoria[i].x, trayectoria[i].y, trayectoria[i].z);
+	}
+	glEnd();
+}
+
+void trazadoElem(std::deque<glm::vec3> pos)
+{
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE_STRIP);
+	for (unsigned int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
+	}
+	glEnd();
+	glPopMatrix();
 }

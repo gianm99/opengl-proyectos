@@ -8,22 +8,25 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <deque>
 
-enum Vista {};
-enum Plano {cenital, picado, normal, contrapicado, nadir};
+enum Vista {alzado, planta, p_izquierdo, p_derecho, isometrica, };
+enum Plano {cenital, picado, base, contrapicado, nadir};
 
 class Camara
 {
 	bool profundidad;
+	bool trayectoriaVisible;
 public:
 	glm::vec3 pos;
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
-	std::deque<glm::vec3> trail;
+	std::deque<glm::vec3> trayectoria;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
 	Camara(glm::vec3 eye, glm::vec3 front, glm::vec3 up);
+
+	void setTrayectoriaVisible(bool trayectoriaVisible);
 
 	// Actualiza el valor de front en base al pitch y el yaw
 	void girar();
@@ -39,4 +42,8 @@ public:
 	void orbital(Plano plano);
 
 	void vista(Vista vista);
+
+	void guardarTrayectoria();
+
+	void dibujarTrayectoria();
 };

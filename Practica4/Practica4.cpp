@@ -73,7 +73,7 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f,1.0f,1.0f);
-	trazadoElem(cam.trail);
+	trazadoElem(cam.trayectoria);
 	trazadoElem(Tet.posiciones);
 	trazadoElem(Esf.posiciones);
 	trazadoElem(Cub.posiciones);
@@ -352,11 +352,11 @@ void idle(void) {
 	lastFrame = currentFrame;
 
 	// Guardar posicion de la camara
-	if (cam.trail.size() == 50)
+	if (cam.trayectoria.size() == 50)
 	{
-		cam.trail.pop_front();
+		cam.trayectoria.pop_front();
 	}
-	cam.trail.push_back(cam.pos);
+	cam.trayectoria.push_back(cam.pos);
 	// Guardar posiciones de objetos
 	if (Tet.posiciones.size() == 50)
 	{

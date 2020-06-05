@@ -1,4 +1,4 @@
-//Practica6.h: Escena 3D simple
+//Practica6.h: Tiovivo
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 #include <windows.h>
 #include <stdio.h>
@@ -23,6 +23,7 @@ using namespace std;
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
 
+enum Proyeccion {normal, caballera, militar};
 
 // Dibuja la escena
 void display(void);
@@ -50,3 +51,5 @@ void dibujarCubo();
 void trazadoElem(std::deque <glm::vec3> pos);
 // Modifica la matriz para que la vista sea oblicua
 void proyeccionOblicua();
+// Inicializa los objetos
+void inicializarObjetos();

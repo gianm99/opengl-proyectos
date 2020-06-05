@@ -25,7 +25,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
-	std::deque<glm::vec3> trail;
+	std::deque<glm::vec3> trayectoria;
 
 	float yaw = -90.0f;
 	float pitch = 0.0f;

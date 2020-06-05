@@ -6,7 +6,13 @@ Camara::Camara(glm::vec3 eye, glm::vec3 front, glm::vec3 up)
 	this->pos = eye;
 	this->front = front;
 	this->up = up;
-	profundidad=true;
+	profundidad = true;
+	trayectoriaVisible=true;
+}
+
+void Camara::setTrayectoriaVisible(bool trayectoriaVisible)
+{
+	this->trayectoriaVisible = trayectoriaVisible;
 }
 
 void Camara::girar()
@@ -48,17 +54,55 @@ void Camara::mirar()
 
 void Camara::cambiarProfundidad()
 {
-	profundidad=!profundidad;
+	profundidad = !profundidad;
 }
 
 void Camara::ortogonal()
 {
-	profundidad=false;
+	profundidad = false;
+
 }
 
 void Camara::perspectiva()
 {
-	profundidad=true;
+	profundidad = true;
+}
+
+void Camara::vista(Vista vista)
+{
+	switch (vista)
+	{
+	case alzado:
+		pos = glm::vec3(0.0f, 0.0f, 1.0f);
+		yaw = -90.0f;
+		pitch = 0.0f;
+		mirar();
+		break;
+	case planta:
+		pos = glm::vec3(0.0f, 1.0f, 0.0f);
+		yaw = -90.0f;
+		pitch = -90.0f;
+		mirar();
+		break;
+	case p_izquierdo:
+		pos = glm::vec3(-1.0f, 0.0f, 0.0f);
+		yaw = 0.0f;
+		pitch = 0.0f;
+		mirar();
+		break;
+	case p_derecho:
+		pos = glm::vec3(1.0f, 0.0f, 0.0f);
+		yaw = 180.0f;
+		pitch = 0.0f;
+		mirar();
+		break;
+	case isometrica:
+		pos = glm::vec3(1.0f, 1.0f, 1.0f);
+		yaw = -135.0f;
+		pitch = -glm::degrees(asin(1 / sqrt(3)));
+		mirar();
+		break;
+	}
 }
 
 void Camara::orbital(Plano plano)
@@ -87,7 +131,7 @@ void Camara::orbital(Plano plano)
 		mirar();
 		break;
 		// Plano normal
-	case normal:
+	case base:
 		pitch_rotation = -pitch;
 		right = glm::normalize(glm::cross(front, up));
 		m = glm::rotate(m, glm::radians(pitch_rotation), right);
@@ -113,5 +157,30 @@ void Camara::orbital(Plano plano)
 		pitch = 89.999f;
 		mirar();
 		break;
+	}
+}
+
+void Camara::guardarTrayectoria()
+{
+	if (trayectoria.size() == 100)
+	{
+		trayectoria.pop_front();
+	}
+	trayectoria.push_back(pos);
+}
+
+void Camara::dibujarTrayectoria()
+{
+	if (trayectoriaVisible)
+	{
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, pos.z);
+		glBegin(GL_LINE_STRIP);
+		for (unsigned int i = 0; i < trayectoria.size(); i++)
+		{
+			glVertex3f(trayectoria[i].x, trayectoria[i].y, trayectoria[i].z);
+		}
+		glEnd();
+		glPopMatrix();
 	}
 }

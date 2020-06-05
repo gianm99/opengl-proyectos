@@ -7,26 +7,28 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <deque>
+#include "Model_OBJ.h"
 
 class Objeto
 {
+	bool trayectoriaVisible;
 public:
+	Model_OBJ obj;
 	glm::vec3 pos;
-	glm::vec3 inc;
-	float velocidad = 0.1f;
-	std::deque<glm::vec3> posiciones;
-
-	Objeto(glm::vec3 pos, glm::vec3 inc);
+	std::deque<glm::vec3> trayectoria;
+	Objeto(Model_OBJ obj, glm::vec3 pos, bool trayectoriaVisible);
 
 	Objeto();
 
-	void setPos(glm::vec3 posicion);
+	void setTrayectoriaVisible(bool trayectoriaVisible);
 
-	void setInc(glm::vec3 incremento);
+	void setPos(glm::vec3 pos);
 
 	glm::vec3 getPos();
 
-	glm::vec3 setInc();
+	void dibujar();
 
-	void draw();
+	void guardarTrayectoria();
+
+	void dibujarTrayectoria();
 };
