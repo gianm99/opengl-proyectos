@@ -20,6 +20,9 @@ using namespace std;
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
+// Indican propiedades de los objetos
+const float horseMax = 3.10403f; // altura máxima
+const float horseMin = 2.23712f; // altura mínima
 // Tipos de proyecciones
 enum Proyeccion {normal, caballera, militar};
 // Dibuja la escena

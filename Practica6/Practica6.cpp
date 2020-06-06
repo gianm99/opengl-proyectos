@@ -69,14 +69,14 @@ void idle(void)
 	for (int i=0; i<4;i++)
 	{
 		caballos[i].pos.y+=caballos[i].vel.y*deltaTime;
-		if (caballos[i].pos.y>3.10403f)
+		if (caballos[i].pos.y>horseMax)
 		{
-			caballos[i].pos.y= 3.10403f;
+			caballos[i].pos.y= horseMax;
 			caballos[i].cambiarDireccion();
 		}
-		else if (caballos[i].pos.y < 2.23712f)
+		else if (caballos[i].pos.y < horseMin)
 		{
-			caballos[i].pos.y= 2.23712f;
+			caballos[i].pos.y= horseMin;
 			caballos[i].cambiarDireccion();
 		}
 	}
