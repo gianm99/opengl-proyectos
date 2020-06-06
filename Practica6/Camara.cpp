@@ -10,6 +10,8 @@ Camara::Camara(glm::vec3 eye, glm::vec3 front, glm::vec3 up)
 	trayectoriaVisible=true;
 }
 
+Camara::Camara(){}
+
 void Camara::setTrayectoriaVisible(bool trayectoriaVisible)
 {
 	this->trayectoriaVisible = trayectoriaVisible;
@@ -39,11 +41,11 @@ void Camara::mirar()
 	glLoadIdentity();
 	if (profundidad)
 	{
-		gluPerspective(90, 1, 0.1, 100);
+		gluPerspective(70, 1, 0.1, 100);
 	}
 	else
 	{
-		glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 10.0f);
+		glOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -30.0f, 30.0f);
 	}
 	girar();
 	gluLookAt(pos.x, pos.y, pos.z,
@@ -97,7 +99,7 @@ void Camara::vista(Vista vista)
 		mirar();
 		break;
 	case isometrica:
-		pos = glm::vec3(1.0f, 1.0f, 1.0f);
+		pos = glm::vec3(10.0f, 10.0f, 10.0f);
 		yaw = -135.0f;
 		pitch = -glm::degrees(asin(1 / sqrt(3)));
 		mirar();

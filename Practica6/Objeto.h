@@ -14,9 +14,11 @@ class Objeto
 	bool trayectoriaVisible;
 public:
 	Model_OBJ obj;
-	glm::vec3 pos;
+	glm::vec3 pos; // posición
+	glm::vec3 rot; // rotación
+	glm::vec3 vel; // velocidad
 	std::deque<glm::vec3> trayectoria;
-	Objeto(Model_OBJ obj, glm::vec3 pos, bool trayectoriaVisible);
+	Objeto(Model_OBJ obj, glm::vec3 pos, glm::vec3 rot, bool trayectoriaVisible);
 
 	Objeto();
 
@@ -25,6 +27,13 @@ public:
 	void setPos(glm::vec3 pos);
 
 	glm::vec3 getPos();
+
+	void setVel(glm::vec3 vel)
+	{
+		this->vel = vel;
+	}
+
+	void cambiarDireccion();
 
 	void dibujar();
 
