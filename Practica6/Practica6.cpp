@@ -2,8 +2,10 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 #include "Practica6.h"
 bool fullscreen;
-bool ejesRef = true; // Dibujar los ejes de referencia
-bool planosRef = true; // Dibujar los planos de referencia
+bool ejesRef = false; // Dibujar los ejes de referencia
+bool planosRef = false; // Dibujar los planos de referencia
+enum estadoEjesPlanos {Ninguno, Ejes, Planos, Ejes_Planos}; //Estados para el dibujo de planos/referencias
+estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f; // Tiempo del frame anterior
@@ -113,8 +115,26 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'e':
-		ejesRef = !ejesRef;
-		planosRef = !planosRef;
+		switch (estadoEP) {
+		case Ninguno:
+			ejesRef = false;
+			planosRef = false;
+			estadoEP = Ejes;
+			break;
+		case Ejes:
+			ejesRef = true;
+			estadoEP = Planos;
+			break;
+		case Planos:
+			ejesRef = false;
+			planosRef = true;
+			estadoEP = Ejes_Planos;
+			break;
+		case Ejes_Planos:
+			ejesRef = true;
+			estadoEP = Ninguno;
+			break;
+		}
 		break;
 	case 'p':
 		cam.cambiarProfundidad();
