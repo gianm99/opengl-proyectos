@@ -9,6 +9,7 @@ estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/re
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f; // Tiempo del frame anterior
+float currentFrame;
 // Variables para las vistas oblicuas
 Proyeccion proyeccion = normal;
 GLfloat angle = 0.0f;
@@ -53,7 +54,7 @@ void display(void)
 
 void idle(void)
 {
-	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
+	currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
 
@@ -478,6 +479,7 @@ void init()
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.vista(isometrica);
 	cam.mirar();
 	// Objetos
 	modeloCaballo.Load("Modelos/arabian.obj");
