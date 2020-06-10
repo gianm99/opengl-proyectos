@@ -24,6 +24,9 @@ Objeto caballos[4];
 // Modelos
 Model_OBJ modeloCaballo;
 Model_OBJ modeloTiovivo;
+// Ratón
+float lastX = windowWidth/2, lastY = windowHeight/2;
+boolean firstMouse = true;
 
 void display(void)
 {
@@ -361,6 +364,50 @@ void initObjetos()
 	}
 }
 
+void camaraRaton(int posx, int posy) {
+	if (firstMouse)
+	{
+		lastX = posx;
+		lastY = posy;
+		firstMouse = false;
+	}
+
+	float xoffset = posx - lastX;
+	float yoffset = lastY - posy;
+	lastX = posx;
+	lastY = posy;
+
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	cam.yaw += xoffset;
+	cam.pitch += yoffset;
+
+	if (cam.pitch > 89.0f)
+		cam.pitch = 89.0f;
+	if (cam.pitch < -89.0f)
+		cam.pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+	direction.y = sin(glm::radians(cam.pitch));
+	direction.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+	cam.front = glm::normalize(direction);
+
+	if (posx < 100 || posx > windowWidth - 200) { 
+		lastX = windowWidth/ 2;   
+		lastY = windowHeight / 2;
+		glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	}
+	else if (posy < 100 || posy > windowHeight - 200) {
+		lastX = windowWidth / 2;
+		lastY = windowHeight / 2;
+		glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	}
+	cam.mirar();
+}
+
 void init()
 {
 	GLfloat mspecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -372,6 +419,9 @@ void init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//Ratón
+	glutSetCursor(GLUT_CURSOR_NONE);
+	glutPassiveMotionFunc(camaraRaton);
 	// Iluminación
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
