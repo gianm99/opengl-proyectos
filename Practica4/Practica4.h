@@ -50,41 +50,6 @@ public:
 	}
 };
 
-class Objeto
-{
-public:
-	glm::vec3 pos;
-	glm::vec3 inc;
-	float velocidad = 0.1f;
-	std::deque<glm::vec3> posiciones;
-
-	// Constructor
-
-	Objeto(glm::vec3 pos, glm::vec3 inc)
-	{
-		this->pos = pos;
-		this->inc = inc;
-	}
-	void setPos(glm::vec3 posicion) {
-		this->pos = pos;
-	}
-
-	void setInc(glm::vec3 incremento) {
-		this->inc = incremento;
-	}
-
-	glm::vec3 getPos() {
-		return pos;
-	}
-
-	glm::vec3 setInc() {
-
-		return inc;
-	}
-
-};
-
-
 // Dibuja la escena
 void display(void);
 // Controla la relacion de aspecto de la escena
@@ -113,3 +78,7 @@ void trazadoElem(std::deque <glm::vec3> pos);
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
+void moverObjeto(Objeto ob);
+void transTetera();
+void transEsfera();
+void transCubo();

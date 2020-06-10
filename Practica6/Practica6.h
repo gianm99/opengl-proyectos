@@ -43,5 +43,8 @@ void proyeccionOblicua();
 void initLuces();
 // Inicializa los objetos
 void initObjetos();
+// Captura los movimientos del ratón para mover la cámara
+void camaraRaton(int posx, int posy);
 // Inicializa algunos valores del dibujado de la escena
 void init();
+
