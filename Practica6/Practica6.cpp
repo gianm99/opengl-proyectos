@@ -389,7 +389,6 @@ void dibujarSuelo() {
 	int GridSizeZ = 32;
 	float SizeX = 2.5f;
 	float SizeZ = 2.5f;
-	glLoadIdentity();
 	glBegin(GL_QUADS);
 	for (int x = -(GridSizeX/2); x<(GridSizeX/2); ++x)
 		for (int z = -(GridSizeZ/2); z<(GridSizeZ/2); ++z)
