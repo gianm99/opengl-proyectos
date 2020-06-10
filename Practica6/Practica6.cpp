@@ -17,7 +17,7 @@ GLfloat angle = 0.0f;
 double alpha = -45.0;
 // Variables para el movimiento
 float rotacion = 0.0f;
-// Cámara
+// Cï¿½mara
 Camara cam;
 // Luces
 Luz luces[4];
@@ -27,7 +27,7 @@ Objeto caballos[4];
 // Modelos
 Model_OBJ modeloCaballo;
 Model_OBJ modeloTiovivo;
-// Ratón
+// Ratï¿½n
 float lastX = windowWidth/2, lastY = windowHeight/2;
 boolean firstMouse = true;
 
@@ -36,7 +36,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	proyeccionOblicua(); // Activa o no la proyección oblicua
+	proyeccionOblicua(); // Activa o no la proyecciï¿½n oblicua
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
@@ -65,7 +65,7 @@ void idle(void)
 		caballo.guardarTrayectoria();
 	}
 
-	// Rotación
+	// Rotaciï¿½n
 	rotacion -= 45.0f * deltaTime;
 	if (rotacion < -360.0f)
 	{
@@ -208,15 +208,15 @@ void keyboard(unsigned char key, int x, int y)
 	case '9':
 		luces[3].alternar();
 		break;
-		// Mover luz 0 a posición 1
+		// Mover luz 0 a posiciï¿½n 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
 		break;
-		// Mover luz 0 a posición 2
+		// Mover luz 0 a posiciï¿½n 2
 	case 'x':
 		luces[0].mover(glm::vec3{ -1.0f,1.0f,1.0f });
 		break;
-		// Mover luz 0 a posición 3
+		// Mover luz 0 a posiciï¿½n 3
 	case 'c':
 		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
@@ -251,7 +251,7 @@ void special(int key, int x, int y)
 		proyeccion = normal;
 		cam.vista(p_derecho);
 		break;
-		// isométrica
+		// isomï¿½trica
 	case GLUT_KEY_F5:
 		proyeccion = normal;
 		cam.vista(isometrica);
@@ -440,10 +440,10 @@ void init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//Ratón
+	//Ratï¿½n
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
-	// Iluminación
+	// Iluminaciï¿½n
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
@@ -452,7 +452,7 @@ void init()
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glShadeModel(GL_SMOOTH);
 	initLuces();
-	// Cámara
+	// Cï¿½mara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
