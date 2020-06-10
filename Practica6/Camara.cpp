@@ -45,7 +45,7 @@ void Camara::mirar()
 	}
 	else
 	{
-		glOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -30.0f, 30.0f);
+		glOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -50.0f, 50.0f);
 	}
 	girar();
 	gluLookAt(pos.x, pos.y, pos.z,
@@ -75,31 +75,31 @@ void Camara::vista(Vista vista)
 	switch (vista)
 	{
 	case alzado:
-		pos = glm::vec3(0.0f, 0.0f, 1.0f);
+		pos = glm::vec3(0.0f, 5.0f, 15.0f);
 		yaw = -90.0f;
 		pitch = 0.0f;
 		mirar();
 		break;
 	case planta:
-		pos = glm::vec3(0.0f, 1.0f, 0.0f);
+		pos = glm::vec3(0.0f, 15.0f, 0.0f);
 		yaw = -90.0f;
 		pitch = -90.0f;
 		mirar();
 		break;
 	case p_izquierdo:
-		pos = glm::vec3(-1.0f, 0.0f, 0.0f);
+		pos = glm::vec3(-15.0f, 5.0f, 0.0f);
 		yaw = 0.0f;
 		pitch = 0.0f;
 		mirar();
 		break;
 	case p_derecho:
-		pos = glm::vec3(1.0f, 0.0f, 0.0f);
+		pos = glm::vec3(15.0f, 5.0f, 0.0f);
 		yaw = 180.0f;
 		pitch = 0.0f;
 		mirar();
 		break;
 	case isometrica:
-		pos = glm::vec3(10.0f, 10.0f, 10.0f);
+		pos = glm::vec3(15.0f, 15.0f, 15.0f);
 		yaw = -135.0f;
 		pitch = -glm::degrees(asin(1 / sqrt(3)));
 		mirar();

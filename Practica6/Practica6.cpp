@@ -1,7 +1,6 @@
 //Practica6.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 #include "Practica6.h"
-
 bool fullscreen;
 bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
@@ -9,16 +8,15 @@ enum estadoEjesPlanos {Ninguno, Ejes, Planos, Ejes_Planos}; //Estados para el di
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
-float currentFrame = 0.0f; // Tiempo del frame actual
 float lastFrame = 0.0f; // Tiempo del frame anterior
-float speed = 0.0f; // Velocidad movimiento de la c�mara
+float currentFrame;
 // Variables para las vistas oblicuas
 Proyeccion proyeccion = normal;
 GLfloat angle = 0.0f;
 double alpha = -45.0;
 // Variables para el movimiento
 float rotacion = 0.0f;
-// C�mara
+// Cámara
 Camara cam;
 // Luces
 Luz luces[4];
@@ -28,18 +26,17 @@ Objeto caballos[4];
 // Modelos
 Model_OBJ modeloCaballo;
 Model_OBJ modeloTiovivo;
-// Rat�n
+// Ratón
 float lastX = windowWidth/2, lastY = windowHeight/2;
 boolean firstMouse = true;
-
-
 
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	proyeccionOblicua(); // Activa o no la proyecci�n oblicua
+	proyeccionOblicua(); // Activa o no la proyección oblicua
+	dibujarSuelo();
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
@@ -60,7 +57,6 @@ void idle(void)
 	currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
-	speed = 10.0f * deltaTime;
 
 	// Guardar trayectorias
 	cam.guardarTrayectoria();
@@ -69,7 +65,7 @@ void idle(void)
 		caballo.guardarTrayectoria();
 	}
 
-	// Rotaci�n
+	// Rotación
 	rotacion -= 45.0f * deltaTime;
 	if (rotacion < -360.0f)
 	{
@@ -100,6 +96,7 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
+	float speed = 10.0f * deltaTime;
 	glm::vec3 position;
 	switch (key)
 	{
@@ -211,15 +208,15 @@ void keyboard(unsigned char key, int x, int y)
 	case '9':
 		luces[3].alternar();
 		break;
-		// Mover luz 0 a posici�n 1
+		// Mover luz 0 a posición 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
 		break;
-		// Mover luz 0 a posici�n 2
+		// Mover luz 0 a posición 2
 	case 'x':
 		luces[0].mover(glm::vec3{ -1.0f,1.0f,1.0f });
 		break;
-		// Mover luz 0 a posici�n 3
+		// Mover luz 0 a posición 3
 	case 'c':
 		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
@@ -254,7 +251,7 @@ void special(int key, int x, int y)
 		proyeccion = normal;
 		cam.vista(p_derecho);
 		break;
-		// isom�trica
+		// isométrica
 	case GLUT_KEY_F5:
 		proyeccion = normal;
 		cam.vista(isometrica);
@@ -302,16 +299,16 @@ void referencia()
 		glBegin(GL_LINES);
 		// X
 		glColor3f(1.0f, 0.0f, 0.0f); // Rojo
-		glVertex3f(-10.0f, 0.0f, 0.0f);
-		glVertex3f(10.0f, 0.0f, 0.0f);
+		glVertex3f(-15.0f, 0.0f, 0.0f);
+		glVertex3f(15.0f, 0.0f, 0.0f);
 		// Y
 		glColor3f(0.0f, 1.0f, 0.0f); // Verde
-		glVertex3f(0.0f, -10.0f, 0.0f);
-		glVertex3f(0.0f, 10.0f, 0.0f);
+		glVertex3f(0.0f, -15.0f, 0.0f);
+		glVertex3f(0.0f, 15.0f, 0.0f);
 		// Z
 		glColor3f(0.0f, 0.0f, 1.0f); // Azul
-		glVertex3f(0.0f, 0.0f, -10.0f);
-		glVertex3f(0.0f, 0.0f, 10.0f);
+		glVertex3f(0.0f, 0.0f, -15.0f);
+		glVertex3f(0.0f, 0.0f, 15.0f);
 		glEnd();
 	}
 	if (planosRef)
@@ -319,22 +316,22 @@ void referencia()
 		glBegin(GL_QUADS);
 		// X / Y - Azul 30%
 		glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
-		glVertex3f(9.0f, 9.0f, 0.0f);
-		glVertex3f(-9.0f, 9.0f, 0.0f);
-		glVertex3f(-9.0f, -9.0f, 0.0f);
-		glVertex3f(9.0f, -9.0f, 0.0f);
+		glVertex3f(15.0f, 15.0f, 0.0f);
+		glVertex3f(-15.0f, 15.0f, 0.0f);
+		glVertex3f(-15.0f, -15.0f, 0.0f);
+		glVertex3f(15.0f, -15.0f, 0.0f);
 		// X / Z - Verde 30%
 		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
-		glVertex3f(9.0f, 0.0f, 9.0f);
-		glVertex3f(-9.0f, 0.0f, 9.0f);
-		glVertex3f(-9.0f, 0.0f, -9.0f);
-		glVertex3f(9.0f, 0.0f, -9.0f);
+		glVertex3f(15.0f, 0.0f, 15.0f);
+		glVertex3f(-15.0f, 0.0f, 15.0f);
+		glVertex3f(-15.0f, 0.0f, -15.0f);
+		glVertex3f(15.0f, 0.0f, -15.0f);
 		// Y / Z - Azul 30%
 		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
-		glVertex3f(0.0f, 9.0f, 9.0f);
-		glVertex3f(0.0f, -9.0f, 9.0f);
-		glVertex3f(0.0f, -9.0f, -9.0f);
-		glVertex3f(0.0f, 9.0f, -9.0f);
+		glVertex3f(0.0f, 15.0f, 15.0f);
+		glVertex3f(0.0f, -15.0f, 15.0f);
+		glVertex3f(0.0f, -15.0f, -15.0f);
+		glVertex3f(0.0f, 15.0f, -15.0f);
 		glEnd();
 	}
 	glPopMatrix();
@@ -386,6 +383,29 @@ void initObjetos()
 	{
 		caballos[i].vel = glm::vec3(0.0f, 0.866f, 0.0f);
 	}
+}
+
+void dibujarSuelo() {
+	int GridSizeX = 32;
+	int GridSizeZ = 32;
+	float SizeX = 2.5f;
+	float SizeZ = 2.5f;
+	glBegin(GL_QUADS);
+	for (int x = -(GridSizeX/2); x<(GridSizeX/2); ++x)
+		for (int z = -(GridSizeZ/2); z<(GridSizeZ/2); ++z)
+		{
+			if (((x + z) % 2)==0) //modulo 2
+				glColor3f(1.0f, 1.0f, 1.0f); //white
+			else
+				glColor3f(0.0f, 0.0f, 0.0f); //black
+
+			glVertex3f(x*SizeX,			0, z*SizeZ);
+			glVertex3f((x + 1)*SizeX,	0, z*SizeZ);
+			glVertex3f((x + 1)*SizeX,	0, (z + 1)*SizeZ);
+			glVertex3f(x*SizeX,			0, (z + 1)*SizeZ);
+
+		}
+	glEnd();
 }
 
 void camaraRaton(int posx, int posy) {
@@ -443,10 +463,10 @@ void init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//Rat�n
+	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
-	// Iluminaci�n
+	// Iluminación
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
@@ -455,10 +475,11 @@ void init()
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glShadeModel(GL_SMOOTH);
 	initLuces();
-	// C�mara
+	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.vista(isometrica);
 	cam.mirar();
 	// Objetos
 	modeloCaballo.Load("Modelos/arabian.obj");
@@ -470,7 +491,6 @@ void init()
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(special);
-	lastFrame = glutGet(GLUT_ELAPSED_TIME);
 }
 
 int main(int argc, char **argv)
