@@ -6,9 +6,9 @@
 // Indica si está en modo fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible=true;
+bool ejesRef=true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosVisible=true;
+bool planosRef=true;
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -24,25 +24,13 @@ GLfloat posZ = 0.0f;
 GLfloat incX;
 GLfloat incY;
 GLfloat incZ = 0.003f;
+// Objetos
+Objeto Tet(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0050f));
+Objeto Esf(glm::vec3(0.6f, 0.6f, 0.0f), glm::vec3(0.005f, 0.0f, 0.0f));
+Objeto Cub(glm::vec3(-0.6f, -0.6f, 0.0f), glm::vec3(0.0f, 0.005f, 0.0f));
 //Indican el tamaño inicial de la ventana
 GLsizei windowWidth = 640;
 GLsizei windowHeight = 640;
-
-void initRandVars() {
-	srand(time(NULL));
-	angX = (float) 0.1*(rand() % 21 + (-10));
-	angY = (float) 0.1*(rand() % 21 + (-10));
-	angZ = (float) 0.1*(rand() % 21 + (-10));
-	incX = (float) 0.0001*(rand() % 10 + 3);
-	srand(time(NULL));
-	incY = (float) 0.0001*(rand() % 10 + 3);
-	if (rand() % 2 == 1) {
-		incX = -incX;
-	}
-	if (rand() % 2 == 1) {
-		incY = -incY;
-	}
-}
 
 void display(void)
 {
@@ -50,13 +38,53 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glTranslatef(posX,posY,posZ);
-	glRotatef(angRot, angX, angY, angZ);
-	glutSolidTeapot(0.1f);
-	if (ejesVisible)referenciaEjes();
-	if (planosVisible)referenciaPlanos();
+	trazadoElem(Tet.posiciones);
+	trazadoElem(Esf.posiciones);
+	trazadoElem(Cub.posiciones);
+	dibujarTetera();
+	dibujarEsfera();
+	dibujarCubo();
+	if (ejesRef) referenciaEjes();
+	if (planosRef) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
+}
+
+void dibujarTetera() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Tet.pos.x, Tet.pos.y, Tet.pos.z);
+	glutSolidTeapot(0.1f);
+	glTranslatef(-Tet.pos.x, -Tet.pos.y, -Tet.pos.z);
+
+	glPopMatrix();
+}
+
+void dibujarEsfera() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Esf.pos.x, Esf.pos.y, Esf.pos.z);
+	glutSolidSphere(0.1f, 100, 100);
+	glTranslatef(-Esf.pos.x, -Esf.pos.y, -Esf.pos.z);
+
+	glPopMatrix();
+}
+
+void dibujarCubo() {
+
+	glLoadIdentity();
+	glPushMatrix();
+
+	glTranslatef(Cub.pos.x, Cub.pos.y, Cub.pos.z);
+	glutSolidCube(0.1);
+	glTranslatef(-Cub.pos.x, -Cub.pos.y, -Cub.pos.z);
+
+	glPopMatrix();
+
 }
 
 void reshape(GLsizei width, GLsizei height)
@@ -98,29 +126,78 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		case 'e':
-			ejesVisible=!ejesVisible;
+			ejesRef=!ejesRef;
 			break;
 		case 'p':
-			planosVisible=!planosVisible;
+			planosRef=!planosRef;
 			break;
 	}
 }
 
 void idle(void) {
-	if (posZ > 0.15f||posZ<-0.15f)
+
+	// Guardar posiciones de objetos
+	if (Tet.posiciones.size() == 50)
 	{
-		incZ=-incZ;
+		Tet.posiciones.pop_front();
 	}
-	if (posX > 0.93 || posX < -0.93) {
-		incX = -incX;
+	Tet.posiciones.push_back(Tet.pos);
+	if (Esf.posiciones.size() == 50) {
+		Esf.posiciones.pop_front();
 	}
-	if (posY > 0.93 || posY < -0.93) {
-		incY = -incY;
+	Esf.posiciones.push_back(Esf.pos);
+	if (Cub.posiciones.size() == 50) {
+		Cub.posiciones.pop_front();
 	}
-	posX += incX;
-	posY += incY;
-	posZ += incZ;
-	angRot += incRot;
+	Cub.posiciones.push_back(Cub.pos);
+
+
+	//tetera
+	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
+	{
+		Tet.inc.z = -Tet.inc.z;
+	}
+	if (Tet.pos.x > 0.7f || Tet.pos.x < -0.7f) {
+		Tet.inc.x = -Tet.inc.x;
+	}
+	if (Tet.pos.y > 0.7f || Tet.pos.y < -0.7f) {
+		Tet.inc.y = -Tet.inc.y;
+	}
+	Tet.pos.x += Tet.inc.x;
+	Tet.pos.y += Tet.inc.y;
+	Tet.pos.z += Tet.inc.z;
+
+	//esfera
+	if (Esf.pos.z > 0.7f || Esf.pos.z < -0.7f)
+	{
+		Esf.inc.z = -Esf.inc.z;
+	}
+	if (Esf.pos.x > 0.7f || Esf.pos.x < -0.7f) {
+		Esf.inc.x = -Esf.inc.x;
+	}
+	if (Esf.pos.y > 0.7f || Esf.pos.y < -0.7f) {
+		Esf.inc.y = -Esf.inc.y;
+	}
+	Esf.pos.x += Esf.inc.x;
+	Esf.pos.y += Esf.inc.y;
+	Esf.pos.z += Esf.inc.z;
+
+	//cubo
+
+	if (Cub.pos.z > 0.7f || Cub.pos.z < -0.7f)
+	{
+		Cub.inc.z = -Cub.inc.z;
+	}
+	if (Cub.pos.x > 0.7f || Cub.pos.x < -0.7f) {
+		Cub.inc.x = -Cub.inc.x;
+	}
+	if (Cub.pos.y > 0.7f || Cub.pos.y < -0.7f) {
+		Cub.inc.y = -Cub.inc.y;
+	}
+	Cub.pos.x += Cub.inc.x;
+	Cub.pos.y += Cub.inc.y;
+	Cub.pos.z += Cub.inc.z;
+
 	glutPostRedisplay();
 }
 
@@ -180,7 +257,6 @@ void init() {
 
 int main(int argc, char **argv)
 {
-	initRandVars();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowPosition(100,100);
@@ -193,4 +269,16 @@ int main(int argc, char **argv)
 	glutIdleFunc(idle);
 	glutMainLoop();
 	return 0;
+}
+
+void trazadoElem(std::deque <glm::vec3> pos) {
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
+	}
+	glEnd();
+	glPopMatrix();
 }

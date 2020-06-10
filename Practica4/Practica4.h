@@ -2,6 +2,7 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
+#include <deque>
 # define _USE_MATH_DEFINES
 #include <gl/glut.h>
 #include <gl/gl.h>
@@ -11,10 +12,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include <cmath>
 #include <cstdlib>
 #include <vector>
+
+#define ESC 27
+#define SPACE 32
 
 // Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
@@ -24,6 +27,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
+	std::deque<glm::vec3> trayectoria;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -52,6 +56,7 @@ public:
 	glm::vec3 pos;
 	glm::vec3 inc;
 	float velocidad = 0.1f;
+	std::deque<glm::vec3> posiciones;
 
 	// Constructor
 
@@ -59,7 +64,7 @@ public:
 	{
 		this->pos = pos;
 		this->inc = inc;
-		}
+	}
 	void setPos(glm::vec3 posicion) {
 		this->pos = pos;
 	}
@@ -73,11 +78,12 @@ public:
 	}
 
 	glm::vec3 setInc() {
-		
+
 		return inc;
 	}
 
 };
+
 
 // Dibuja la escena
 void display(void);
@@ -97,11 +103,13 @@ void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
 // Cambia a la vista definida por el parametro cam
-void mirar(Camara cam);
+void look(Camara cam);
+// Funciones de movimiento y dibujado de los objetos
+void dibujarTetera();
+void dibujarEsfera();
+void dibujarCubo();
+// Función para el dibujado de la trayectoria
+void trazadoElem(std::deque <glm::vec3> pos);
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
-void moverObjeto(Objeto ob);
-void transTetera();
-void transEsfera();
-void transCubo();
