@@ -11,6 +11,7 @@ bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
 float currentFrame = 0.0f; // Tiempo del frame actual
 float lastFrame = 0.0f; // Tiempo del frame anterior
+float speed = 0.0f; // Velocidad movimiento de la cámara
 // Variables para las vistas oblicuas
 Proyeccion proyeccion = normal;
 GLfloat angle = 0.0f;
@@ -30,6 +31,8 @@ Model_OBJ modeloTiovivo;
 // Ratï¿½n
 float lastX = windowWidth/2, lastY = windowHeight/2;
 boolean firstMouse = true;
+
+
 
 void display(void)
 {
@@ -57,6 +60,7 @@ void idle(void)
 	currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
+	speed = 10.0f * deltaTime;
 
 	// Guardar trayectorias
 	cam.guardarTrayectoria();
@@ -96,7 +100,6 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	float speed = 10.0f * deltaTime;
 	glm::vec3 position;
 	switch (key)
 	{
