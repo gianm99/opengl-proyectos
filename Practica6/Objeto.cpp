@@ -1,9 +1,10 @@
 #include "Objeto.h"
 
-Objeto::Objeto(Model_OBJ obj, glm::vec3 pos, bool trayectoriaVisible)
+Objeto::Objeto(Model_OBJ obj, glm::vec3 pos, glm::vec3 rot, bool trayectoriaVisible)
 {
 	this->obj = obj;
 	this->pos = pos;
+	this->rot = rot;
 	this->trayectoriaVisible = trayectoriaVisible;
 }
 
@@ -27,6 +28,7 @@ void Objeto::dibujar()
 {
 	glPushMatrix();
 	glTranslatef(pos.x, pos.y, pos.z);
+	glRotatef(rot.y, 0.0f, 1.0f, 0.0f);
 	obj.Draw();
 	if (trayectoriaVisible)
 	{
@@ -44,6 +46,13 @@ void Objeto::guardarTrayectoria()
 	trayectoria.push_back(pos);
 }
 
+void Objeto::cambiarDireccion()
+{
+	vel.x = -vel.x;
+	vel.y = -vel.y;
+	vel.z = -vel.z;
+}
+
 void Objeto::dibujarTrayectoria()
 {
 	glBegin(GL_LINE_STRIP);
@@ -54,15 +63,3 @@ void Objeto::dibujarTrayectoria()
 	glEnd();
 }
 
-void trazadoElem(std::deque<glm::vec3> pos)
-{
-	glPushMatrix();
-	glLoadIdentity();
-	glBegin(GL_LINE_STRIP);
-	for (unsigned int i = 0; i < pos.size(); i++)
-	{
-		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
-	}
-	glEnd();
-	glPopMatrix();
-}

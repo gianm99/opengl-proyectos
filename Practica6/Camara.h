@@ -26,6 +26,8 @@ public:
 
 	Camara(glm::vec3 eye, glm::vec3 front, glm::vec3 up);
 
+	Camara();
+
 	void setTrayectoriaVisible(bool trayectoriaVisible);
 
 	// Actualiza el valor de front en base al pitch y el yaw

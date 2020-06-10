@@ -572,7 +572,7 @@ void init()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
 	glLightModelfv(GL_AMBIENT, globalAmbient);
-	configurarLuces();
+	initLuces();
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -591,7 +591,7 @@ void trazadoElem(std::deque <glm::vec3> pos) {
 	glPopMatrix();
 }
 
-void configurarLuces()
+void initLuces()
 {
 	GLfloat position0[] = { 0.0f,0.0f,1.0f,1.0f };
 	GLfloat position1[] = { 1.0f,1.0f,0.0f,1.0f };

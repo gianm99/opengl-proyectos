@@ -144,7 +144,7 @@ void init();
 // Cambia a la vista definida por el parametro cam
 void look(Camara cam);
 // Inicializa los valores de las luces
-void configurarLuces();
+void initLuces();
 // Funciones de movimiento y dibujado de los objetos
 void dibujarTetera();
 void dibujarEsfera();
