@@ -21,8 +21,8 @@ using namespace std;
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
 // Indican propiedades de los objetos
-const float horseMax = 3.10403f; // altura m·xima
-const float horseMin = 2.23712f; // altura mÌnima
+const float horseMax = 3.10403f; // altura m√°xima
+const float horseMin = 2.23712f; // altura m√≠nima
 // Tipos de proyecciones
 enum Proyeccion {normal, caballera, militar};
 // Dibuja la escena
@@ -43,7 +43,9 @@ void proyeccionOblicua();
 void initLuces();
 // Inicializa los objetos
 void initObjetos();
-// Captura los movimientos del ratÛn para mover la c·mara
+// Dibuja el suelo como un tablero de ajedrez
+void dibujarSuelo();
+// Captura los movimientos del rat√≥n para mover la c√°mara
 void camaraRaton(int posx, int posy);
 // Inicializa algunos valores del dibujado de la escena
 void init();
