@@ -13,7 +13,7 @@ GLfloat angle = 0.0f;
 double alpha = -45.0;
 // Variables para el movimiento
 float rotacion = 0.0f;
-// C醡ara
+// C谩mara
 Camara cam;
 // Luces
 Luz luces[4];
@@ -23,13 +23,16 @@ Objeto caballos[4];
 // Modelos
 Model_OBJ modeloCaballo;
 Model_OBJ modeloTiovivo;
+// Rat贸n
+float lastX = windowWidth/2, lastY = windowHeight/2;
+boolean firstMouse = true;
 
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	proyeccionOblicua(); // Activa o no la proyecci髇 oblicua
+	proyeccionOblicua(); // Activa o no la proyecci贸n oblicua
 	dibujarSuelo();
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glPushMatrix();
@@ -59,7 +62,7 @@ void idle(void)
 		caballo.guardarTrayectoria();
 	}
 
-	// Rotaci髇
+	// Rotaci贸n
 	rotacion -= 45.0f * deltaTime;
 	if (rotacion < -360.0f)
 	{
@@ -184,15 +187,15 @@ void keyboard(unsigned char key, int x, int y)
 	case '9':
 		luces[3].alternar();
 		break;
-		// Mover luz 0 a posici髇 1
+		// Mover luz 0 a posici贸n 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
 		break;
-		// Mover luz 0 a posici髇 2
+		// Mover luz 0 a posici贸n 2
 	case 'x':
 		luces[0].mover(glm::vec3{ -1.0f,1.0f,1.0f });
 		break;
-		// Mover luz 0 a posici髇 3
+		// Mover luz 0 a posici贸n 3
 	case 'c':
 		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
@@ -227,7 +230,7 @@ void special(int key, int x, int y)
 		proyeccion = normal;
 		cam.vista(p_derecho);
 		break;
-		// isom閠rica
+		// isom茅trica
 	case GLUT_KEY_F5:
 		proyeccion = normal;
 		cam.vista(isometrica);
@@ -385,6 +388,50 @@ void dibujarSuelo() {
 	glEnd();
 }
 
+void camaraRaton(int posx, int posy) {
+	if (firstMouse)
+	{
+		lastX = posx;
+		lastY = posy;
+		firstMouse = false;
+	}
+
+	float xoffset = posx - lastX;
+	float yoffset = lastY - posy;
+	lastX = posx;
+	lastY = posy;
+
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	cam.yaw += xoffset;
+	cam.pitch += yoffset;
+
+	if (cam.pitch > 89.0f)
+		cam.pitch = 89.0f;
+	if (cam.pitch < -89.0f)
+		cam.pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+	direction.y = sin(glm::radians(cam.pitch));
+	direction.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
+	cam.front = glm::normalize(direction);
+
+	if (posx < 100 || posx > windowWidth - 200) { 
+		lastX = windowWidth/ 2;   
+		lastY = windowHeight / 2;
+		glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	}
+	else if (posy < 100 || posy > windowHeight - 200) {
+		lastX = windowWidth / 2;
+		lastY = windowHeight / 2;
+		glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	}
+	cam.mirar();
+}
+
 void init()
 {
 	GLfloat mspecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -396,7 +443,10 @@ void init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Iluminaci髇
+	//Rat贸n
+	glutSetCursor(GLUT_CURSOR_NONE);
+	glutPassiveMotionFunc(camaraRaton);
+	// Iluminaci贸n
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
@@ -405,7 +455,7 @@ void init()
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glShadeModel(GL_SMOOTH);
 	initLuces();
-	// C醡ara
+	// C谩mara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
