@@ -9,6 +9,7 @@ enum estadoEjesPlanos {Ninguno, Ejes, Planos, Ejes_Planos}; //Estados para el di
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
+float currentFrame = 0.0f; // Tiempo del frame actual
 float lastFrame = 0.0f; // Tiempo del frame anterior
 // Variables para las vistas oblicuas
 Proyeccion proyeccion = normal;
@@ -53,7 +54,7 @@ void display(void)
 
 void idle(void)
 {
-	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
+	currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
 
@@ -466,6 +467,7 @@ void init()
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(special);
+	lastFrame = glutGet(GLUT_ELAPSED_TIME);
 }
 
 int main(int argc, char **argv)
