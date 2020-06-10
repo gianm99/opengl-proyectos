@@ -43,5 +43,7 @@ void proyeccionOblicua();
 void initLuces();
 // Inicializa los objetos
 void initObjetos();
+// Dibuja el suelo como un tablero de ajedrez
+void dibujarSuelo();
 // Inicializa algunos valores del dibujado de la escena
 void init();

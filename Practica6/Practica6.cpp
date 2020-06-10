@@ -1,7 +1,6 @@
 //Practica6.cpp: Escena 3D simple
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 #include "Practica6.h"
-
 bool fullscreen;
 bool ejesRef = true; // Dibujar los ejes de referencia
 bool planosRef = true; // Dibujar los planos de referencia
@@ -31,6 +30,7 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
+	dibujarSuelo();
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
@@ -359,6 +359,30 @@ void initObjetos()
 	{
 		caballos[i].vel = glm::vec3(0.0f, 0.866f, 0.0f);
 	}
+}
+
+void dibujarSuelo() {
+	int GridSizeX = 32;
+	int GridSizeZ = 32;
+	float SizeX = 2.5f;
+	float SizeZ = 2.5f;
+	glLoadIdentity();
+	glBegin(GL_QUADS);
+	for (int x = -(GridSizeX/2); x<(GridSizeX/2); ++x)
+		for (int z = -(GridSizeZ/2); z<(GridSizeZ/2); ++z)
+		{
+			if (((x + z) % 2)==0) //modulo 2
+				glColor3f(1.0f, 1.0f, 1.0f); //white
+			else
+				glColor3f(0.0f, 0.0f, 0.0f); //black
+
+			glVertex3f(x*SizeX,			0, z*SizeZ);
+			glVertex3f((x + 1)*SizeX,	0, z*SizeZ);
+			glVertex3f((x + 1)*SizeX,	0, (z + 1)*SizeZ);
+			glVertex3f(x*SizeX,			0, (z + 1)*SizeZ);
+
+		}
+	glEnd();
 }
 
 void init()
