@@ -298,16 +298,16 @@ void referencia()
 		glBegin(GL_LINES);
 		// X
 		glColor3f(1.0f, 0.0f, 0.0f); // Rojo
-		glVertex3f(-10.0f, 0.0f, 0.0f);
-		glVertex3f(10.0f, 0.0f, 0.0f);
+		glVertex3f(-15.0f, 0.0f, 0.0f);
+		glVertex3f(15.0f, 0.0f, 0.0f);
 		// Y
 		glColor3f(0.0f, 1.0f, 0.0f); // Verde
-		glVertex3f(0.0f, -10.0f, 0.0f);
-		glVertex3f(0.0f, 10.0f, 0.0f);
+		glVertex3f(0.0f, -15.0f, 0.0f);
+		glVertex3f(0.0f, 15.0f, 0.0f);
 		// Z
 		glColor3f(0.0f, 0.0f, 1.0f); // Azul
-		glVertex3f(0.0f, 0.0f, -10.0f);
-		glVertex3f(0.0f, 0.0f, 10.0f);
+		glVertex3f(0.0f, 0.0f, -15.0f);
+		glVertex3f(0.0f, 0.0f, 15.0f);
 		glEnd();
 	}
 	if (planosRef)
@@ -315,22 +315,22 @@ void referencia()
 		glBegin(GL_QUADS);
 		// X / Y - Azul 30%
 		glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
-		glVertex3f(9.0f, 9.0f, 0.0f);
-		glVertex3f(-9.0f, 9.0f, 0.0f);
-		glVertex3f(-9.0f, -9.0f, 0.0f);
-		glVertex3f(9.0f, -9.0f, 0.0f);
+		glVertex3f(15.0f, 15.0f, 0.0f);
+		glVertex3f(-15.0f, 15.0f, 0.0f);
+		glVertex3f(-15.0f, -15.0f, 0.0f);
+		glVertex3f(15.0f, -15.0f, 0.0f);
 		// X / Z - Verde 30%
 		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
-		glVertex3f(9.0f, 0.0f, 9.0f);
-		glVertex3f(-9.0f, 0.0f, 9.0f);
-		glVertex3f(-9.0f, 0.0f, -9.0f);
-		glVertex3f(9.0f, 0.0f, -9.0f);
+		glVertex3f(15.0f, 0.0f, 15.0f);
+		glVertex3f(-15.0f, 0.0f, 15.0f);
+		glVertex3f(-15.0f, 0.0f, -15.0f);
+		glVertex3f(15.0f, 0.0f, -15.0f);
 		// Y / Z - Azul 30%
 		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
-		glVertex3f(0.0f, 9.0f, 9.0f);
-		glVertex3f(0.0f, -9.0f, 9.0f);
-		glVertex3f(0.0f, -9.0f, -9.0f);
-		glVertex3f(0.0f, 9.0f, -9.0f);
+		glVertex3f(0.0f, 15.0f, 15.0f);
+		glVertex3f(0.0f, -15.0f, 15.0f);
+		glVertex3f(0.0f, -15.0f, -15.0f);
+		glVertex3f(0.0f, 15.0f, -15.0f);
 		glEnd();
 	}
 	glPopMatrix();
