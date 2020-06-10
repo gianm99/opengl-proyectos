@@ -9,6 +9,7 @@ estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/re
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f; // Tiempo del frame anterior
+float currentFrame;
 // Variables para las vistas oblicuas
 Proyeccion proyeccion = normal;
 GLfloat angle = 0.0f;
@@ -53,7 +54,7 @@ void display(void)
 
 void idle(void)
 {
-	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
+	currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
 
@@ -298,16 +299,16 @@ void referencia()
 		glBegin(GL_LINES);
 		// X
 		glColor3f(1.0f, 0.0f, 0.0f); // Rojo
-		glVertex3f(-10.0f, 0.0f, 0.0f);
-		glVertex3f(10.0f, 0.0f, 0.0f);
+		glVertex3f(-15.0f, 0.0f, 0.0f);
+		glVertex3f(15.0f, 0.0f, 0.0f);
 		// Y
 		glColor3f(0.0f, 1.0f, 0.0f); // Verde
-		glVertex3f(0.0f, -10.0f, 0.0f);
-		glVertex3f(0.0f, 10.0f, 0.0f);
+		glVertex3f(0.0f, -15.0f, 0.0f);
+		glVertex3f(0.0f, 15.0f, 0.0f);
 		// Z
 		glColor3f(0.0f, 0.0f, 1.0f); // Azul
-		glVertex3f(0.0f, 0.0f, -10.0f);
-		glVertex3f(0.0f, 0.0f, 10.0f);
+		glVertex3f(0.0f, 0.0f, -15.0f);
+		glVertex3f(0.0f, 0.0f, 15.0f);
 		glEnd();
 	}
 	if (planosRef)
@@ -315,22 +316,22 @@ void referencia()
 		glBegin(GL_QUADS);
 		// X / Y - Azul 30%
 		glColor4f(0.0f, 0.0f, 1.0f, 0.3f);
-		glVertex3f(9.0f, 9.0f, 0.0f);
-		glVertex3f(-9.0f, 9.0f, 0.0f);
-		glVertex3f(-9.0f, -9.0f, 0.0f);
-		glVertex3f(9.0f, -9.0f, 0.0f);
+		glVertex3f(15.0f, 15.0f, 0.0f);
+		glVertex3f(-15.0f, 15.0f, 0.0f);
+		glVertex3f(-15.0f, -15.0f, 0.0f);
+		glVertex3f(15.0f, -15.0f, 0.0f);
 		// X / Z - Verde 30%
 		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
-		glVertex3f(9.0f, 0.0f, 9.0f);
-		glVertex3f(-9.0f, 0.0f, 9.0f);
-		glVertex3f(-9.0f, 0.0f, -9.0f);
-		glVertex3f(9.0f, 0.0f, -9.0f);
+		glVertex3f(15.0f, 0.0f, 15.0f);
+		glVertex3f(-15.0f, 0.0f, 15.0f);
+		glVertex3f(-15.0f, 0.0f, -15.0f);
+		glVertex3f(15.0f, 0.0f, -15.0f);
 		// Y / Z - Azul 30%
 		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
-		glVertex3f(0.0f, 9.0f, 9.0f);
-		glVertex3f(0.0f, -9.0f, 9.0f);
-		glVertex3f(0.0f, -9.0f, -9.0f);
-		glVertex3f(0.0f, 9.0f, -9.0f);
+		glVertex3f(0.0f, 15.0f, 15.0f);
+		glVertex3f(0.0f, -15.0f, 15.0f);
+		glVertex3f(0.0f, -15.0f, -15.0f);
+		glVertex3f(0.0f, 15.0f, -15.0f);
 		glEnd();
 	}
 	glPopMatrix();
@@ -389,7 +390,6 @@ void dibujarSuelo() {
 	int GridSizeZ = 32;
 	float SizeX = 2.5f;
 	float SizeZ = 2.5f;
-	glLoadIdentity();
 	glBegin(GL_QUADS);
 	for (int x = -(GridSizeX/2); x<(GridSizeX/2); ++x)
 		for (int z = -(GridSizeZ/2); z<(GridSizeZ/2); ++z)
@@ -479,6 +479,7 @@ void init()
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.vista(isometrica);
 	cam.mirar();
 	// Objetos
 	modeloCaballo.Load("Modelos/arabian.obj");

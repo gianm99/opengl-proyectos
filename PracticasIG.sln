@@ -21,7 +21,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Practica5", "Practica5\Prac
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Practica6", "Practica6\Practica6.vcxproj", "{69BF2F07-25AC-49B7-86EF-ED834E139D2B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tiovivo", "Tiovivo\Tiovivo.vcxproj", "{6488BE5B-01F9-4E45-A7C1-E27CDA23576A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Practica6-GLFW", "Tiovivo\Tiovivo.vcxproj", "{6488BE5B-01F9-4E45-A7C1-E27CDA23576A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
