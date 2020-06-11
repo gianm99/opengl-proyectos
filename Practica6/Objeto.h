@@ -18,7 +18,8 @@ public:
 	glm::vec3 rot; // rotación
 	glm::vec3 vel; // velocidad
 	std::deque<glm::vec3> trayectoria;
-	Objeto(Model_OBJ obj, glm::vec3 pos, glm::vec3 rot, bool trayectoriaVisible);
+	std::deque<float> rotacion;
+	Objeto(Model_OBJ obj, glm::vec3 pos, glm::vec3 rot);
 
 	Objeto();
 
@@ -37,7 +38,7 @@ public:
 
 	void dibujar();
 
-	void guardarTrayectoria();
+	void guardarTrayectoria(float rotacionY);
 
 	void dibujarTrayectoria();
 };

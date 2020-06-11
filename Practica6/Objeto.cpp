@@ -1,11 +1,11 @@
 #include "Objeto.h"
 
-Objeto::Objeto(Model_OBJ obj, glm::vec3 pos, glm::vec3 rot, bool trayectoriaVisible)
+Objeto::Objeto(Model_OBJ obj, glm::vec3 pos, glm::vec3 rot)
 {
 	this->obj = obj;
 	this->pos = pos;
 	this->rot = rot;
-	this->trayectoriaVisible = trayectoriaVisible;
+	trayectoriaVisible = false;
 }
 
 Objeto::Objeto() {}
@@ -32,20 +32,21 @@ void Objeto::dibujar()
 	glRotatef(rot.y, 0.0f, 1.0f, 0.0f);
 	glRotatef(rot.z, 0.0f, 0.0f, 1.0f);
 	obj.Draw();
-	if (trayectoriaVisible)
-	{
-		dibujarTrayectoria();
-	}
 	glPopMatrix();
 }
 
-void Objeto::guardarTrayectoria()
+void Objeto::guardarTrayectoria(float rotacionY)
 {
-	if (trayectoria.size() == 100)
+	if (trayectoria.size() == 15)
 	{
 		trayectoria.pop_front();
 	}
 	trayectoria.push_back(pos);
+	if (rotacion.size() == 15)
+	{
+		rotacion.pop_front();
+	}
+	rotacion.push_back(rotacionY);
 }
 
 void Objeto::cambiarDireccion()
@@ -57,11 +58,17 @@ void Objeto::cambiarDireccion()
 
 void Objeto::dibujarTrayectoria()
 {
-	glBegin(GL_LINE_STRIP);
-	for (unsigned int i = 0; i < trayectoria.size(); i++)
+	if (trayectoriaVisible)
 	{
-		glVertex3f(trayectoria[i].x, trayectoria[i].y, trayectoria[i].z);
+		glPushMatrix();
+		glLoadIdentity();
+		glBegin(GL_LINE_STRIP);
+		for (unsigned int i = 0; i < trayectoria.size(); i++)
+		{
+			glVertex3f(-3.35739994*cos(glm::radians(rotacion[i])), trayectoria[i].y, 3.35739994*sin(glm::radians(rotacion[i])));
+		}
+		glEnd();
+		glPopMatrix();
 	}
-	glEnd();
 }
 

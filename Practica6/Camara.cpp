@@ -176,7 +176,6 @@ void Camara::dibujarTrayectoria()
 	if (trayectoriaVisible)
 	{
 		glPushMatrix();
-		glTranslatef(pos.x, pos.y, pos.z);
 		glBegin(GL_LINE_STRIP);
 		for (unsigned int i = 0; i < trayectoria.size(); i++)
 		{
