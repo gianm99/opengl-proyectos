@@ -3,7 +3,7 @@ GLfloat ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-Luz::Luz(GLenum id, GLfloat *pos, GLfloat *spot_direction, bool encendida)
+Luz::Luz(GLenum id, GLfloat *pos, GLfloat *spot_direction, GLfloat *cut, bool encendida)
 {
 	this->id = id;
 	this->pos = pos;
@@ -11,6 +11,7 @@ Luz::Luz(GLenum id, GLfloat *pos, GLfloat *spot_direction, bool encendida)
 	this->encendida = encendida;
 	glLightfv(id, GL_POSITION, pos);
 	glLightfv(id, GL_SPOT_DIRECTION, spot_direction);
+	glLightfv(id, GL_SPOT_CUTOFF, cut);
 	glLightfv(id, GL_AMBIENT, ambient);
 	glLightfv(id, GL_DIFFUSE, diffuse);
 	glLightfv(id, GL_SPECULAR, specular);
