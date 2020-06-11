@@ -5,6 +5,7 @@ bool fullscreen;
 bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
 bool trazadosCaballos= false; // Dibujar la trayectoria de los caballos
+bool antialiasing=true; // Usar antialiasing
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
@@ -226,6 +227,18 @@ void keyboard(unsigned char key, int x, int y)
 		for (int i=0;i<4;i++)
 		{
 			caballos[i].setTrayectoriaVisible(trazadosCaballos);
+		}
+	case 'm':
+		antialiasing = !antialiasing;
+		if (antialiasing)
+		{
+			glEnable(GL_LINE_SMOOTH);
+			glEnable(GL_POLYGON_SMOOTH);
+		}
+		else
+		{
+			glDisable(GL_LINE_SMOOTH);
+			glDisable(GL_POLYGON_SMOOTH);
 		}
 		break;
 	case '1':
@@ -549,9 +562,10 @@ void init()
 
 	glClearColor(0.0f, 0.67f, 0.79f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
 	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
@@ -583,7 +597,7 @@ void init()
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
 	glutInitWindowPosition(50, 50);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Tiovivo");
