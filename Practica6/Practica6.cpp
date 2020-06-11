@@ -4,6 +4,7 @@
 bool fullscreen;
 bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
+bool trazadosCaballos= false; // Dibujar la trayectoria de los caballos
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
@@ -49,6 +50,9 @@ void display(void)
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
 	dibujarSuelo();
+	// Dibujar la trayectoria de la cámara y los objetos
+	glColor3f(1.0f, 1.0f, 1.0f); // Blanco
+	cam.dibujarTrayectoria();
 	// Dibujar objetos del fondo
 	glColor3f(0.894f, 0.615f, 0.129f);
 	torres.dibujar();
@@ -88,9 +92,11 @@ void display(void)
 	{
 		caballo.dibujar();
 	}
-	glColor3f(1.0f,1.0f,1.0f); // Blanco
-	cam.dibujarTrayectoria();
 	glPopMatrix();
+	for each (Objeto caballo in caballos)
+	{
+		caballo.dibujarTrayectoria();
+	}
 	referencia();
 	cam.mostrarCoordenadas(windowWidth, windowHeight);
 	glutSwapBuffers();
@@ -104,16 +110,15 @@ void idle(void)
 
 	// Guardar trayectorias
 	cam.guardarTrayectoria();
-	for each (Objeto caballo in caballos)
-	{
-		caballo.guardarTrayectoria();
-	}
-
+	caballos[0].guardarTrayectoria(rotacion-90.0f);
+	caballos[1].guardarTrayectoria(rotacion);
+	caballos[2].guardarTrayectoria(rotacion+90.0f);
+	caballos[3].guardarTrayectoria(rotacion+180.0f);
 	// Rotación
 	rotacion -= 45.0f * deltaTime;
 	if (rotacion < -360.0f)
 	{
-		rotacion = 0;
+		rotacion=-(int)rotacion%360;
 	}
 	// Movimiento de los caballos
 	for (int i = 0; i < 4; i++)
@@ -214,6 +219,13 @@ void keyboard(unsigned char key, int x, int y)
 		else
 		{
 			glShadeModel(GL_FLAT);
+		}
+		break;
+	case 't':
+		trazadosCaballos=!trazadosCaballos;
+		for (int i=0;i<4;i++)
+		{
+			caballos[i].setTrayectoriaVisible(trazadosCaballos);
 		}
 		break;
 	case '1':
@@ -429,37 +441,37 @@ void initObjetos()
 	mArbol2.Load("Modelos/Arbol2.obj");
 	// Posicionar los objetos en la escena
 	// Objetos de la escena
-	tiovivo = Objeto(mTiovivo, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	caballos[0] = Objeto(mCaballo, glm::vec3(3.3574f, 2.23712f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), true);
-	caballos[1] = Objeto(mCaballo, glm::vec3(0.0f, 2.55784f, -3.3574f), glm::vec3(0.0f, 90.0f, 0.0f), true);
-	caballos[2] = Objeto(mCaballo, glm::vec3(-3.3574f, 3.10403f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), true);
-	caballos[3] = Objeto(mCaballo, glm::vec3(0.0f, 2.78831f, 3.3574f), glm::vec3(0.0f, -90.0f, 0.0f), true);
+	tiovivo = Objeto(mTiovivo, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	caballos[0] = Objeto(mCaballo, glm::vec3(3.3574f, 2.23712f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	caballos[1] = Objeto(mCaballo, glm::vec3(0.0f, 2.55784f, -3.3574f), glm::vec3(0.0f, 90.0f, 0.0f));
+	caballos[2] = Objeto(mCaballo, glm::vec3(-3.3574f, 3.10403f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+	caballos[3] = Objeto(mCaballo, glm::vec3(0.0f, 2.78831f, 3.3574f), glm::vec3(0.0f, -90.0f, 0.0f));
 	for (int i = 0; i < 4; i++)
 	{
 		caballos[i].vel = glm::vec3(0.0f, 0.866f, 0.0f);
 	}
 	// Objetos secundarios
-	arboles1[0] = Objeto(mArbol1, glm::vec3(-13.586f, 0.0f, 13.5265f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	arboles1[1] = Objeto(mArbol1, glm::vec3(-10.0f, 0.0f, -12.8954f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	arboles1[2] = Objeto(mArbol1, glm::vec3(10.0f, 0.0f, -18.1351f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	arboles1[3] = Objeto(mArbol1, glm::vec3(15.9371f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	arboles2[0] = Objeto(mArbol2, glm::vec3(14.8497f, 0.0f, -2.28204f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	arboles2[1] = Objeto(mArbol2, glm::vec3(4.08433f, 0.0f, 16.8323f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	arboles2[2] = Objeto(mArbol2, glm::vec3(-14.9429f, 0.0f, -3.55794f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	arboles1[0] = Objeto(mArbol1, glm::vec3(-13.586f, 0.0f, 13.5265f), glm::vec3(0.0f, 0.0f, 0.0f));
+	arboles1[1] = Objeto(mArbol1, glm::vec3(-10.0f, 0.0f, -12.8954f), glm::vec3(0.0f, 0.0f, 0.0f));
+	arboles1[2] = Objeto(mArbol1, glm::vec3(10.0f, 0.0f, -18.1351f), glm::vec3(0.0f, 0.0f, 0.0f));
+	arboles1[3] = Objeto(mArbol1, glm::vec3(15.9371f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	arboles2[0] = Objeto(mArbol2, glm::vec3(14.8497f, 0.0f, -2.28204f), glm::vec3(0.0f, 0.0f, 0.0f));
+	arboles2[1] = Objeto(mArbol2, glm::vec3(4.08433f, 0.0f, 16.8323f), glm::vec3(0.0f, 0.0f, 0.0f));
+	arboles2[2] = Objeto(mArbol2, glm::vec3(-14.9429f, 0.0f, -3.55794f), glm::vec3(0.0f, 0.0f, 0.0f));
 	// Objetos de fondo
-	edificios[0] = Objeto(mEdificio, glm::vec3(-33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), false);
-	edificios[1] = Objeto(mEdificio, glm::vec3(8.70247f, 0.0f, -31.4336f), glm::vec3(0.0f, 180.0f, 0.0f), false);
-	edificios[2] = Objeto(mEdificio, glm::vec3(33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), false);
-	edificios[3] = Objeto(mEdificio, glm::vec3(0.0f, 0.0f, 31.4336f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	farolas[0] = Objeto(mFarola, glm::vec3(3.63164f, 0.0f, 10.0f), glm::vec3(0.0f, -90.0f, 0.0f), false);
-	farolas[1] = Objeto(mFarola, glm::vec3(-10.0f, 0.0f, 3.63164f), glm::vec3(0.0f, 180.0f, 0.0f), false);
-	farolas[2] = Objeto(mFarola, glm::vec3(-3.63164f, 0.0f, -10.0f), glm::vec3(0.0f, 90.0f, 0.0f), false);
-	farolas[3] = Objeto(mFarola, glm::vec3(10.0f, 0.0f, -3.63164f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	bancos[0] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	bancos[1] = Objeto(mBanco, glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), false);
-	bancos[2] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 180.0f, 0.0f), false);
-	bancos[3] = Objeto(mBanco, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), false);
-	torres = Objeto(mTorres, glm::vec3(-8.04349f, 0.0f, -11.3122f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	edificios[0] = Objeto(mEdificio, glm::vec3(-33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f));
+	edificios[1] = Objeto(mEdificio, glm::vec3(8.70247f, 0.0f, -31.4336f), glm::vec3(0.0f, 180.0f, 0.0f));
+	edificios[2] = Objeto(mEdificio, glm::vec3(33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f));
+	edificios[3] = Objeto(mEdificio, glm::vec3(0.0f, 0.0f, 31.4336f), glm::vec3(0.0f, 0.0f, 0.0f));
+	farolas[0] = Objeto(mFarola, glm::vec3(3.63164f, 0.0f, 10.0f), glm::vec3(0.0f, -90.0f, 0.0f));
+	farolas[1] = Objeto(mFarola, glm::vec3(-10.0f, 0.0f, 3.63164f), glm::vec3(0.0f, 180.0f, 0.0f));
+	farolas[2] = Objeto(mFarola, glm::vec3(-3.63164f, 0.0f, -10.0f), glm::vec3(0.0f, 90.0f, 0.0f));
+	farolas[3] = Objeto(mFarola, glm::vec3(10.0f, 0.0f, -3.63164f), glm::vec3(0.0f, 0.0f, 0.0f));
+	bancos[0] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	bancos[1] = Objeto(mBanco, glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f));
+	bancos[2] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+	bancos[3] = Objeto(mBanco, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f));
+	torres = Objeto(mTorres, glm::vec3(-8.04349f, 0.0f, -11.3122f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 void dibujarSuelo() {
