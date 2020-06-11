@@ -186,3 +186,38 @@ void Camara::dibujarTrayectoria()
 		glPopMatrix();
 	}
 }
+
+void Camara::mostrarCoordenadas(float w, float h) {
+	std::ostringstream x, y, z;
+	x << pos.x;
+	y << pos.y;
+	z << pos.z;
+	std::string s = "X: ";
+	s += x.str();
+	s += " Y: ";
+	s += y.str();
+	s += " Z: ";
+	s += z.str();
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, w, 0.0, h);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glColor3f(1.0f, 0.0f, 0.0f);//needs to be called before RasterPos
+	glRasterPos2i(10, 10);
+	void * font = GLUT_BITMAP_9_BY_15;
+
+	for (std::string::iterator i = s.begin(); i != s.end(); ++i)
+	{
+		char c = *i;
+		glutBitmapCharacter(font, c);
+	}
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glEnable(GL_TEXTURE_2D);
+}
