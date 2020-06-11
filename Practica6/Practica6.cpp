@@ -66,6 +66,7 @@ void display(void)
 	cam.dibujarTrayectoria();
 	glPopMatrix();
 	referencia();
+	cam.mostrarCoordenadas(windowWidth, windowHeight);
 	glutSwapBuffers();
 	glFlush();
 }
@@ -376,14 +377,14 @@ void proyeccionOblicua()
 
 void initLuces()
 {
-	GLfloat position0[] = { 10.0f, 10.0f, 10.0f, 1.0f };
-	GLfloat position1[] = { 10.0f, 10.0f, 0.0f, 1.0f };
-	GLfloat position2[] = { 10.0f, 10.0f, -10.0f, 1.0f };
-	GLfloat position3[] = { 10.0f, 0.0f, 0.0f, 1.0f };
-	GLfloat spot_direction0[] = { -10.0f, -10.0f, -10.0f };
-	GLfloat spot_direction1[] = { -10.0f, -10.0f, 0.0f };
-	GLfloat spot_direction2[] = { -10.0f, -10.0f, 10.0f };
-	GLfloat spot_direction3[] = { -10.0f, 0.0f, 0.0f };
+	GLfloat position0[] = { 0.0f, 50.0f, 0.0f, 0.0f };
+	GLfloat position1[] = { -70.0, 20.0f, 0.0f, 1.0f };
+	GLfloat position2[] = { 50.0f, 50.0f, 0.0f, 0.0f };
+	GLfloat position3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
+	GLfloat spot_direction0[] = { 0.0f, 0.0f, 0.0f };
+	GLfloat spot_direction1[] = { 0.0f, 0.0f, 0.0f };
+	GLfloat spot_direction2[] = { 0.0f, 0.0f, 0.0f };
+	GLfloat spot_direction3[] = { 0.0f, 0.0f, 0.0f };
 	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, false);
 	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, true);
 	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, false);

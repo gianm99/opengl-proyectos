@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <deque>
+#include <sstream>
 
 enum Vista {alzado, planta, p_izquierdo, p_derecho, isometrica, };
 enum Plano {cenital, picado, base, contrapicado, nadir};
@@ -48,4 +49,6 @@ public:
 	void guardarTrayectoria();
 
 	void dibujarTrayectoria();
+
+	void mostrarCoordenadas(float w, float h);
 };
