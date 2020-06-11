@@ -4,7 +4,8 @@
 bool fullscreen;
 bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
-bool trazadosCaballos= false; // Dibujar la trayectoria de los caballos
+bool trazadosCaballos = false; // Dibujar la trayectoria de los caballos
+bool antialiasing = true; // Usar antialiasing
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
@@ -21,6 +22,8 @@ float rotacion = 0.0f;
 Camara cam;
 // Luces
 Luz luces[8];
+// Niebla
+static GLint fogMode;
 // Modelos
 Model_OBJ mCaballo;
 Model_OBJ mTiovivo;
@@ -62,7 +65,7 @@ void display(void)
 		edificio.dibujar();
 	}
 	// Dibujar objetos secundarios
-	glColor3f(0.3f,0.3f,0.3f); // Negro
+	glColor3f(0.3f, 0.3f, 0.3f); // Negro
 	for each (Objeto farola in farolas)
 	{
 		farola.dibujar();
@@ -110,15 +113,15 @@ void idle(void)
 
 	// Guardar trayectorias
 	cam.guardarTrayectoria();
-	caballos[0].guardarTrayectoria(rotacion-90.0f);
+	caballos[0].guardarTrayectoria(rotacion - 90.0f);
 	caballos[1].guardarTrayectoria(rotacion);
-	caballos[2].guardarTrayectoria(rotacion+90.0f);
-	caballos[3].guardarTrayectoria(rotacion+180.0f);
+	caballos[2].guardarTrayectoria(rotacion + 90.0f);
+	caballos[3].guardarTrayectoria(rotacion + 180.0f);
 	// Rotación
 	rotacion -= 45.0f * deltaTime;
 	if (rotacion < -360.0f)
 	{
-		rotacion=-(int)rotacion%360;
+		rotacion = -(int)rotacion % 360;
 	}
 	// Movimiento de los caballos
 	for (int i = 0; i < 4; i++)
@@ -222,11 +225,48 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 't':
-		trazadosCaballos=!trazadosCaballos;
-		for (int i=0;i<4;i++)
+		trazadosCaballos = !trazadosCaballos;
+		for (int i = 0; i < 4; i++)
 		{
 			caballos[i].setTrayectoriaVisible(trazadosCaballos);
 		}
+	case 'm':
+		antialiasing = !antialiasing;
+		if (antialiasing)
+		{
+			glEnable(GL_LINE_SMOOTH);
+			glEnable(GL_POLYGON_SMOOTH);
+		}
+		else
+		{
+			glDisable(GL_LINE_SMOOTH);
+			glDisable(GL_POLYGON_SMOOTH);
+		}
+		break;
+		case 'n':
+			if (fogMode == GL_EXP) {
+				fogMode = GL_EXP2;
+			}
+			else if (fogMode == GL_EXP2) {
+				fogMode = GL_LINEAR;
+			}
+			else if (fogMode == GL_LINEAR) {
+				fogMode = GL_EXP;
+			}
+			glFogi(GL_FOG_MODE, fogMode);
+			glutPostRedisplay();
+			break;
+		// Mover luz 0 a posición 1
+	case 'z':
+		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
+		break;
+		// Mover luz 0 a posición 2
+	case 'x':
+		luces[0].mover(glm::vec3{ -1.0f,1.0f,1.0f });
+		break;
+		// Mover luz 0 a posición 3
+	case 'c':
+		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
 	case '1':
 		cam.orbital(cenital);
@@ -269,18 +309,6 @@ void keyboard(unsigned char key, int x, int y)
 		luces[5].alternar();
 		luces[6].alternar();
 		luces[7].alternar();
-		break;
-		// Mover luz 0 a posición 1
-	case 'z':
-		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
-		break;
-		// Mover luz 0 a posición 2
-	case 'x':
-		luces[0].mover(glm::vec3{ -1.0f,1.0f,1.0f });
-		break;
-		// Mover luz 0 a posición 3
-	case 'c':
-		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
 	}
 	glutPostRedisplay();
@@ -561,9 +589,10 @@ void init()
 
 	glClearColor(0.0f, 0.67f, 0.79f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
 	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
@@ -576,6 +605,20 @@ void init()
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glShadeModel(GL_SMOOTH);
 	initLuces();
+	// Niebla
+	glEnable(GL_FOG);
+	{
+		GLfloat fogColor[4] = { 0.5, 0.5, 0.5, 1.0 };
+
+		fogMode = GL_EXP;
+		glFogi(GL_FOG_MODE, fogMode);
+		glFogfv(GL_FOG_COLOR, fogColor);
+		glFogf(GL_FOG_DENSITY, 0.05);
+		glHint(GL_FOG_HINT, GL_DONT_CARE);
+		glFogf(GL_FOG_START, 15.0);
+		glFogf(GL_FOG_END, 30.0);
+	}
+	//glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
@@ -595,7 +638,7 @@ void init()
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
 	glutInitWindowPosition(50, 50);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Tiovivo");
