@@ -49,26 +49,31 @@ void display(void)
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
 	dibujarSuelo();
-	glColor3f(0.8f, 0.8f, 0.8f);
 	// Dibujar objetos del fondo
+	glColor3f(0.894f, 0.615f, 0.129f);
 	torres.dibujar();
+	glColor3f(0.937f, 0.921f, 0.501f);
 	for each (Objeto edificio in edificios)
 	{
 		edificio.dibujar();
 	}
 	// Dibujar objetos secundarios
+	glColor3f(0.3f,0.3f,0.3f); // Negro
 	for each (Objeto farola in farolas)
 	{
 		farola.dibujar();
 	}
+	glColor3f(0.549f, 0.247f, 0.133f); // Marrón oscuro
 	for each (Objeto banco in bancos)
 	{
 		banco.dibujar();
 	}
+	glColor3f(0.105f, 0.270f, 0.050f); // Verde oscuro
 	for each (Objeto arbol in arboles1)
 	{
 		arbol.dibujar();
 	}
+	glColor3f(0.239f, 0.549f, 0.133f); // Verde
 	for each (Objeto arbol in arboles2)
 	{
 		arbol.dibujar();
@@ -76,11 +81,14 @@ void display(void)
 	// Dibujar la escena
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
+	glColor3f(0.941f, 0.098f, 0.137f); // Rojo claro
 	tiovivo.dibujar();
+	glColor3f(0.901f, 0.650f, 0.560f); // Marrón claro
 	for each (Objeto caballo in caballos)
 	{
 		caballo.dibujar();
 	}
+	glColor3f(1.0f,1.0f,1.0f); // Blanco
 	cam.dibujarTrayectoria();
 	glPopMatrix();
 	referencia();
