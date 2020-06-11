@@ -4,7 +4,7 @@
 bool fullscreen;
 bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
-enum estadoEjesPlanos {Ninguno, Ejes, Planos, Ejes_Planos}; //Estados para el dibujo de planos/referencias
+enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
@@ -23,11 +23,17 @@ Luz luces[4];
 // Objetos
 Objeto tiovivo;
 Objeto caballos[4];
+Objeto edificios[4];
+Objeto farolas[4];
+Objeto bancos[4];
 // Modelos
-Model_OBJ modeloCaballo;
-Model_OBJ modeloTiovivo;
+Model_OBJ mCaballo;
+Model_OBJ mTiovivo;
+Model_OBJ mEdificio;
+Model_OBJ mFarola;
+Model_OBJ mBanco;
 // Ratón
-float lastX = windowWidth/2, lastY = windowHeight/2;
+float lastX = windowWidth / 2, lastY = windowHeight / 2;
 boolean firstMouse = true;
 
 void display(void)
@@ -37,7 +43,19 @@ void display(void)
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
 	dibujarSuelo();
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.8f, 0.8f, 0.8f);
+	for each (Objeto edificio in edificios)
+	{
+		edificio.dibujar();
+	}
+	for each (Objeto farola in farolas)
+	{
+		farola.dibujar();
+	}
+	for each (Objeto banco in bancos)
+	{
+		banco.dibujar();
+	}
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
 	tiovivo.dibujar();
@@ -72,17 +90,17 @@ void idle(void)
 		rotacion = 0;
 	}
 	// Movimiento de los caballos
-	for (int i=0; i<4;i++)
+	for (int i = 0; i < 4; i++)
 	{
-		caballos[i].pos.y+=caballos[i].vel.y*deltaTime;
-		if (caballos[i].pos.y>horseMax)
+		caballos[i].pos.y += caballos[i].vel.y*deltaTime;
+		if (caballos[i].pos.y > horseMax)
 		{
-			caballos[i].pos.y= horseMax;
+			caballos[i].pos.y = horseMax;
 			caballos[i].cambiarDireccion();
 		}
 		else if (caballos[i].pos.y < horseMin)
 		{
-			caballos[i].pos.y= horseMin;
+			caballos[i].pos.y = horseMin;
 			caballos[i].cambiarDireccion();
 		}
 	}
@@ -96,7 +114,7 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	float speed = 10.0f * deltaTime;
+	float speed = 20.0f * deltaTime;
 	glm::vec3 position;
 	switch (key)
 	{
@@ -374,15 +392,34 @@ void initLuces()
 
 void initObjetos()
 {
-	tiovivo = Objeto(modeloTiovivo, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	caballos[0] = Objeto(modeloCaballo, glm::vec3(3.3574f, 2.23712f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), true);
-	caballos[1] = Objeto(modeloCaballo, glm::vec3(0.0f, 2.55784f, -3.3574f), glm::vec3(0.0f, 90.0f, 0.0f), true);
-	caballos[2] = Objeto(modeloCaballo, glm::vec3(-3.3574f, 3.10403f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), true);
-	caballos[3] = Objeto(modeloCaballo, glm::vec3(0.0f, 2.78831f, 3.3574f), glm::vec3(0.0f, -90.0f, 0.0f), true);
-	for (int i = 0; i<4; i++)
+	// Cargar los modelos
+	mCaballo.Load("Modelos/arabian.obj");
+	mTiovivo.Load("Modelos/Tiovivo.obj");
+	mEdificio.Load("Modelos/Edificio.obj");
+	mFarola.Load("Modelos/Farola.obj");
+	mBanco.Load("Modelos/Banco.obj");
+	// Posicionar los objetos en la escena
+	tiovivo = Objeto(mTiovivo, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	caballos[0] = Objeto(mCaballo, glm::vec3(3.3574f, 2.23712f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), true);
+	caballos[1] = Objeto(mCaballo, glm::vec3(0.0f, 2.55784f, -3.3574f), glm::vec3(0.0f, 90.0f, 0.0f), true);
+	caballos[2] = Objeto(mCaballo, glm::vec3(-3.3574f, 3.10403f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), true);
+	caballos[3] = Objeto(mCaballo, glm::vec3(0.0f, 2.78831f, 3.3574f), glm::vec3(0.0f, -90.0f, 0.0f), true);
+	for (int i = 0; i < 4; i++)
 	{
 		caballos[i].vel = glm::vec3(0.0f, 0.866f, 0.0f);
 	}
+	edificios[0] = Objeto(mEdificio, glm::vec3(-33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), false);
+	edificios[1] = Objeto(mEdificio, glm::vec3(8.70247f, 0.0f, -31.4336f), glm::vec3(0.0f, 180.0f, 0.0f), false);
+	edificios[2] = Objeto(mEdificio, glm::vec3(33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), false);
+	edificios[3] = Objeto(mEdificio, glm::vec3(0.0f, 0.0f, 31.4336f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	farolas[0] = Objeto(mFarola, glm::vec3(3.63164f, 0.0f, 10.0f), glm::vec3(0.0f, -90.0f, 0.0f), false);
+	farolas[1] = Objeto(mFarola, glm::vec3(-10.0f, 0.0f, 3.63164f), glm::vec3(0.0f, 180.0f, 0.0f), false);
+	farolas[2] = Objeto(mFarola, glm::vec3(-3.63164f, 0.0f, -10.0f), glm::vec3(0.0f, 90.0f, 0.0f), false);
+	farolas[3] = Objeto(mFarola, glm::vec3(10.0f, 0.0f, -3.63164f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	bancos[0] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	bancos[1] = Objeto(mBanco, glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), false);
+	bancos[2] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 180.0f, 0.0f), false);
+	bancos[3] = Objeto(mBanco,glm::vec3(10.0f,0.0f,0.0f),glm::vec3(0.0f,90.0f,0.0f),false);
 }
 
 void dibujarSuelo() {
@@ -391,18 +428,18 @@ void dibujarSuelo() {
 	float SizeX = 2.5f;
 	float SizeZ = 2.5f;
 	glBegin(GL_QUADS);
-	for (int x = -(GridSizeX/2); x<(GridSizeX/2); ++x)
-		for (int z = -(GridSizeZ/2); z<(GridSizeZ/2); ++z)
+	for (int x = -(GridSizeX / 2); x < (GridSizeX / 2); ++x)
+		for (int z = -(GridSizeZ / 2); z < (GridSizeZ / 2); ++z)
 		{
-			if (((x + z) % 2)==0) //modulo 2
+			if (((x + z) % 2) == 0) //modulo 2
 				glColor3f(1.0f, 1.0f, 1.0f); //white
 			else
 				glColor3f(0.0f, 0.0f, 0.0f); //black
 
-			glVertex3f(x*SizeX,			0, z*SizeZ);
-			glVertex3f((x + 1)*SizeX,	0, z*SizeZ);
-			glVertex3f((x + 1)*SizeX,	0, (z + 1)*SizeZ);
-			glVertex3f(x*SizeX,			0, (z + 1)*SizeZ);
+			glVertex3f(x*SizeX, 0, z*SizeZ);
+			glVertex3f((x + 1)*SizeX, 0, z*SizeZ);
+			glVertex3f((x + 1)*SizeX, 0, (z + 1)*SizeZ);
+			glVertex3f(x*SizeX, 0, (z + 1)*SizeZ);
 
 		}
 	glEnd();
@@ -439,8 +476,8 @@ void camaraRaton(int posx, int posy) {
 	direction.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
 	cam.front = glm::normalize(direction);
 
-	if (posx < 100 || posx > windowWidth - 200) { 
-		lastX = windowWidth/ 2;   
+	if (posx < 100 || posx > windowWidth - 200) {
+		lastX = windowWidth / 2;
 		lastY = windowHeight / 2;
 		glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	}
@@ -458,7 +495,7 @@ void init()
 	GLfloat memission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat globalAmbient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.67f, 0.79f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -482,8 +519,6 @@ void init()
 	cam.vista(isometrica);
 	cam.mirar();
 	// Objetos
-	modeloCaballo.Load("Modelos/arabian.obj");
-	modeloTiovivo.Load("Modelos/Tiovivo.obj");
 	initObjetos();
 	// Callbacks
 	glutDisplayFunc(display);
