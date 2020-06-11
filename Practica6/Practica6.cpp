@@ -20,7 +20,7 @@ float rotacion = 0.0f;
 // Cámara
 Camara cam;
 // Luces
-Luz luces[4];
+Luz luces[8];
 // Modelos
 Model_OBJ mCaballo;
 Model_OBJ mTiovivo;
@@ -264,6 +264,12 @@ void keyboard(unsigned char key, int x, int y)
 	case '9':
 		luces[3].alternar();
 		break;
+	case '0':
+		luces[4].alternar();
+		luces[5].alternar();
+		luces[6].alternar();
+		luces[7].alternar();
+		break;
 		// Mover luz 0 a posición 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
@@ -415,17 +421,28 @@ void proyeccionOblicua()
 void initLuces()
 {
 	GLfloat position0[] = { 0.0f, 50.0f, 0.0f, 0.0f };
-	GLfloat position1[] = { -70.0, 20.0f, 0.0f, 1.0f };
+	GLfloat position1[] = { -70.0, 20.0f, 0.0f, 0.0f };
 	GLfloat position2[] = { 50.0f, 50.0f, 0.0f, 0.0f };
 	GLfloat position3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
+	GLfloat position4[] = { 8.36f, 5.92f, -3.63f, 1.0f };
+	GLfloat position5[] = { 3.64f, 5.92f, 8.36f, 1.0f };
+	GLfloat position6[] = { -8.36f, 5.92f, 3.63f, 1.0f };
+	GLfloat position7[] = { -3.64f, 5.92f, -8.36f, 1.0f };
 	GLfloat spot_direction0[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat spot_direction1[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat spot_direction2[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat spot_direction3[] = { 0.0f, 0.0f, 0.0f };
-	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, false);
-	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, true);
-	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, false);
-	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, false);
+	GLfloat spot_direction4567[] = { 0.0f, -1.0f, 0.0f };
+	GLfloat cut1 = 180;
+	GLfloat cut2 = 52;
+	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, &cut1, true);
+	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, &cut1, false);
+	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, &cut1, false);
+	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, &cut1, false);
+	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4567, &cut2, false);
+	luces[5] = Luz((GLenum)GL_LIGHT5, position5, spot_direction4567, &cut2, false);
+	luces[6] = Luz((GLenum)GL_LIGHT6, position6, spot_direction4567, &cut2, false);
+	luces[7] = Luz((GLenum)GL_LIGHT7, position7, spot_direction4567, &cut2, false);
 }
 
 void initObjetos()
@@ -522,11 +539,6 @@ void camaraRaton(int posx, int posy) {
 	if (cam.pitch < -89.0f)
 		cam.pitch = -89.0f;
 
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-	direction.y = sin(glm::radians(cam.pitch));
-	direction.z = sin(glm::radians(cam.yaw)) * cos(glm::radians(cam.pitch));
-	cam.front = glm::normalize(direction);
 
 	if (posx < 100 || posx > windowWidth - 200) {
 		lastX = windowWidth / 2;
