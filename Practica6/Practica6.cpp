@@ -148,7 +148,7 @@ void reshape(GLsizei width, GLsizei height)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	float speed = 20.0f * deltaTime;
+	float speed = 10.0f * deltaTime;
 	glm::vec3 position;
 	switch (key)
 	{
