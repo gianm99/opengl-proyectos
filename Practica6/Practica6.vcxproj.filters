@@ -29,7 +29,7 @@
     </ClCompile>
     <ClCompile Include="Objeto.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </ClCompile>   
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Practica6.h">
@@ -47,5 +47,5 @@
     <ClInclude Include="Objeto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
+      </ItemGroup>
 </Project>

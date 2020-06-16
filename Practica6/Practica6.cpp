@@ -635,6 +635,53 @@ void init()
 	glutSpecialFunc(special);
 }
 
+void initTexture(void)
+{
+
+	image_t temp_image; // variável que irá armazenar a textura a ser usada
+
+						// Habilita o uso de textura 
+	glEnable(GL_TEXTURE_2D);
+
+	// Define a forma de armazenamento dos pixels na textura (1= alihamento por byte)
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// Define quantas texturas serão usadas no programa 
+	glGenTextures(1, texture_id);  // 1 = uma textura;
+								   // texture_id = vetor que guardas os números das texturas
+
+								   // Define os números da textura dos cubos
+								   //Paredes y techo. 
+	texture_id[CDAV] = 1001;
+	texture_id[CDRE] = 1002;
+	texture_id[CDAR] = 1003;
+	texture_id[CESQ] = 1004;
+	texture_id[CADA] = 1005;
+
+	//Trees.
+	
+
+	// **
+	// Define a textura do objeto da ESQUERDA
+	// **
+	glBindTexture(GL_TEXTURE_2D, texture_id[CDAV]);
+	tgaLoad("textures/skybox2_pz.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CDRE]);
+	tgaLoad("textures/skybox2_px.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CDAR]);
+	tgaLoad("textures/skybox2_nz.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CESQ]);
+	tgaLoad("textures/skybox2_nx.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CADA]);
+	tgaLoad("textures/skybox2_py.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+
+}
+
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
@@ -646,3 +693,4 @@ int main(int argc, char **argv)
 	glutMainLoop();
 	return 0;
 }
+

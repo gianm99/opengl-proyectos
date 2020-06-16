@@ -156,6 +156,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\..\GL\tgload.cpp" />
     <ClCompile Include="Camara.cpp" />
     <ClCompile Include="Luz.cpp" />
     <ClCompile Include="Model_OBJ.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="Practica6.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\GL\tgload.h" />
     <ClInclude Include="Camara.h" />
     <ClInclude Include="Luz.h" />
     <ClInclude Include="Model_OBJ.h" />
