@@ -6,6 +6,7 @@ bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
 bool trazadosCaballos = false; // Dibujar la trayectoria de los caballos
 bool antialiasing = true; // Usar antialiasing
+bool fillPoligonos = true; // Rellenar los polígonos
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
@@ -49,6 +50,7 @@ boolean firstMouse = true;
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearStencil(0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
@@ -230,6 +232,18 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			caballos[i].setTrayectoriaVisible(trazadosCaballos);
 		}
+		break;
+	case 'b':
+		fillPoligonos=!fillPoligonos;
+		if (fillPoligonos)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		break;
 	case 'm':
 		antialiasing = !antialiasing;
 		if (antialiasing)
@@ -243,19 +257,19 @@ void keyboard(unsigned char key, int x, int y)
 			glDisable(GL_POLYGON_SMOOTH);
 		}
 		break;
-		case 'n':
-			if (fogMode == GL_EXP) {
-				fogMode = GL_EXP2;
-			}
-			else if (fogMode == GL_EXP2) {
-				fogMode = GL_LINEAR;
-			}
-			else if (fogMode == GL_LINEAR) {
-				fogMode = GL_EXP;
-			}
-			glFogi(GL_FOG_MODE, fogMode);
-			glutPostRedisplay();
-			break;
+	case 'n':
+		if (fogMode == GL_EXP) {
+			fogMode = GL_EXP2;
+		}
+		else if (fogMode == GL_EXP2) {
+			fogMode = GL_LINEAR;
+		}
+		else if (fogMode == GL_LINEAR) {
+			fogMode = GL_EXP;
+		}
+		glFogi(GL_FOG_MODE, fogMode);
+		glutPostRedisplay();
+		break;
 		// Mover luz 0 a posición 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
@@ -593,6 +607,7 @@ void init()
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_STENCIL_TEST);
 	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
