@@ -49,6 +49,7 @@ boolean firstMouse = true;
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearStencil(0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
@@ -593,6 +594,7 @@ void init()
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_STENCIL_TEST);
 	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
