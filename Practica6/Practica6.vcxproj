@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\glm;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documentos\UIB\Tercero\Informatica_Grafica\GLM\glm;C:\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\glfw-3.3.2;C:\Program Files %28x86%29\glm;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documentos\UIB\Tercero\Informatica_Grafica\GLM\glm;C:\Program Files %28x86%29\glfw-3.3.2;C:\Program Files %28x86%29\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -161,6 +161,7 @@
     <ClCompile Include="Model_OBJ.cpp" />
     <ClCompile Include="Objeto.cpp" />
     <ClCompile Include="Practica6.cpp" />
+    <ClCompile Include="tgload.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camara.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Model_OBJ.h" />
     <ClInclude Include="Objeto.h" />
     <ClInclude Include="Practica6.h" />
+    <ClInclude Include="tgload.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
