@@ -7,6 +7,7 @@ bool planosRef = false; // Dibujar los planos de referencia
 bool trazadosCaballos = false; // Dibujar la trayectoria de los caballos
 bool antialiasing = true; // Usar antialiasing
 bool niebla = true;
+bool fillPoligonos = true; // Rellenar los polígonos
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
@@ -59,6 +60,7 @@ GLuint texture_id[N_TEXTURAS];
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearStencil(0);
 	glMatrixMode(GL_MODELVIEW);
 	
 	glLoadIdentity();
@@ -268,6 +270,18 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			caballos[i].setTrayectoriaVisible(trazadosCaballos);
 		}
+		break;
+	case 'b':
+		fillPoligonos=!fillPoligonos;
+		if (fillPoligonos)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		break;
 	case 'm':
 		antialiasing = !antialiasing;
 		if (antialiasing)
@@ -281,7 +295,7 @@ void keyboard(unsigned char key, int x, int y)
 			glDisable(GL_POLYGON_SMOOTH);
 		}
 		break;
-		case 'n':
+  case 'n':
 			if (niebla) {
 				if (fogMode == GL_EXP) {
 					fogMode = GL_EXP2;
@@ -294,8 +308,7 @@ void keyboard(unsigned char key, int x, int y)
 					niebla = !niebla;
 					glDisable(GL_FOG);
 				}
-			}
-			else  {
+			} else  {
 				glEnable(GL_FOG);
 				niebla = !niebla;
 			}
@@ -688,6 +701,7 @@ void init()
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_STENCIL_TEST);
 	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
