@@ -1,4 +1,4 @@
-// Pendulo.cpp++++++++
+// Pendulo.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
 #include <GL/glut.h>
@@ -23,7 +23,7 @@ void display(void)
 	glLoadIdentity();                // Reset the model-view matrix
 
 
-	// Parte superior
+									 // Parte superior
 	glPushMatrix();
 	glRotatef(fAnguloCentral, 0.0f, 0.0f, 1.0f);
 	glBegin(GL_QUADS);
@@ -94,4 +94,34 @@ void reshape(GLsizei width, GLsizei height)
 }
 
 // Función principal
-+++
+int main(int argc, char **argv)
+{
+	// Inicializamos la librería GLUT
+	glutInit(&argc, argv);
+
+	// Creamos la ventana
+	glutInitWindowSize(W_WIDTH, W_HEIGHT);
+	// Se situa en el centro de la pantalla
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - W_WIDTH) / 2,
+		(glutGet(GLUT_SCREEN_HEIGHT) - W_HEIGHT) / 2);
+	// Usamos doble buffer
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutCreateWindow("Péndulo doble");
+
+	// Indicamos cuales son las funciones de redibujado y reshape
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutIdleFunc(idle);
+
+	// El color de fondo será gris oscuro opaco
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+	// Indicamos la velocidad a la que gira en grados
+	fIncCentral = 3.0f;
+	fIncInferior = 4.0f;
+
+	// Comienza la ejecución del core de GLUT
+	glutMainLoop();
+	return 0;
+}
+
