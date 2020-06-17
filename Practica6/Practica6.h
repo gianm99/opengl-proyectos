@@ -13,14 +13,11 @@
 #include "Objeto.h"
 #include "Luz.h"
 #include "tgload.h"
+
 #define KEY_ESCAPE 27
 #define KEY_SPACE 32
 
-#define CFRONT 0
-#define CLDER  1
-#define CINF   2
-#define CLIZQ  3
-#define CSUP   4
+
 
 using namespace std;
 
@@ -52,8 +49,12 @@ void initLuces();
 void initObjetos();
 // Dibuja el suelo como un tablero de ajedrez
 void dibujarSuelo();
+void dibujarskybox();
 // Captura los movimientos del ratón para mover la cámara
 void camaraRaton(int posx, int posy);
 // Inicializa algunos valores del dibujado de la escena
 void init();
+void CreaSkyBox(GLuint nro_de_textura);
+// Inicializa las texturas
+void initTexture(void);
 

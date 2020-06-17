@@ -29,7 +29,10 @@
     </ClCompile>
     <ClCompile Include="Objeto.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>   
+    </ClCompile>
+    <ClCompile Include="tgload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Practica6.h">
@@ -47,5 +50,8 @@
     <ClInclude Include="Objeto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-      </ItemGroup>
+    <ClInclude Include="tgload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
