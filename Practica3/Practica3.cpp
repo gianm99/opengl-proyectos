@@ -6,9 +6,9 @@
 // Indica si está en modo fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible=true;
+bool ejesRef=true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosVisible=true;
+bool planosRef=true;
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -38,16 +38,19 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
-	transTetera();
-	transEsfera();
-	transCubo();
-	if (ejesVisible) referenciaEjes();
-	if (planosVisible) referenciaPlanos();
+	trazadoElem(Tet.posiciones);
+	trazadoElem(Esf.posiciones);
+	trazadoElem(Cub.posiciones);
+	dibujarTetera();
+	dibujarEsfera();
+	dibujarCubo();
+	if (ejesRef) referenciaEjes();
+	if (planosRef) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
-void transTetera() {
+void dibujarTetera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -59,7 +62,7 @@ void transTetera() {
 	glPopMatrix();
 }
 
-void transEsfera() {
+void dibujarEsfera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -71,7 +74,7 @@ void transEsfera() {
 	glPopMatrix();
 }
 
-void transCubo() {
+void dibujarCubo() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -123,15 +126,32 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		case 'e':
-			ejesVisible=!ejesVisible;
+			ejesRef=!ejesRef;
 			break;
 		case 'p':
-			planosVisible=!planosVisible;
+			planosRef=!planosRef;
 			break;
 	}
 }
 
 void idle(void) {
+
+	// Guardar posiciones de objetos
+	if (Tet.posiciones.size() == 50)
+	{
+		Tet.posiciones.pop_front();
+	}
+	Tet.posiciones.push_back(Tet.pos);
+	if (Esf.posiciones.size() == 50) {
+		Esf.posiciones.pop_front();
+	}
+	Esf.posiciones.push_back(Esf.pos);
+	if (Cub.posiciones.size() == 50) {
+		Cub.posiciones.pop_front();
+	}
+	Cub.posiciones.push_back(Cub.pos);
+
+
 	//tetera
 	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
 	{
@@ -249,4 +269,16 @@ int main(int argc, char **argv)
 	glutIdleFunc(idle);
 	glutMainLoop();
 	return 0;
+}
+
+void trazadoElem(std::deque <glm::vec3> pos) {
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
+	}
+	glEnd();
+	glPopMatrix();
 }

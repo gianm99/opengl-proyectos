@@ -6,9 +6,9 @@
 // Indica si está en fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesVisible = true;
+bool ejesRef = true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosVisible = true;
+bool planosRef = true;
 bool profundidad = true;
 // Indica el tipo de sombreado que se pintará
 bool sombreado = true;
@@ -85,48 +85,44 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	trazadoElem(Tet.cola);
-	transTetera();
-	transEsfera();
-	transCubo();
-	if (ejesVisible) referenciaEjes();
-	if (planosVisible) referenciaPlanos();
+	trazadoElem(cam.trayectoria);
+	trazadoElem(Tet.posiciones);
+	trazadoElem(Esf.posiciones);
+	trazadoElem(Cub.posiciones);
+	dibujarTetera();
+	dibujarEsfera();
+	dibujarCubo();
+	if (ejesRef) referenciaEjes();
+	if (planosRef) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
-void transTetera() {
-
-	glLoadIdentity();
+void dibujarTetera() {
 	glPushMatrix();
 
 	glTranslatef(Tet.pos.x, Tet.pos.y, Tet.pos.z);
 	glutSolidTeapot(0.1f);
-	glTranslatef(-Tet.pos.x, -Tet.pos.y, -Tet.pos.z);
 
 	glPopMatrix();
 }
 
-void transEsfera() {
+void dibujarEsfera() {
 
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Esf.pos.x, Esf.pos.y, Esf.pos.z);
 	glutSolidSphere(0.1f, 100, 100);
-	glTranslatef(-Esf.pos.x, -Esf.pos.y, -Esf.pos.z);
 
 	glPopMatrix();
 }
 
-void transCubo() {
+void dibujarCubo() {
 
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Cub.pos.x, Cub.pos.y, Cub.pos.z);
 	glutSolidCube(0.1);
-	glTranslatef(-Cub.pos.x, -Cub.pos.y, -Cub.pos.z);
 
 	glPopMatrix();
 
@@ -135,7 +131,7 @@ void transCubo() {
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	mirar(cam);
+	look(cam);
 }
 
 
@@ -166,35 +162,35 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'e':
-		ejesVisible = !ejesVisible;
-		planosVisible = !planosVisible;
+		ejesRef = !ejesRef;
+		planosRef = !planosRef;
 		break;
 	case 'p':
 		profundidad = !profundidad;
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		mirar(cam);
+		look(cam);
 		glMatrixMode(GL_MODELVIEW);
 		break;
 		// Dolly in
 	case 'w':
 		cam.pos += speed*cam.front;
-		mirar(cam);
+		look(cam);
 		break;
 		// Dolly out
 	case 's':
 		cam.pos -= speed*cam.front;
-		mirar(cam);
+		look(cam);
 		break;
 		// Travelling izquierda
 	case 'a':
 		cam.pos -= glm::normalize(glm::cross(cam.front, cam.up))*speed;
-		mirar(cam);
+		look(cam);
 		break;
 		// Travelling derecha
 	case 'd':
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
-		mirar(cam);
+		look(cam);
 		break;
 	case SPACEBAR:
 		if (sombreado) {
@@ -213,7 +209,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -89.999f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano picado
 	case '2':
@@ -223,7 +219,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -45.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano normal
 	case '3':
@@ -233,7 +229,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano contrapicado
 	case '4':
@@ -243,7 +239,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 45.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano nadir
 	case '5':
@@ -253,11 +249,11 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 89.999f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Luz 0
 	case '6':
-		if (luces[0].on)
+		if (luces[0].encendida)
 		{
 			glDisable(GL_LIGHT0);
 		}
@@ -265,11 +261,11 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			glEnable(GL_LIGHT0);
 		}
-		luces[0].on = !luces[0].on;
+		luces[0].encendida = !luces[0].encendida;
 		break;
 		// Luz 1
 	case '7':
-		if (luces[1].on)
+		if (luces[1].encendida)
 		{
 			glDisable(GL_LIGHT1);
 		}
@@ -277,11 +273,11 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			glEnable(GL_LIGHT1);
 		}
-		luces[1].on = !luces[1].on;
+		luces[1].encendida = !luces[1].encendida;
 		break;
 		// Luz 2
 	case '8':
-		if (luces[2].on)
+		if (luces[2].encendida)
 		{
 			glDisable(GL_LIGHT2);
 		}
@@ -289,11 +285,11 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			glEnable(GL_LIGHT2);
 		}
-		luces[2].on = !luces[2].on;
+		luces[2].encendida = !luces[2].encendida;
 		break;
 		// Luz 3
 	case '9':
-		if (luces[3].on)
+		if (luces[3].encendida)
 		{
 			glDisable(GL_LIGHT3);
 		}
@@ -301,7 +297,7 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			glEnable(GL_LIGHT3);
 		}
-		luces[3].on = !luces[3].on;
+		luces[3].encendida = !luces[3].encendida;
 		break;
 		// Mover luz 0 a posición 1
 	case 'z':
@@ -309,7 +305,7 @@ void keyboard(unsigned char key, int x, int y)
 		position[1] = 0.0f;
 		position[2] = 1.0f;
 		position[3] = 1.0f;
-		luces[0].mover((GLenum) GL_LIGHT0,position);
+		luces[0].mover((GLenum)GL_LIGHT0, position);
 		break;
 		// Mover luz 0 a posición 2
 	case 'x':
@@ -345,7 +341,7 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// planta
 	case GLUT_KEY_F2:
@@ -354,7 +350,7 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = -90.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// perfil izquierdo
 	case GLUT_KEY_F3:
@@ -363,7 +359,7 @@ void special(int key, int x, int y)
 		cam.yaw = 0.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F4:
@@ -372,7 +368,7 @@ void special(int key, int x, int y)
 		cam.yaw = 180.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F5:
@@ -381,7 +377,7 @@ void special(int key, int x, int y)
 		cam.yaw = -135.0f;
 		cam.pitch = -glm::degrees(asin(1 / sqrt(3)));
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// caballera
 	case GLUT_KEY_F6:
@@ -391,7 +387,7 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// militar
 	case GLUT_KEY_F7:
@@ -401,27 +397,27 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_RIGHT:
 		cam.yaw += speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_LEFT:
 		cam.yaw -= speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_UP:
 		cam.pitch += speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_DOWN:
 		cam.pitch -= speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	}
 }
@@ -430,6 +426,27 @@ void idle(void) {
 	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
+
+	// Guardar posicion de la camara
+	if (cam.trayectoria.size() == 50)
+	{
+		cam.trayectoria.pop_front();
+	}
+	cam.trayectoria.push_back(cam.pos);
+	// Guardar posiciones de objetos
+	if (Tet.posiciones.size() == 50)
+	{
+		Tet.posiciones.pop_front();
+	}
+	Tet.posiciones.push_back(Tet.pos);
+	if (Esf.posiciones.size() == 50) {
+		Esf.posiciones.pop_front();
+	}
+	Esf.posiciones.push_back(Esf.pos);
+	if (Cub.posiciones.size() == 50) {
+		Cub.posiciones.pop_front();
+	}
+	Cub.posiciones.push_back(Cub.pos);
 
 	//tetera
 	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
@@ -446,11 +463,6 @@ void idle(void) {
 	Tet.pos.y += Tet.inc.y;
 	Tet.pos.z += Tet.inc.z;
 
-	Tet.cola.push(glm::vec3(0.1f, 0.1f, 0.1f));
-	Tet.cola.push(glm::vec3(0.1f, 0.2f, 0.1f));
-	Tet.cola.push(glm::vec3(0.1f, 0.3f, 0.1f));
-	Tet.cola.push(glm::vec3(0.1f, 0.4f, 0.1f));
-	Tet.cola.push(glm::vec3(0.1f, 0.5f, 0.1f));
 	//esfera
 	if (Esf.pos.z > 0.7f || Esf.pos.z < -0.7f)
 	{
@@ -465,7 +477,6 @@ void idle(void) {
 	Esf.pos.x += Esf.inc.x;
 	Esf.pos.y += Esf.inc.y;
 	Esf.pos.z += Esf.inc.z;
-
 
 	//cubo
 
@@ -486,7 +497,7 @@ void idle(void) {
 	glutPostRedisplay();
 }
 
-void mirar(Camara cam)
+void look(Camara cam)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -561,30 +572,26 @@ void init()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
 	glLightModelfv(GL_AMBIENT, globalAmbient);
-	configurarLuces();
+	initLuces();
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
 }
 
-void trazadoElem(std::queue <glm::vec3> cola) {
-	glm::vec3 aux = cola.front();
-	cola.pop();
+void trazadoElem(std::deque <glm::vec3> pos) {
 	glPushMatrix();
 	glLoadIdentity();
-	glBegin(GL_LINE);
-	while (!cola.empty()) {
-		glVertex3f(aux.x, aux.y, aux.z);
-		glVertex3f(cola.front().x, cola.front().y, cola.front().z);
-		aux = cola.front();
-		cola.pop();
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
 	}
 	glEnd();
 	glPopMatrix();
 }
 
-void configurarLuces()
+void initLuces()
 {
 	GLfloat position0[] = { 0.0f,0.0f,1.0f,1.0f };
 	GLfloat position1[] = { 1.0f,1.0f,0.0f,1.0f };

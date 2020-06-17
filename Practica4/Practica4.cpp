@@ -4,8 +4,8 @@
 #include "Practica4.h"
 
 bool fullscreen;  // Indica si está en pantalla completa
-bool ejesVisible = true;  // Indica si se dibujan los ejes
-bool planosVisible = true;  // Indica si se dibujan los planos
+bool ejesRef = true;  // Indica si se dibujan los ejes
+bool planosRef = true;  // Indica si se dibujan los planos
 bool profundidad = true;  // Indica si la escena tiene profundida
 float deltaTime = 0.0f;	 // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f;  // Tiempo del frame anterior
@@ -73,16 +73,20 @@ void display(void)
 	}
 	glMultMatrixf(m);
 	glColor3f(1.0f,1.0f,1.0f);
-	transTetera();
-	transEsfera();
-	transCubo();
-	if (ejesVisible) referenciaEjes();
-	if (planosVisible) referenciaPlanos();
+	trazadoElem(cam.trayectoria);
+	trazadoElem(Tet.posiciones);
+	trazadoElem(Esf.posiciones);
+	trazadoElem(Cub.posiciones);
+	dibujarTetera();
+	dibujarEsfera();
+	dibujarCubo();
+	if (ejesRef) referenciaEjes();
+	if (planosRef) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
-void transTetera() {
+void dibujarTetera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -94,7 +98,7 @@ void transTetera() {
 	glPopMatrix();
 }
 
-void transEsfera() {
+void dibujarEsfera() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -106,7 +110,7 @@ void transEsfera() {
 	glPopMatrix();
 }
 
-void transCubo() {
+void dibujarCubo() {
 
 	glLoadIdentity();
 	glPushMatrix();
@@ -119,7 +123,7 @@ void transCubo() {
 
 }
 
-void mirar(Camara cam)
+void look(Camara cam)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -165,33 +169,33 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 		// Ejes y planos de referencia
 	case 'e':
-		ejesVisible = !ejesVisible;
-		planosVisible = !planosVisible;
+		ejesRef = !ejesRef;
+		planosRef = !planosRef;
 		break;
 		// Profundidad
 	case 'p':
 		profundidad = !profundidad;
-		mirar(cam);
+		look(cam);
 		break;
 		// Dolly in
 	case 'w':
 		cam.pos += speed*cam.front;
-		mirar(cam);
+		look(cam);
 		break;
 		// Dolly out
 	case 's':
 		cam.pos -= speed*cam.front;
-		mirar(cam);
+		look(cam);
 		break;
 		// Travelling izquierda
 	case 'a':
 		cam.pos -= glm::normalize(glm::cross(cam.front, cam.up))*speed;
-		mirar(cam);
+		look(cam);
 		break;
 		// Travelling derecha
 	case 'd':
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano cenital
 	case '1':
@@ -201,7 +205,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -89.999f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano picado
 	case '2':
@@ -211,7 +215,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -45.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano normal
 	case '3':
@@ -221,7 +225,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano contrapicado
 	case '4':
@@ -231,7 +235,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 45.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// Plano nadir
 	case '5':
@@ -241,7 +245,7 @@ void keyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 89.999f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	}
 	glutPostRedisplay();
@@ -261,7 +265,7 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// planta
 	case GLUT_KEY_F2:
@@ -270,7 +274,7 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = -90.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// perfil izquierdo
 	case GLUT_KEY_F3:
@@ -279,7 +283,7 @@ void special(int key, int x, int y)
 		cam.yaw = 0.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F4:
@@ -288,7 +292,7 @@ void special(int key, int x, int y)
 		cam.yaw = 180.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F5:
@@ -297,7 +301,7 @@ void special(int key, int x, int y)
 		cam.yaw = -135.0f;
 		cam.pitch = -glm::degrees(asin(1 / sqrt(3)));
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// caballera
 	case GLUT_KEY_F6:
@@ -307,7 +311,7 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 		// militar
 	case GLUT_KEY_F7:
@@ -317,27 +321,27 @@ void special(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_RIGHT:
 		cam.yaw += speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_LEFT:
 		cam.yaw -= speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_UP:
 		cam.pitch += speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	case GLUT_KEY_DOWN:
 		cam.pitch -= speed;
 		cam.girar();
-		mirar(cam);
+		look(cam);
 		break;
 	}
 }
@@ -346,6 +350,28 @@ void idle(void) {
 	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentFrame - lastFrame)/1000;
 	lastFrame = currentFrame;
+
+	// Guardar posicion de la camara
+	if (cam.trayectoria.size() == 50)
+	{
+		cam.trayectoria.pop_front();
+	}
+	cam.trayectoria.push_back(cam.pos);
+	// Guardar posiciones de objetos
+	if (Tet.posiciones.size() == 50)
+	{
+		Tet.posiciones.pop_front();
+	}
+	Tet.posiciones.push_back(Tet.pos);
+	if (Esf.posiciones.size() == 50) {
+		Esf.posiciones.pop_front();
+	}
+	Esf.posiciones.push_back(Esf.pos);
+	if (Cub.posiciones.size() == 50) {
+		Cub.posiciones.pop_front();
+	}
+	Cub.posiciones.push_back(Cub.pos);
+
 
 	//tetera
 	if (Tet.pos.z > 0.7f || Tet.pos.z < -0.7f)
@@ -455,5 +481,17 @@ void init() {
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	mirar(cam);
+	look(cam);
+}
+
+void trazadoElem(std::deque <glm::vec3> pos) {
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < pos.size(); i++)
+	{
+		glVertex3f(pos[i].x, pos[i].y, pos[i].z);
+	}
+	glEnd();
+	glPopMatrix();
 }

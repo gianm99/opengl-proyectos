@@ -2,7 +2,7 @@
 //Autores: Tomas Bordoy, Gian Lucas Martin y Jordi Sastre.
 
 #include <stdlib.h>
-#include <queue>
+#include <deque>
 # define _USE_MATH_DEFINES
 # define SPACEBAR 32
 #include <gl/glut.h>
@@ -17,8 +17,6 @@
 #include <cstdlib>
 #include <vector>
 
-
-
 // Representa una camara, con los datos de posicion, direccion, etc.
 class Camara
 {
@@ -27,7 +25,8 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
-	std::queue <glm::vec3> cola;
+	std::deque<glm::vec3> trayectoria;
+
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 	// Constructor
@@ -55,20 +54,20 @@ class Luz
 {
 public:
 	GLfloat *pos;
-	GLfloat *spot_direction;
+	GLfloat *direction;
 	GLfloat *ambient;
 	GLfloat *diffuse;
 	GLfloat *specular;
-	bool on;
+	bool encendida;
 	Luz(GLenum n, GLfloat *pos, GLfloat *spot_direction,
 		GLfloat *ambient, GLfloat *diffuse, GLfloat *specular)
 	{
 		this->pos = pos;
-		this->spot_direction = spot_direction;
+		this->direction = spot_direction;
 		this->ambient = ambient;
 		this->diffuse = diffuse;
 		this->specular = specular;
-		this->on = false;
+		this->encendida = false;
 		glLightfv(n, GL_POSITION, pos);
 		glLightfv(n, GL_SPOT_DIRECTION, spot_direction);
 		glLightfv(n, GL_AMBIENT, ambient);
@@ -91,7 +90,39 @@ public:
 	}
 };
 
+class Objeto
+{
+public:
+	glm::vec3 pos;
+	glm::vec3 inc;
+	float velocidad = 0.1f;
+	std::deque<glm::vec3> posiciones;
 
+	// Constructor
+
+	Objeto(glm::vec3 pos, glm::vec3 inc)
+	{
+		this->pos = pos;
+		this->inc = inc;
+	}
+	void setPos(glm::vec3 posicion) {
+		this->pos = pos;
+	}
+
+	void setInc(glm::vec3 incremento) {
+		this->inc = incremento;
+	}
+
+	glm::vec3 getPos() {
+		return pos;
+	}
+
+	glm::vec3 setInc() {
+
+		return inc;
+	}
+
+};
 
 // Dibuja la escena
 void display(void);
@@ -111,38 +142,15 @@ void referenciaPlanos();
 // Inicializa algunos valores del dibujado de la escena
 void init();
 // Cambia a la vista definida por el parametro cam
-void mirar(Camara cam);
+void look(Camara cam);
 // Inicializa los valores de las luces
-void configurarLuces();
+void initLuces();
 // Funciones de movimiento y dibujado de los objetos
-void transTetera();
-void transEsfera();
-void transCubo();
+void dibujarTetera();
+void dibujarEsfera();
+void dibujarCubo();
+// Función para el dibujado de la trayectoria
+void trazadoElem(std::deque <glm::vec3> pos);
 // Indican el tamano inicial de la ventana
 const GLsizei windowWidth = 640;
 const GLsizei windowHeight = 640;
-void trazadoElem(std::queue <glm::vec3> cola);
-
-
-
-
-
-
-
-class Objeto
-{
-public:
-	glm::vec3 pos;
-	glm::vec3 inc;
-	float velocidad = 0.1f;
-	std::queue <glm::vec3> cola;
-
-	// Constructor
-
-	Objeto(glm::vec3 pos, glm::vec3 inc)
-	{
-		this->pos = pos;
-		this->inc = inc;
-	}
-
-};
