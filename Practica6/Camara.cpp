@@ -45,7 +45,7 @@ void Camara::mirar()
 	}
 	else
 	{
-		glOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -50.0f, 50.0f);
+		glOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 200.0f);
 	}
 	girar();
 	gluLookAt(pos.x, pos.y, pos.z,
