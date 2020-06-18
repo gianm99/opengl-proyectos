@@ -711,10 +711,9 @@ void init()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
 	glLightModelfv(GL_AMBIENT, globalAmbient);
-	//glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glShadeModel(GL_SMOOTH);
 	initLuces();
-	
 	// Niebla
 	glEnable(GL_FOG);
 	{
@@ -727,8 +726,7 @@ void init()
 		glHint(GL_FOG_HINT, GL_DONT_CARE);
 		glFogf(GL_FOG_START, 15.0);
 		glFogf(GL_FOG_END, 30.0);
-	} 
-	
+	} 	
 	//glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
