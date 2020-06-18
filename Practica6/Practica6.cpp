@@ -123,26 +123,8 @@ void display(void)
 	
 	referencia();
 	cam.mostrarCoordenadas(windowWidth, windowHeight);
-	
 
 	glutSwapBuffers();
-}
-
-
-void dibujarskybox() {
-
-	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -100.0f, 10.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -100.0f, 10.0f); 
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, 10.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 10.0f);
-
-	//glVertex3f(100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, -100.0f); glVertex3f(100.0f, -1.0f, -100.0f);
-	//glVertex3f(100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, -100.0f); glVertex3f(100.0f, -1.0f, -100.0f);
-	glEnd();
-
-
 }
 
 void idle(void)
@@ -370,7 +352,6 @@ void keyboard(unsigned char key, int x, int y)
 		luces[7].alternar();
 		break;
 	}
-	glutPostRedisplay();
 }
 
 void special(int key, int x, int y)
