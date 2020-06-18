@@ -63,30 +63,27 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearStencil(0);
 	glMatrixMode(GL_MODELVIEW);
-	
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
 	dibujarSuelo();
-
-	
 	// Dibujar la trayectoria de la cámara y los objetos
 	glColor3f(1.0f, 1.0f, 1.0f); // Blanco
 	cam.dibujarTrayectoria();
 	// Dibujar objetos del fondo
 	glColor3f(0.894f, 0.615f, 0.129f);
-	torres.dibujar();
+	edificios[0].dibujar();
 	glColor3f(0.937f, 0.921f, 0.501f);
-	for each (Objeto edificio in edificios)
-	{
-		edificio.dibujar();
-	}
+	edificios[1].dibujar();
+	glColor3f(0.96f, 0.57f, 0.25f);
+	edificios[2].dibujar();
+	glColor3f(0.588f, 0.96f, 0.25f);
+	edificios[3].dibujar();
 	// Dibujar objetos secundarios
-	// Negro
 	glDepthMask(GL_FALSE);
 	CreaSkyBox(texture_id[CDTR]);
 	glDepthMask(GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glColor3f(0.3f, 0.3f, 0.3f);
+	glColor3f(0.3f, 0.3f, 0.3f); // Gris oscuro
 	for each (Objeto farola in farolas)
 	{
 		farola.dibujar();
@@ -121,29 +118,11 @@ void display(void)
 	{
 		caballo.dibujarTrayectoria();
 	}
-	
+
 	referencia();
 	cam.mostrarCoordenadas(windowWidth, windowHeight);
-	
 
 	glutSwapBuffers();
-}
-
-
-void dibujarskybox() {
-
-	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -100.0f, 10.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -100.0f, 10.0f); 
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, 10.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 10.0f);
-
-	//glVertex3f(100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, -100.0f); glVertex3f(100.0f, -1.0f, -100.0f);
-	//glVertex3f(100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, -100.0f); glVertex3f(100.0f, -1.0f, -100.0f);
-	glEnd();
-
-
 }
 
 void idle(void)
@@ -280,7 +259,7 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'b':
-		fillPoligonos=!fillPoligonos;
+		fillPoligonos = !fillPoligonos;
 		if (fillPoligonos)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -303,26 +282,27 @@ void keyboard(unsigned char key, int x, int y)
 			glDisable(GL_POLYGON_SMOOTH);
 		}
 		break;
-  case 'n':
-			if (niebla) {
-				if (fogMode == GL_EXP) {
-					fogMode = GL_EXP2;
-									}
-				else if (fogMode == GL_EXP2) {
-					fogMode = GL_LINEAR;
-				}
-				else if (fogMode == GL_LINEAR) {
-					fogMode = GL_EXP;
-					niebla = !niebla;
-					glDisable(GL_FOG);
-				}
-			} else  {
-				glEnable(GL_FOG);
-				niebla = !niebla;
+	case 'n':
+		if (niebla) {
+			if (fogMode == GL_EXP) {
+				fogMode = GL_EXP2;
 			}
-			glFogi(GL_FOG_MODE, fogMode);
-			glutPostRedisplay();
-			break;
+			else if (fogMode == GL_EXP2) {
+				fogMode = GL_LINEAR;
+			}
+			else if (fogMode == GL_LINEAR) {
+				fogMode = GL_EXP;
+				niebla = !niebla;
+				glDisable(GL_FOG);
+			}
+		}
+		else {
+			glEnable(GL_FOG);
+			niebla = !niebla;
+		}
+		glFogi(GL_FOG_MODE, fogMode);
+		glutPostRedisplay();
+		break;
 		// Mover luz 0 a posición 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
@@ -338,6 +318,11 @@ void keyboard(unsigned char key, int x, int y)
 	case 'v':
 		camCaballo = !camCaballo;
 		break;
+	case '0':
+		luces[4].alternar();
+		luces[5].alternar();
+		luces[6].alternar();
+		luces[7].alternar();
 	case '1':
 		cam.orbital(cenital);
 		cam.mirar();
@@ -374,14 +359,7 @@ void keyboard(unsigned char key, int x, int y)
 	case '9':
 		luces[3].alternar();
 		break;
-	case '0':
-		luces[4].alternar();
-		luces[5].alternar();
-		luces[6].alternar();
-		luces[7].alternar();
-		break;
 	}
-	glutPostRedisplay();
 }
 
 void special(int key, int x, int y)
@@ -546,12 +524,11 @@ void initLuces()
 void initObjetos()
 {
 	// Cargar los modelos
-	mCaballo.Load("Modelos/arabian.obj");
+	mCaballo.Load("Modelos/Caballo.obj");
 	mTiovivo.Load("Modelos/Tiovivo.obj");
 	mEdificio.Load("Modelos/Edificio.obj");
 	mFarola.Load("Modelos/Farola.obj");
 	mBanco.Load("Modelos/Banco.obj");
-	mTorres.Load("Modelos/Torres.obj");
 	mArbol1.Load("Modelos/Arbol1.obj");
 	mArbol2.Load("Modelos/Arbol2.obj");
 	// Posicionar los objetos en la escena
@@ -574,10 +551,10 @@ void initObjetos()
 	arboles2[1] = Objeto(mArbol2, glm::vec3(4.08433f, 0.0f, 16.8323f), glm::vec3(0.0f, 0.0f, 0.0f));
 	arboles2[2] = Objeto(mArbol2, glm::vec3(-14.9429f, 0.0f, -3.55794f), glm::vec3(0.0f, 0.0f, 0.0f));
 	// Objetos de fondo
-	edificios[0] = Objeto(mEdificio, glm::vec3(-33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f));
-	edificios[1] = Objeto(mEdificio, glm::vec3(8.70247f, 0.0f, -31.4336f), glm::vec3(0.0f, 180.0f, 0.0f));
-	edificios[2] = Objeto(mEdificio, glm::vec3(33.8542f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f));
-	edificios[3] = Objeto(mEdificio, glm::vec3(0.0f, 0.0f, 31.4336f), glm::vec3(0.0f, 0.0f, 0.0f));
+	edificios[0] = Objeto(mEdificio, glm::vec3(-42.3058f, 0.0f, 31.0456f), glm::vec3(0.0f, -45.0f, 0.0f));
+	edificios[1] = Objeto(mEdificio, glm::vec3(-36.1186f, 0.0f, -40.4119f), glm::vec3(0.0f, -135.0f, 0.0f));
+	edificios[2] = Objeto(mEdificio, glm::vec3(42.5663f, 0.0f, -30.0f), glm::vec3(0.0f, -225.0f, 0.0f));
+	edificios[3] = Objeto(mEdificio, glm::vec3(34.2859f, 0.0f, 42.8227f), glm::vec3(0.0f, 45.0f, 0.0f));
 	farolas[0] = Objeto(mFarola, glm::vec3(3.63164f, 0.0f, 10.0f), glm::vec3(0.0f, -90.0f, 0.0f));
 	farolas[1] = Objeto(mFarola, glm::vec3(-10.0f, 0.0f, 3.63164f), glm::vec3(0.0f, 180.0f, 0.0f));
 	farolas[2] = Objeto(mFarola, glm::vec3(-3.63164f, 0.0f, -10.0f), glm::vec3(0.0f, 90.0f, 0.0f));
@@ -586,7 +563,6 @@ void initObjetos()
 	bancos[1] = Objeto(mBanco, glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f));
 	bancos[2] = Objeto(mBanco, glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 180.0f, 0.0f));
 	bancos[3] = Objeto(mBanco, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f));
-	torres = Objeto(mTorres, glm::vec3(-8.04349f, 0.0f, -11.3122f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 void dibujarSuelo() {
@@ -596,7 +572,7 @@ void dibujarSuelo() {
 	float SizeZ = 2.5f;
 	glBegin(GL_QUADS);
 
-	
+
 	for (int x = -(GridSizeX / 2); x < (GridSizeX / 2); ++x)
 		for (int z = -(GridSizeZ / 2); z < (GridSizeZ / 2); ++z)
 		{
@@ -633,7 +609,7 @@ void CreaSkyBox(GLuint n_de_textura)
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	
+
 	// Top Face
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
@@ -737,7 +713,7 @@ void init()
 		glHint(GL_FOG_HINT, GL_DONT_CARE);
 		glFogf(GL_FOG_START, 15.0);
 		glFogf(GL_FOG_END, 30.0);
-	} 	
+	}
 	//glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
@@ -779,7 +755,7 @@ void initTexture()
 	texture_id[CLIZQ] = 1004;
 	texture_id[CSUP] = 1005;
 
-	
+
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
 	tgaLoad("texturas/zpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
@@ -801,14 +777,12 @@ void initTexture()
 
 int main(int argc, char **argv)
 {
-	
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
 	glutInitWindowPosition(50, 50);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Tiovivo");
-
-	
 	init();
 	initTexture();
 	glutMainLoop();
