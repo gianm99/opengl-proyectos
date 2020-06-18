@@ -309,6 +309,12 @@ void keyboard(unsigned char key, int x, int y)
 	case 'c':
 		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
+	case '0':
+		luces[4].alternar();
+		luces[5].alternar();
+		luces[6].alternar();
+		luces[7].alternar();
+		break;
 	case '1':
 		cam.orbital(cenital);
 		cam.mirar();
@@ -344,12 +350,6 @@ void keyboard(unsigned char key, int x, int y)
 		// Luz 3
 	case '9':
 		luces[3].alternar();
-		break;
-	case '0':
-		luces[4].alternar();
-		luces[5].alternar();
-		luces[6].alternar();
-		luces[7].alternar();
 		break;
 	}
 }
