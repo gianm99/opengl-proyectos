@@ -41,7 +41,7 @@ void Camara::mirar()
 	glLoadIdentity();
 	if (profundidad)
 	{
-		gluPerspective(70, 1, 0.1, 300);
+		gluPerspective(60, 1, 0.1, 200);
 	}
 	else
 	{
