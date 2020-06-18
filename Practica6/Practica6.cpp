@@ -6,6 +6,7 @@ bool ejesRef = false; // Dibujar los ejes de referencia
 bool planosRef = false; // Dibujar los planos de referencia
 bool trazadosCaballos = false; // Dibujar la trayectoria de los caballos
 bool antialiasing = true; // Usar antialiasing
+bool niebla = true;
 bool fillPoligonos = true; // Rellenar los polígonos
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
@@ -47,14 +48,26 @@ Objeto arboles2[3];
 float lastX = windowWidth / 2, lastY = windowHeight / 2;
 boolean firstMouse = true;
 
+#define CFRONT 0
+#define CLDER  1
+#define CDTR   2
+#define CLIZQ  3
+#define CSUP   4
+
+#define N_TEXTURAS 5
+GLuint texture_id[N_TEXTURAS];
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearStencil(0);
 	glMatrixMode(GL_MODELVIEW);
+	
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
 	dibujarSuelo();
+
+	
 	// Dibujar la trayectoria de la cámara y los objetos
 	glColor3f(1.0f, 1.0f, 1.0f); // Blanco
 	cam.dibujarTrayectoria();
@@ -67,7 +80,12 @@ void display(void)
 		edificio.dibujar();
 	}
 	// Dibujar objetos secundarios
-	glColor3f(0.3f, 0.3f, 0.3f); // Negro
+	// Negro
+	glDepthMask(GL_FALSE);
+	CreaSkyBox(texture_id[CDTR]);
+	glDepthMask(GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glColor3f(0.3f, 0.3f, 0.3f);
 	for each (Objeto farola in farolas)
 	{
 		farola.dibujar();
@@ -102,9 +120,29 @@ void display(void)
 	{
 		caballo.dibujarTrayectoria();
 	}
+	
 	referencia();
 	cam.mostrarCoordenadas(windowWidth, windowHeight);
+	
+
 	glutSwapBuffers();
+}
+
+
+void dibujarskybox() {
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -100.0f, 10.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -100.0f, 10.0f); 
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, 10.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 10.0f);
+
+	//glVertex3f(100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, -100.0f); glVertex3f(100.0f, -1.0f, -100.0f);
+	//glVertex3f(100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, 100.0f); glVertex3f(-100.0f, -1.0f, -100.0f); glVertex3f(100.0f, -1.0f, -100.0f);
+	glEnd();
+
+
 }
 
 void idle(void)
@@ -257,19 +295,26 @@ void keyboard(unsigned char key, int x, int y)
 			glDisable(GL_POLYGON_SMOOTH);
 		}
 		break;
-	case 'n':
-		if (fogMode == GL_EXP) {
-			fogMode = GL_EXP2;
-		}
-		else if (fogMode == GL_EXP2) {
-			fogMode = GL_LINEAR;
-		}
-		else if (fogMode == GL_LINEAR) {
-			fogMode = GL_EXP;
-		}
-		glFogi(GL_FOG_MODE, fogMode);
-		glutPostRedisplay();
-		break;
+  case 'n':
+			if (niebla) {
+				if (fogMode == GL_EXP) {
+					fogMode = GL_EXP2;
+									}
+				else if (fogMode == GL_EXP2) {
+					fogMode = GL_LINEAR;
+				}
+				else if (fogMode == GL_LINEAR) {
+					fogMode = GL_EXP;
+					niebla = !niebla;
+					glDisable(GL_FOG);
+				}
+			} else  {
+				glEnable(GL_FOG);
+				niebla = !niebla;
+			}
+			glFogi(GL_FOG_MODE, fogMode);
+			glutPostRedisplay();
+			break;
 		// Mover luz 0 a posición 1
 	case 'z':
 		luces[0].mover(glm::vec3{ -1.0f,0.0f,1.0f });
@@ -534,11 +579,13 @@ void initObjetos()
 }
 
 void dibujarSuelo() {
-	int GridSizeX = 32;
-	int GridSizeZ = 32;
+	int GridSizeX = 80;
+	int GridSizeZ = 80;
 	float SizeX = 2.5f;
 	float SizeZ = 2.5f;
 	glBegin(GL_QUADS);
+
+	
 	for (int x = -(GridSizeX / 2); x < (GridSizeX / 2); ++x)
 		for (int z = -(GridSizeZ / 2); z < (GridSizeZ / 2); ++z)
 		{
@@ -555,6 +602,52 @@ void dibujarSuelo() {
 		}
 	glEnd();
 }
+
+
+void CreaSkyBox(GLuint n_de_textura)
+{
+	// Desenha Cubo 1
+	glColor3f(1.0f, 1.0f, 1.0f);
+	// define qual das texturas usar
+	glBindTexture(GL_TEXTURE_2D, n_de_textura);
+
+	glBegin(GL_QUADS);
+	// Front Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, 100.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
+	// Back Face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
+	
+	// Top Face
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, 100.0f, 100.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
+	// Bottom Face
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, -10.0f, -100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
+	// Right face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, 100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
+	// Left Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
+	glEnd();
+
+
+}
+
 
 void camaraRaton(int posx, int posy) {
 	if (firstMouse)
@@ -602,6 +695,7 @@ void init()
 	GLfloat globalAmbient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 
 	glClearColor(0.0f, 0.67f, 0.79f, 1.0f);
+
 	glEnable(GL_DEPTH_TEST);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glEnable(GL_BLEND);
@@ -632,7 +726,7 @@ void init()
 		glHint(GL_FOG_HINT, GL_DONT_CARE);
 		glFogf(GL_FOG_START, 15.0);
 		glFogf(GL_FOG_END, 30.0);
-	}
+	} 	
 	//glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
@@ -650,14 +744,63 @@ void init()
 	glutSpecialFunc(special);
 }
 
+void initTexture()
+{
+
+	image_t temp_image; // variável que irá armazenar a textura a ser usada
+
+						// Habilita o uso de textura 
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+
+	// Define a forma de armazenamento dos pixels na textura (1= alihamento por byte)
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// Define quantas texturas serão usadas no programa 
+	glGenTextures(1, texture_id);  // 1 = uma textura;
+								   // texture_id = vetor que guardas os números das texturas
+
+								   // Define os números da textura dos cubos
+								   //Paredes y techo. 
+	texture_id[CFRONT] = 1001;
+	texture_id[CLDER] = 1002;
+	texture_id[CDTR] = 1003;
+	texture_id[CLIZQ] = 1004;
+	texture_id[CSUP] = 1005;
+
+	
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
+	tgaLoad("texturas/zpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
+	tgaLoad("texturas/xpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
+	tgaLoad("texturas/zneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
+	tgaLoad("texturas/xneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
+	tgaLoad("texturas/ypos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+
+
+}
+
 int main(int argc, char **argv)
 {
+	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
 	glutInitWindowPosition(50, 50);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Tiovivo");
+
+	
 	init();
+	initTexture();
 	glutMainLoop();
 	return 0;
 }
+
