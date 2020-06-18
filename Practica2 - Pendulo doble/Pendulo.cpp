@@ -6,14 +6,14 @@
 #include <GL/glu.h>
 #include <math.h>
 
-const int W_WIDTH = 640; // TamaÒo incial de la ventana
+const int W_WIDTH = 640; // Tama√±o incial de la ventana
 const int W_HEIGHT = 480;
-GLfloat fAnguloCentral = 0.0f, fAnguloInferior = 0.0f; // ¡ngulos de rotaciÛn de los ejes
+GLfloat fAnguloCentral = 0.0f, fAnguloInferior = 0.0f; // √Ångulos de rotaci√≥n de los ejes
 GLfloat fIncCentral, fIncInferior;
 const GLfloat MAX_ANGULO_CENTRAL = 120;
 const GLfloat MAX_ANGULO_INFERIOR = 360;
 
-// FunciÛn que dibuja la escena
+// Funci√≥n que dibuja la escena
 void display(void)
 {
 	// Borramos la escena
@@ -54,16 +54,16 @@ void display(void)
 	glFlush();
 }
 
-// FunciÛn que permite la animaciÛn de la escena
+// Funci√≥n que permite la animaci√≥n de la escena
 void idle(void)
 {
-	// Incrementamos los ·ngulos
+	// Incrementamos los √°ngulos
 	fAnguloCentral += fIncCentral;
 	// Si es mayor que dos pi la decrementamos
 	if (fAnguloCentral > MAX_ANGULO_CENTRAL || fAnguloCentral < -MAX_ANGULO_CENTRAL)
 		fIncCentral = -fIncCentral;
 
-	// Incrementamos los ·ngulos
+	// Incrementamos los √°ngulos
 	fAnguloInferior += fIncInferior;
 	// Si es mayor que dos pi la decrementamos
 	if (fAnguloInferior > MAX_ANGULO_INFERIOR)
@@ -72,7 +72,7 @@ void idle(void)
 	glutPostRedisplay();
 }
 
-// FunciÛn que controla la relaciÛn de aspecto
+// Funci√≥n que controla la relaci√≥n de aspecto
 void reshape(GLsizei width, GLsizei height)
 {
 	double left, right, top, bottom, near, far;
@@ -81,7 +81,7 @@ void reshape(GLsizei width, GLsizei height)
 	GLfloat aspect = (GLfloat)width / (GLfloat)height;
 	// Hacer que el viewport cubra la nueva ventana
 	glViewport(0, 0, width, height);
-	// Hacer que el aspect ratio del ·rea de dibujado sea igual al del viewport
+	// Hacer que el aspect ratio del √°rea de dibujado sea igual al del viewport
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (width >= height) {
@@ -93,10 +93,10 @@ void reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-// FunciÛn principal
+// Funci√≥n principal
 int main(int argc, char **argv)
 {
-	// Inicializamos la librerÌa GLUT
+	// Inicializamos la librer√≠a GLUT
 	glutInit(&argc, argv);
 
 	// Creamos la ventana
@@ -106,22 +106,21 @@ int main(int argc, char **argv)
 		(glutGet(GLUT_SCREEN_HEIGHT) - W_HEIGHT) / 2);
 	// Usamos doble buffer
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutCreateWindow("PÈndulo doble");
+	glutCreateWindow("P√©ndulo doble");
 
 	// Indicamos cuales son las funciones de redibujado y reshape
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutIdleFunc(idle);
 
-	// El color de fondo ser· gris oscuro opaco
+	// El color de fondo ser√° gris oscuro opaco
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 	// Indicamos la velocidad a la que gira en grados
 	fIncCentral = 3.0f;
 	fIncInferior = 4.0f;
 
-	// Comienza la ejecuciÛn del core de GLUT
+	// Comienza la ejecuci√≥n del core de GLUT
 	glutMainLoop();
 	return 0;
 }
-

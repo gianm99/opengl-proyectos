@@ -8,6 +8,7 @@ bool trazadosCaballos = false; // Dibujar la trayectoria de los caballos
 bool antialiasing = true; // Usar antialiasing
 bool niebla = true;
 bool fillPoligonos = true; // Rellenar los polígonos
+bool camCaballo = false;
 enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
 estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
 bool smooth = true; // Sombreado suave
@@ -156,6 +157,13 @@ void idle(void)
 			caballos[i].pos.y = horseMin;
 			caballos[i].cambiarDireccion();
 		}
+	}
+	// Cámara subjetiva a un caballo
+	if (camCaballo) {
+		cam.pos.y = caballos[1].pos.y + 1.25f;
+		cam.pos.x = -3.35739994*cos(glm::radians(rotacion));
+		cam.pos.z = 3.35739994*sin(glm::radians(rotacion));
+		cam.mirar();
 	}
 	glutPostRedisplay();
 }
@@ -307,12 +315,14 @@ void keyboard(unsigned char key, int x, int y)
 	case 'c':
 		luces[0].mover(glm::vec3{ -1.0f ,1.0f,0.0f });
 		break;
+	case 'v':
+		camCaballo = !camCaballo;
+		break;
 	case '0':
 		luces[4].alternar();
 		luces[5].alternar();
 		luces[6].alternar();
 		luces[7].alternar();
-		break;
 	case '1':
 		cam.orbital(cenital);
 		cam.mirar();
