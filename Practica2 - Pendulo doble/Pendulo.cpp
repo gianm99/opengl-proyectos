@@ -94,4 +94,3 @@ void reshape(GLsizei width, GLsizei height)
 }
 
 // Función principal
-+++
