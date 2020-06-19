@@ -29,9 +29,10 @@ public:
 
 	Camara();
 
+	void cambiarTrayectoriaVisible();
+
 	void setTrayectoriaVisible(bool trayectoriaVisible);
 
-	// Actualiza el valor de front en base al pitch y el yaw
 	void girar();
 
 	void mirar();
