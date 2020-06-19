@@ -8,8 +8,10 @@ bool trazadosCaballos = false; // Dibujar la trayectoria de los caballos
 bool antialiasing = true; // Usar antialiasing
 bool niebla = true;
 bool fillPoligonos = true; // Rellenar los polígonos
-enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos }; //Estados para el dibujo de planos/referencias
-estadoEjesPlanos estadoEP = Ejes; //Guarda el estado para el dibujo de planos/referencias 
+//Estados para el dibujo de planos/referencias
+enum estadoEjesPlanos { Ninguno, Ejes, Planos, Ejes_Planos };
+//Guarda el estado para el dibujo de planos/referencias 
+estadoEjesPlanos estadoEP = Ejes;
 bool smooth = true; // Sombreado suave
 float deltaTime = 0.0f; // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f; // Tiempo del frame anterior
@@ -27,23 +29,9 @@ Luz luces[8];
 // Niebla
 static GLint fogMode;
 // Modelos
-Model_OBJ mCaballo;
-Model_OBJ mTiovivo;
-Model_OBJ mEdificio;
-Model_OBJ mFarola;
-Model_OBJ mBanco;
-Model_OBJ mTorres;
-Model_OBJ mArbol1;
-Model_OBJ mArbol2;
+Model_OBJ mCaballo, mTiovivo, mEdificio, mFarola, mBanco, mArbol1, mArbol2;
 // Objetos
-Objeto tiovivo;
-Objeto caballos[4];
-Objeto edificios[4];
-Objeto farolas[4];
-Objeto bancos[4];
-Objeto torres;
-Objeto arboles1[4];
-Objeto arboles2[3];
+Objeto tiovivo, caballos[4], edificios[4], farolas[4], bancos[4], arboles1[4], arboles2[3];
 // Ratón
 float lastX = windowWidth / 2, lastY = windowHeight / 2;
 boolean firstMouse = true;
@@ -60,7 +48,6 @@ GLuint texture_id[N_TEXTURAS];
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearStencil(0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	proyeccionOblicua(); // Activa o no la proyección oblicua
@@ -172,14 +159,16 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case KEY_ESCAPE:
+		// Salir del programa
 		exit(0);
 		break;
 	case 'f':
+		// Pantalla completa
 		fullscreen = !fullscreen;
 		if (!fullscreen)
 		{
 			glutReshapeWindow(windowWidth, windowHeight);
-			glutPositionWindow(50, 50);
+			glutPositionWindow(0, 0);
 		}
 		else
 		{
@@ -187,6 +176,7 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'e':
+		// Mostrar/ocultar referencias
 		switch (estadoEP) {
 		case Ninguno:
 			ejesRef = false;
@@ -209,30 +199,32 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'p':
+		// Cambiar tipo de proyección
 		cam.cambiarProfundidad();
 		cam.mirar();
 		break;
-		// Dolly in
 	case 'w':
+		// Dolly in
 		cam.pos += speed * cam.front;
 		cam.mirar();
 		break;
-		// Dolly out
 	case 's':
+		// Dolly out
 		cam.pos -= speed * cam.front;
 		cam.mirar();
 		break;
-		// Travelling izquierda
 	case 'a':
+		// Travelling izquierda
 		cam.pos -= glm::normalize(glm::cross(cam.front, cam.up)) * speed;
 		cam.mirar();
 		break;
-		// Travelling derecha
 	case 'd':
+		// Travelling derecha
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up)) * speed;
 		cam.mirar();
 		break;
 	case KEY_SPACE:
+		// Cambiar modelo de sombreado
 		smooth = !smooth;
 		if (smooth)
 		{
@@ -244,13 +236,16 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 't':
-		trazadosCaballos = !trazadosCaballos;
+		// Activar/desactivar los trazados
+		cam.cambiarTrayectoriaVisible(); // Para la cámara
+		trazadosCaballos = !trazadosCaballos; // Para los caballos
 		for (int i = 0; i < 4; i++)
 		{
 			caballos[i].setTrayectoriaVisible(trazadosCaballos);
 		}
 		break;
 	case 'b':
+		// Activar/desactivar modo de líneas
 		fillPoligonos = !fillPoligonos;
 		if (fillPoligonos)
 		{
@@ -262,6 +257,7 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'm':
+		// Activar/desactivar antialiasing
 		antialiasing = !antialiasing;
 		if (antialiasing)
 		{
@@ -500,7 +496,7 @@ void initLuces()
 	GLfloat spot_direction3[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat spot_direction4567[] = { 0.0f, -1.0f, 0.0f };
 	GLfloat cut1 = 180;
-	GLfloat cut2 = 52;
+	GLfloat cut2 = 30;
 	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, &cut1, true);
 	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, &cut1, false);
 	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, &cut1, false);
@@ -676,17 +672,16 @@ void init()
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
-	glEnable(GL_STENCIL_TEST);
 	//Ratón
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutPassiveMotionFunc(camaraRaton);
 	// Iluminación
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
+	//glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mspecular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, memission);
-	glLightModelfv(GL_AMBIENT, globalAmbient);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glShadeModel(GL_SMOOTH);
 	initLuces();
 	// Niebla
@@ -702,7 +697,6 @@ void init()
 		glFogf(GL_FOG_START, 15.0);
 		glFogf(GL_FOG_END, 30.0);
 	}
-	//glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
@@ -767,7 +761,7 @@ int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
-	glutInitWindowPosition(50, 50);
+	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Tiovivo");
 	init();
