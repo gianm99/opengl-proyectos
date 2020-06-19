@@ -22,8 +22,8 @@
 using namespace std;
 
 // Indican el tamano inicial de la ventana
-const GLsizei windowWidth = 640;
-const GLsizei windowHeight = 640;
+const GLsizei windowWidth = 1280;
+const GLsizei windowHeight = 720;
 // Indican propiedades de los objetos
 const float horseMax = 3.10403f; // altura máxima
 const float horseMin = 2.23712f; // altura mínima
