@@ -10,7 +10,7 @@ bool refEjes; // Dibujar los ejes de referencia
 bool refPlanos; // Dibujar los planos de referencia
 bool trazados; // Dibujar la trayectoria de algunos objetos
 bool suavizado = true; // Usar suavizado (antialiasing)
-bool niebla = true;
+bool niebla;
 bool modoLineas = true;
 bool subjetiva;
 //Guarda el estado para el dibujo de planos/referencias 
@@ -34,7 +34,8 @@ Luz luces[8];
 GLfloat mspecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat memission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 // Niebla
-static GLint fogMode;
+int fogMode;
+GLfloat fogColor[4] = { 0.5, 0.5, 0.5, 1.0 };
 // Modelos
 Model_OBJ mCaballo, mTiovivo, mEdificio, mFarola, mBanco, mArbol1, mArbol2;
 // Objetos
@@ -80,18 +81,12 @@ void init()
 	glShadeModel(GL_SMOOTH);
 	initLuces();
 	// Niebla
-	glEnable(GL_FOG);
-	{
-		GLfloat fogColor[4] = { 0.5, 0.5, 0.5, 1.0 };
-
-		fogMode = GL_EXP;
-		glFogi(GL_FOG_MODE, fogMode);
-		glFogfv(GL_FOG_COLOR, fogColor);
-		glFogf(GL_FOG_DENSITY, 0.05);
-		glHint(GL_FOG_HINT, GL_DONT_CARE);
-		glFogf(GL_FOG_START, 15.0);
-		glFogf(GL_FOG_END, 30.0);
-	}
+	fogMode = GL_EXP;
+	glFogfv(GL_FOG_COLOR, fogColor);
+	glFogf(GL_FOG_DENSITY, 0.05);
+	glHint(GL_FOG_HINT, GL_DONT_CARE);
+	glFogf(GL_FOG_START, 15.0);
+	glFogf(GL_FOG_END, 30.0);
 	// Cámara
 	cam = Camara(glm::vec3(0.0f, 0.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
@@ -233,7 +228,7 @@ void inputKeyboard(unsigned char key, int x, int y)
 	{
 		// GENERAL
 	case 'e':
-		coordenadas=!coordenadas;
+		coordenadas = !coordenadas;
 		break;
 	case 'f':
 		// Activar/desactivar pantalla completa
@@ -678,10 +673,10 @@ void initLuces()
 	GLfloat spot_direction4567[] = { 0.0f, -1.0f, 0.0f };
 	GLfloat cut1 = 180;
 	GLfloat cut2 = 30;
-	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, &cut1, true);
+	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, &cut1, false);
 	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, &cut1, false);
 	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, &cut1, false);
-	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, &cut1, false);
+	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, &cut1, true);
 	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4567, &cut2, false);
 	luces[5] = Luz((GLenum)GL_LIGHT5, position5, spot_direction4567, &cut2, false);
 	luces[6] = Luz((GLenum)GL_LIGHT6, position6, spot_direction4567, &cut2, false);
