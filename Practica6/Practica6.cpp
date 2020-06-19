@@ -319,6 +319,7 @@ void keyboard(unsigned char key, int x, int y)
 		luces[5].alternar();
 		luces[6].alternar();
 		luces[7].alternar();
+		break;
 	case '1':
 		cam.orbital(cenital);
 		cam.mirar();
