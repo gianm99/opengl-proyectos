@@ -580,7 +580,6 @@ void dibujarSuelo() {
 	glEnd();
 }
 
-
 void CreaSkyBox(GLuint n_de_textura)
 {
 	// Desenha Cubo 1
@@ -624,7 +623,6 @@ void CreaSkyBox(GLuint n_de_textura)
 
 
 }
-
 
 void camaraRaton(int posx, int posy) {
 	if (firstMouse)
@@ -767,7 +765,6 @@ void initTexture()
 
 int main(int argc, char **argv)
 {
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
 	glutInitWindowPosition(50, 50);
