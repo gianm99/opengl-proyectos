@@ -4,8 +4,8 @@
 #include "Practica4.h"
 
 bool fullscreen;  // Indica si está en pantalla completa
-bool ejesRef = true;  // Indica si se dibujan los ejes
-bool planosRef = true;  // Indica si se dibujan los planos
+bool refEjes = true;  // Indica si se dibujan los ejes
+bool refPlanos = true;  // Indica si se dibujan los planos
 bool profundidad = true;  // Indica si la escena tiene profundida
 float deltaTime = 0.0f;	 // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f;  // Tiempo del frame anterior
@@ -47,8 +47,8 @@ int main(int argc, char **argv)
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
-	glutSpecialFunc(special);
+	glutKeyboardFunc(inputKeyboard);
+	glutSpecialFunc(inputSpecialKeyboard);
 	glutIdleFunc(idle);
 	glutMainLoop();
 	return 0;
@@ -80,8 +80,8 @@ void display(void)
 	dibujarTetera();
 	dibujarEsfera();
 	dibujarCubo();
-	if (ejesRef) referenciaEjes();
-	if (planosRef) referenciaPlanos();
+	if (refEjes) referenciaEjes();
+	if (refPlanos) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
@@ -141,7 +141,7 @@ void look(Camara cam)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void keyboard(unsigned char key, int x, int y)
+void inputKeyboard(unsigned char key, int x, int y)
 {
 	float speed = 3.0f*deltaTime;
 	float pitch_rotation = 0.0f;
@@ -169,8 +169,8 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 		// Ejes y planos de referencia
 	case 'e':
-		ejesRef = !ejesRef;
-		planosRef = !planosRef;
+		refEjes = !refEjes;
+		refPlanos = !refPlanos;
 		break;
 		// Profundidad
 	case 'p':
@@ -251,7 +251,7 @@ void keyboard(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-void special(int key, int x, int y)
+void inputSpecialKeyboard(int key, int x, int y)
 {
 	glm::vec3 prueba;
 	float speed = 2.5f;

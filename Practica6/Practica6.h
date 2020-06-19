@@ -13,22 +13,26 @@
 #include "Objeto.h"
 #include "Luz.h"
 #include "tgload.h"
-
 #define KEY_ESCAPE 27
 #define KEY_SPACE 32
-
-
-
+#define CFRONT 0
+#define CLDER  1
+#define CDTR   2
+#define CLIZQ  3
+#define CSUP   4
+#define N_TEXTURAS 5
 using namespace std;
 
 // Indican el tamano inicial de la ventana
-const GLsizei windowWidth = 640;
-const GLsizei windowHeight = 640;
+const GLsizei windowWidth = 1280;
+const GLsizei windowHeight = 720;
 // Indican propiedades de los objetos
 const float horseMax = 3.10403f; // altura máxima
 const float horseMin = 2.23712f; // altura mínima
 // Tipos de proyecciones
 enum Proyeccion {normal, caballera, militar};
+// Inicializa algunos valores del dibujado de la escena
+void init();
 // Dibuja la escena
 void display(void);
 // Anima la escena
@@ -36,25 +40,22 @@ void idle(void);
 // Controla la relacion de aspecto de la escena
 void reshape(GLsizei width, GLsizei height);
 // Controla el input de teclado
-void keyboard(unsigned char key, int x, int y);
+void inputKeyboard(unsigned char key, int x, int y);
 // Controla el input especial de teclado
-void special(int key, int x, int y);
+void inputSpecialKeyboard(int key, int x, int y);
+// Captura los movimientos del ratón para mover la cámara
+void inputRaton(int posx, int posy);
 // Dibuja los planos y los ejes de referencia
-void referencia();
+void dibujarReferencia();
+// Dibuja el suelo como un tablero de ajedrez
+void dibujarSuelo();
+// Dibuja el skybox
+void dibujarSkyBox(GLuint nro_de_textura);
 // Cambia la proyeccion
-void proyeccionOblicua();
+void initOblicua();
 // Inicializa los valores de las luces
 void initLuces();
 // Inicializa los objetos
 void initObjetos();
-// Dibuja el suelo como un tablero de ajedrez
-void dibujarSuelo();
-void dibujarskybox();
-// Captura los movimientos del ratón para mover la cámara
-void camaraRaton(int posx, int posy);
-// Inicializa algunos valores del dibujado de la escena
-void init();
-void CreaSkyBox(GLuint nro_de_textura);
 // Inicializa las texturas
-void initTexture(void);
-
+void initTexturas(void);

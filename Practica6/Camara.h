@@ -14,7 +14,7 @@ enum Plano {cenital, picado, base, contrapicado, nadir};
 
 class Camara
 {
-	bool profundidad;
+	bool perspectiva;
 	bool trayectoriaVisible;
 public:
 	glm::vec3 pos;
@@ -29,18 +29,21 @@ public:
 
 	Camara();
 
+	void cambiarTrayectoriaVisible();
+
 	void setTrayectoriaVisible(bool trayectoriaVisible);
 
-	// Actualiza el valor de front en base al pitch y el yaw
 	void girar();
 
 	void mirar();
 
-	void cambiarProfundidad();
+	void setProfundidad(bool profundidad);
 
-	void ortogonal();
+	void cambiarPerspectiva();
 
-	void perspectiva();
+	void proyeccionOrtogonal();
+
+	void proyeccionPerspectiva();
 
 	void orbital(Plano plano);
 

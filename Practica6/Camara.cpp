@@ -6,11 +6,16 @@ Camara::Camara(glm::vec3 eye, glm::vec3 front, glm::vec3 up)
 	this->pos = eye;
 	this->front = front;
 	this->up = up;
-	profundidad = true;
-	trayectoriaVisible=true;
+	this->perspectiva = true;
+	this->trayectoriaVisible = false;
 }
 
-Camara::Camara(){}
+Camara::Camara() {}
+
+void Camara::cambiarTrayectoriaVisible()
+{
+	trayectoriaVisible = !trayectoriaVisible;
+}
 
 void Camara::setTrayectoriaVisible(bool trayectoriaVisible)
 {
@@ -39,13 +44,13 @@ void Camara::mirar()
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (profundidad)
+	if (perspectiva)
 	{
-		gluPerspective(60, 1, 0.1, 200);
+		gluPerspective(80, 1.778, 0.1, 200);
 	}
 	else
 	{
-		glOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 200.0f);
+		glOrtho(-17.778f, 17.778f, -10.0f, 10.0f, -10.0f, 200.0f);
 	}
 	girar();
 	gluLookAt(pos.x, pos.y, pos.z,
@@ -54,20 +59,19 @@ void Camara::mirar()
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void Camara::cambiarProfundidad()
+void Camara::cambiarPerspectiva()
 {
-	profundidad = !profundidad;
+	this->perspectiva = !perspectiva;
 }
 
-void Camara::ortogonal()
+void Camara::proyeccionOrtogonal()
 {
-	profundidad = false;
-
+	this->perspectiva = false;
 }
 
-void Camara::perspectiva()
+void Camara::proyeccionPerspectiva()
 {
-	profundidad = true;
+	this->perspectiva = true;
 }
 
 void Camara::vista(Vista vista)
