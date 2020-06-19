@@ -14,7 +14,7 @@ enum Plano {cenital, picado, base, contrapicado, nadir};
 
 class Camara
 {
-	bool profundidad;
+	bool perspectiva;
 	bool trayectoriaVisible;
 public:
 	glm::vec3 pos;
@@ -37,11 +37,13 @@ public:
 
 	void mirar();
 
-	void cambiarProfundidad();
+	void setProfundidad(bool profundidad);
 
-	void ortogonal();
+	void cambiarPerspectiva();
 
-	void perspectiva();
+	void proyeccionOrtogonal();
+
+	void proyeccionPerspectiva();
 
 	void orbital(Plano plano);
 

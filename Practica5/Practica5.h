@@ -129,9 +129,9 @@ void display(void);
 // Controla la relacion de aspecto de la escena
 void reshape(GLsizei width, GLsizei height);
 // Controla el input de teclado
-void keyboard(unsigned char key, int x, int y);
+void inputKeyboard(unsigned char key, int x, int y);
 // Controla el input especial de teclado
-void special(int key, int x, int y);
+void inputSpecialKeyboard(int key, int x, int y);
 // Anima la escena
 void idle(void);
 // Dibuja los ejes de coordenadas para poder usarlos como referencia

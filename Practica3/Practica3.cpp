@@ -6,9 +6,9 @@
 // Indica si está en modo fullscreen
 bool fullscreen;
 // Indica si los ejes de referencia se tienen que dibujar
-bool ejesRef=true;
+bool refEjes=true;
 // Indica si los planos de referencia se tienen que dibujar
-bool planosRef=true;
+bool refPlanos=true;
 // Indica el ángulo de rotación de la tetera
 GLfloat angRot = 0.0f;
 //Indican los vectores de cada eje para la función de rotación
@@ -44,8 +44,8 @@ void display(void)
 	dibujarTetera();
 	dibujarEsfera();
 	dibujarCubo();
-	if (ejesRef) referenciaEjes();
-	if (planosRef) referenciaPlanos();
+	if (refEjes) referenciaEjes();
+	if (refPlanos) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
@@ -106,7 +106,7 @@ void reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void keyboard(unsigned char key, int x, int y)
+void inputKeyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
@@ -126,10 +126,10 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		case 'e':
-			ejesRef=!ejesRef;
+			refEjes=!refEjes;
 			break;
 		case 'p':
-			planosRef=!planosRef;
+			refPlanos=!refPlanos;
 			break;
 	}
 }
@@ -265,7 +265,7 @@ int main(int argc, char **argv)
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
+	glutKeyboardFunc(inputKeyboard);
 	glutIdleFunc(idle);
 	glutMainLoop();
 	return 0;
