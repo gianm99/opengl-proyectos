@@ -58,13 +58,12 @@ void initLuces();
 void initObjetos();
 // Dibuja el suelo como un tablero de ajedrez
 void dibujarSuelo();
-void dibujarskybox();
 // Captura los movimientos del ratón para mover la cámara
 void camaraRaton(int posx, int posy);
 // Inicializa algunos valores del dibujado de la escena
 void init();
 // Genera las texturas del cielo
-void CreaSkyBox(GLuint nro_de_textura);
+void CreaSkyBox(void);
 // Genera las texturas del suelo
 void creaSuelo(GLuint nro_de_textura);
 // Inicializa las texturas
