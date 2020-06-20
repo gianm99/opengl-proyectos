@@ -15,7 +15,7 @@ public:
 	GLfloat *direction;
 	bool encendida;
 
-	Luz(GLenum id, GLfloat *pos, GLfloat *spot_direction, GLfloat *cut, bool encendida);
+	Luz(GLenum id, GLfloat *pos, GLfloat *spot_direction, GLfloat *cut, bool ambiente, bool encendida);
 	
 	Luz();
 

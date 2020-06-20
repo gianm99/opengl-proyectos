@@ -1,4 +1,4 @@
-// Pendulo.cpp++++++++
+// Pendulo.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
 #include <GL/glut.h>
@@ -6,14 +6,14 @@
 #include <GL/glu.h>
 #include <math.h>
 
-const int W_WIDTH = 640; // Tama駉 incial de la ventana
+const int W_WIDTH = 640; // Tama帽o incial de la ventana
 const int W_HEIGHT = 480;
-GLfloat fAnguloCentral = 0.0f, fAnguloInferior = 0.0f; // 羘gulos de rotaci髇 de los ejes
+GLfloat fAnguloCentral = 0.0f, fAnguloInferior = 0.0f; // 脕ngulos de rotaci贸n de los ejes
 GLfloat fIncCentral, fIncInferior;
 const GLfloat MAX_ANGULO_CENTRAL = 120;
 const GLfloat MAX_ANGULO_INFERIOR = 360;
 
-// Funci髇 que dibuja la escena
+// Funci贸n que dibuja la escena
 void display(void)
 {
 	// Borramos la escena
@@ -23,7 +23,7 @@ void display(void)
 	glLoadIdentity();                // Reset the model-view matrix
 
 
-	// Parte superior
+									 // Parte superior
 	glPushMatrix();
 	glRotatef(fAnguloCentral, 0.0f, 0.0f, 1.0f);
 	glBegin(GL_QUADS);
@@ -54,16 +54,16 @@ void display(void)
 	glFlush();
 }
 
-// Funci髇 que permite la animaci髇 de la escena
+// Funci贸n que permite la animaci贸n de la escena
 void idle(void)
 {
-	// Incrementamos los 醤gulos
+	// Incrementamos los 谩ngulos
 	fAnguloCentral += fIncCentral;
 	// Si es mayor que dos pi la decrementamos
 	if (fAnguloCentral > MAX_ANGULO_CENTRAL || fAnguloCentral < -MAX_ANGULO_CENTRAL)
 		fIncCentral = -fIncCentral;
 
-	// Incrementamos los 醤gulos
+	// Incrementamos los 谩ngulos
 	fAnguloInferior += fIncInferior;
 	// Si es mayor que dos pi la decrementamos
 	if (fAnguloInferior > MAX_ANGULO_INFERIOR)
@@ -72,7 +72,7 @@ void idle(void)
 	glutPostRedisplay();
 }
 
-// Funci髇 que controla la relaci髇 de aspecto
+// Funci贸n que controla la relaci贸n de aspecto
 void reshape(GLsizei width, GLsizei height)
 {
 	double left, right, top, bottom, near, far;
@@ -81,7 +81,7 @@ void reshape(GLsizei width, GLsizei height)
 	GLfloat aspect = (GLfloat)width / (GLfloat)height;
 	// Hacer que el viewport cubra la nueva ventana
 	glViewport(0, 0, width, height);
-	// Hacer que el aspect ratio del 醨ea de dibujado sea igual al del viewport
+	// Hacer que el aspect ratio del 谩rea de dibujado sea igual al del viewport
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (width >= height) {
@@ -93,5 +93,34 @@ void reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-// Funci髇 principal
-+++
+// Funci贸n principal
+int main(int argc, char **argv)
+{
+	// Inicializamos la librer铆a GLUT
+	glutInit(&argc, argv);
+
+	// Creamos la ventana
+	glutInitWindowSize(W_WIDTH, W_HEIGHT);
+	// Se situa en el centro de la pantalla
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - W_WIDTH) / 2,
+		(glutGet(GLUT_SCREEN_HEIGHT) - W_HEIGHT) / 2);
+	// Usamos doble buffer
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+	glutCreateWindow("P茅ndulo doble");
+
+	// Indicamos cuales son las funciones de redibujado y reshape
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutIdleFunc(idle);
+
+	// El color de fondo ser谩 gris oscuro opaco
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+	// Indicamos la velocidad a la que gira en grados
+	fIncCentral = 3.0f;
+	fIncInferior = 4.0f;
+
+	// Comienza la ejecuci贸n del core de GLUT
+	glutMainLoop();
+	return 0;
+}
