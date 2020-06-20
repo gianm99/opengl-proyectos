@@ -4,8 +4,8 @@
 #include "Practica4.h"
 
 bool fullscreen;  // Indica si está en pantalla completa
-bool refEjes = true;  // Indica si se dibujan los ejes
-bool refPlanos = true;  // Indica si se dibujan los planos
+bool ejesVisible = true;  // Indica si se dibujan los ejes
+bool planosVisible = true;  // Indica si se dibujan los planos
 bool profundidad = true;  // Indica si la escena tiene profundida
 float deltaTime = 0.0f;	 // Tiempo entre el anterior frame y este
 float lastFrame = 0.0f;  // Tiempo del frame anterior
@@ -47,8 +47,8 @@ int main(int argc, char **argv)
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(inputKeyboard);
-	glutSpecialFunc(inputSpecialKeyboard);
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
 	glutIdleFunc(idle);
 	glutMainLoop();
 	return 0;
@@ -72,23 +72,22 @@ void display(void)
 		m[2 * 4 + 1] = sin(angle) / 2.0f;
 	}
 	glMultMatrixf(m);
-	glColor3f(1.0f,1.0f,1.0f);
-	trazadoElem(cam.trayectoria);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	trazadoElem(cam.posiciones);
 	trazadoElem(Tet.posiciones);
 	trazadoElem(Esf.posiciones);
 	trazadoElem(Cub.posiciones);
 	dibujarTetera();
 	dibujarEsfera();
 	dibujarCubo();
-	if (refEjes) referenciaEjes();
-	if (refPlanos) referenciaPlanos();
+	if (ejesVisible) referenciaEjes();
+	if (planosVisible) referenciaPlanos();
 	glutSwapBuffers();
 	glFlush();
 }
 
 void dibujarTetera() {
 
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Tet.pos.x, Tet.pos.y, Tet.pos.z);
@@ -99,8 +98,6 @@ void dibujarTetera() {
 }
 
 void dibujarEsfera() {
-
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Esf.pos.x, Esf.pos.y, Esf.pos.z);
@@ -112,7 +109,6 @@ void dibujarEsfera() {
 
 void dibujarCubo() {
 
-	glLoadIdentity();
 	glPushMatrix();
 
 	glTranslatef(Cub.pos.x, Cub.pos.y, Cub.pos.z);
@@ -123,7 +119,7 @@ void dibujarCubo() {
 
 }
 
-void look(Camara cam)
+void mirar(Camara cam)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -141,7 +137,7 @@ void look(Camara cam)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void inputKeyboard(unsigned char key, int x, int y)
+void keyboard(unsigned char key, int x, int y)
 {
 	float speed = 3.0f*deltaTime;
 	float pitch_rotation = 0.0f;
@@ -169,33 +165,33 @@ void inputKeyboard(unsigned char key, int x, int y)
 		break;
 		// Ejes y planos de referencia
 	case 'e':
-		refEjes = !refEjes;
-		refPlanos = !refPlanos;
+		ejesVisible = !ejesVisible;
+		planosVisible = !planosVisible;
 		break;
 		// Profundidad
 	case 'p':
 		profundidad = !profundidad;
-		look(cam);
+		mirar(cam);
 		break;
 		// Dolly in
 	case 'w':
 		cam.pos += speed*cam.front;
-		look(cam);
+		mirar(cam);
 		break;
 		// Dolly out
 	case 's':
 		cam.pos -= speed*cam.front;
-		look(cam);
+		mirar(cam);
 		break;
 		// Travelling izquierda
 	case 'a':
 		cam.pos -= glm::normalize(glm::cross(cam.front, cam.up))*speed;
-		look(cam);
+		mirar(cam);
 		break;
 		// Travelling derecha
 	case 'd':
 		cam.pos += glm::normalize(glm::cross(cam.front, cam.up))*speed;
-		look(cam);
+		mirar(cam);
 		break;
 		// Plano cenital
 	case '1':
@@ -205,7 +201,7 @@ void inputKeyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -89.999f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// Plano picado
 	case '2':
@@ -215,7 +211,7 @@ void inputKeyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = -45.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// Plano normal
 	case '3':
@@ -225,7 +221,7 @@ void inputKeyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 0.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// Plano contrapicado
 	case '4':
@@ -235,7 +231,7 @@ void inputKeyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 45.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// Plano nadir
 	case '5':
@@ -245,13 +241,13 @@ void inputKeyboard(unsigned char key, int x, int y)
 		cam.pos = glm::vec3(m*glm::vec4(-cam.front, 0.0f)) + cam.pos + cam.front;
 		cam.pitch = 89.999f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 	}
 	glutPostRedisplay();
 }
 
-void inputSpecialKeyboard(int key, int x, int y)
+void special(int key, int x, int y)
 {
 	glm::vec3 prueba;
 	float speed = 2.5f;
@@ -265,7 +261,7 @@ void inputSpecialKeyboard(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// planta
 	case GLUT_KEY_F2:
@@ -274,7 +270,7 @@ void inputSpecialKeyboard(int key, int x, int y)
 		cam.yaw = -90.0f;
 		cam.pitch = -90.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// perfil izquierdo
 	case GLUT_KEY_F3:
@@ -283,16 +279,16 @@ void inputSpecialKeyboard(int key, int x, int y)
 		cam.yaw = 0.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
-		// isométrica
+		// perfil derecho
 	case GLUT_KEY_F4:
 		proyeccion = 0;
 		cam.pos = glm::vec3(1.0f, 0.0f, 0.0f);
 		cam.yaw = 180.0f;
 		cam.pitch = 0.0f;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// isométrica
 	case GLUT_KEY_F5:
@@ -301,62 +297,62 @@ void inputSpecialKeyboard(int key, int x, int y)
 		cam.yaw = -135.0f;
 		cam.pitch = -glm::degrees(asin(1 / sqrt(3)));
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// caballera
 	case GLUT_KEY_F6:
 		profundidad = false;
 		proyeccion = 1;
-		cam.pos = glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.yaw = -90.0f;
-		cam.pitch = 0.0f;
+		cam.pos = glm::vec3(1.0f, 1.0f, 1.0f);
+		cam.yaw = -135.0f;
+		cam.pitch = -glm::degrees(asin(1 / sqrt(3)));
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 		// militar
 	case GLUT_KEY_F7:
 		profundidad = false;
 		proyeccion = 2;
-		cam.pos = glm::vec3(0.0f, 0.0f, 1.0f);
-		cam.yaw = -90.0f;
-		cam.pitch = 0.0f;
+		cam.pos = glm::vec3(1.0f, 1.0f, 1.0f);
+		cam.yaw = -135.0f;
+		cam.pitch = -glm::degrees(asin(1 / sqrt(3)));
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 	case GLUT_KEY_RIGHT:
 		cam.yaw += speed;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 	case GLUT_KEY_LEFT:
 		cam.yaw -= speed;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 	case GLUT_KEY_UP:
 		cam.pitch += speed;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 	case GLUT_KEY_DOWN:
 		cam.pitch -= speed;
 		cam.girar();
-		look(cam);
+		mirar(cam);
 		break;
 	}
 }
 
 void idle(void) {
 	int currentFrame = glutGet(GLUT_ELAPSED_TIME);
-	deltaTime = (currentFrame - lastFrame)/1000;
+	deltaTime = (currentFrame - lastFrame) / 1000;
 	lastFrame = currentFrame;
 
 	// Guardar posicion de la camara
-	if (cam.trayectoria.size() == 50)
+	if (cam.posiciones.size() == 50)
 	{
-		cam.trayectoria.pop_front();
+		cam.posiciones.pop_front();
 	}
-	cam.trayectoria.push_back(cam.pos);
+	cam.posiciones.push_back(cam.pos);
 	// Guardar posiciones de objetos
 	if (Tet.posiciones.size() == 50)
 	{
@@ -481,12 +477,11 @@ void init() {
 void reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);  // El viewport cubre la ventana
-	look(cam);
+	mirar(cam);
 }
 
 void trazadoElem(std::deque <glm::vec3> pos) {
 	glPushMatrix();
-	glLoadIdentity();
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < pos.size(); i++)
 	{
