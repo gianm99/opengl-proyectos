@@ -109,7 +109,6 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	initOblicua(); // Activa o no la proyección oblicua
-	dibujarSuelo();
 	// Dibujar la trayectoria de la cámara y los objetos
 	glColor3f(1.0f, 1.0f, 1.0f); // Blanco
 	cam.dibujarTrayectoria();
@@ -123,9 +122,9 @@ void display(void)
 	glColor3f(0.588f, 0.96f, 0.25f);
 	edificios[3].dibujar();
 	// Dibujar objetos secundarios
-	glDepthMask(GL_FALSE);
-	dibujarSkyBox(texture_id[CDTR]);
-	glDepthMask(GL_TRUE);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	dibujarSuelo(texture_id[CINF]);
+	dibujarSkyBox();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor3f(0.3f, 0.3f, 0.3f); // Gris oscuro
 	for each (Objeto farola in farolas)
@@ -590,72 +589,72 @@ void dibujarReferencia()
 	glPopMatrix();
 }
 
-void dibujarSuelo() {
-	int GridSizeX = 80;
-	int GridSizeZ = 80;
-	float SizeX = 2.5f;
-	float SizeZ = 2.5f;
+void dibujarSkyBox(void)
+{
+	glColor3f(1.0f, 1.0f, 1.0f);
+	// define qual das texturas usar
+	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
+
 	glBegin(GL_QUADS);
+	// Front Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 50.0f, 50.0f);
+	glEnd();
 
+	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
+	glBegin(GL_QUADS);
+	// Back Face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -15.0f, -50.0f);
+	glEnd();
 
-	for (int x = -(GridSizeX / 2); x < (GridSizeX / 2); ++x)
-		for (int z = -(GridSizeZ / 2); z < (GridSizeZ / 2); ++z)
-		{
-			if (((x + z) % 2) == 0) //modulo 2
-				glColor3f(1.0f, 1.0f, 1.0f); //white
-			else
-				glColor3f(0.0f, 0.0f, 0.0f); //black
+	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
+	glBegin(GL_QUADS);
+	// Top Face
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, 50.0f, 50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
+	glEnd();
 
-			glVertex3f(x*SizeX, 0, z*SizeZ);
-			glVertex3f((x + 1)*SizeX, 0, z*SizeZ);
-			glVertex3f((x + 1)*SizeX, 0, (z + 1)*SizeZ);
-			glVertex3f(x*SizeX, 0, (z + 1)*SizeZ);
+	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
+	glBegin(GL_QUADS);
+	// Right face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -15.0f, 50.0f);
+	glEnd();
 
-		}
+	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
+	glBegin(GL_QUADS);
+	// Left Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
 	glEnd();
 }
 
-void dibujarSkyBox(GLuint n_de_textura)
-{
-	// Desenha Cubo 1
-	glColor3f(1.0f, 1.0f, 1.0f);
-	// define qual das texturas usar
+void dibujarSuelo(GLuint n_de_textura) {
+
 	glBindTexture(GL_TEXTURE_2D, n_de_textura);
 
 	glBegin(GL_QUADS);
-	// Delante
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, 100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
-	// Detrás
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	// Arriba
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, 100.0f, 100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	// Debajo
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
-	// Derecha
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, 100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	// Izquierda
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexCoord2f(100.0f, 100.0f); glVertex3f(-50.0f, 0.0f, -50.0f);
+	glTexCoord2f(0.0f, 100.0f); glVertex3f(50.0f, 0.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, 0.0f, 50.0f);
+	glTexCoord2f(100.0f, 0.0f); glVertex3f(-50.0f, 0.0f, 50.0f);
 	glEnd();
 }
-
 // FUNCIONES DE INICIALIZACIÓN
 
 void initOblicua()
@@ -763,26 +762,24 @@ void initTexturas()
 	glDisable(GL_BLEND);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
 	glGenTextures(1, texture_id);
 	texture_id[CFRONT] = 1001;
 	texture_id[CLDER] = 1002;
 	texture_id[CDTR] = 1003;
 	texture_id[CLIZQ] = 1004;
 	texture_id[CSUP] = 1005;
+	texture_id[CINF] = 1006;
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
 	tgaLoad("texturas/zpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
 	tgaLoad("texturas/xpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
 	tgaLoad("texturas/zneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
 	tgaLoad("texturas/xneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
 	tgaLoad("texturas/ypos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+	glBindTexture(GL_TEXTURE_2D, texture_id[CINF]);
+	tgaLoad("texturas/suelo.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
 }
