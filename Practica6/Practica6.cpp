@@ -122,6 +122,7 @@ void display(void)
 	glColor3f(0.588f, 0.96f, 0.25f);
 	edificios[3].dibujar();
 	// Dibujar objetos secundarios
+	glColor3f(1.0f,1.0f,1.0f);
 	creaSuelo(texture_id[CINF]);
 	CreaSkyBox();
 	glBindTexture(GL_TEXTURE_2D, 0);

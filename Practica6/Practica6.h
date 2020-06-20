@@ -22,7 +22,6 @@
 #define CSUP   4
 #define CINF   5
 #define N_TEXTURAS 6
-GLuint texture_id[N_TEXTURAS];
 
 using namespace std;
 
