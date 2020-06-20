@@ -4,7 +4,7 @@
 //Estados para el dibujo de planos/referencias
 enum estadoEjesPlanos { Ninguno, Ejes, Ejes_Planos };
 // Interruptores
-bool coordenadas;
+bool coordenadas = true;
 bool fullscreen;
 bool refEjes; // Dibujar los ejes de referencia
 bool refPlanos; // Dibujar los planos de referencia
@@ -150,6 +150,14 @@ void display(void)
 	// Dibujar la escena
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
+	if (luces[1].encendida) {
+		GLfloat position1[] = { 2.0, 5.61f, 0.0f, 1.0f };
+		glLightfv(GL_LIGHT1, GL_POSITION, position1);
+	}
+	if (luces[2].encendida) {
+		GLfloat position2[] = { -2.0f, 5.61f, 0.0f, 1.0f };
+		glLightfv(GL_LIGHT2, GL_POSITION, position2);
+	}
 	glColor3f(0.941f, 0.098f, 0.137f); // Rojo claro
 	tiovivo.dibujar();
 	glColor3f(0.901f, 0.650f, 0.560f); // Marrón claro
@@ -224,6 +232,10 @@ void inputKeyboard(unsigned char key, int x, int y)
 {
 	float speed = 10.0f * deltaTime;
 	glm::vec3 position;
+	GLfloat pos0[] = { 0.0f, 50.0f, 0.0f, 0.0f };
+	GLfloat pos1[] = { -70.0, 20.0f, 0.0f, 0.0f };
+	GLfloat pos2[] = { 50.0f, 50.0f, 0.0f, 0.0f };
+	GLfloat pos3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
 	switch (key)
 	{
 		// GENERAL
@@ -342,27 +354,36 @@ void inputKeyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case '1':
+		// Activar/desactivar luz global
+		luces[0].alternar();
+		break;
+	case '2':
+		// Luz global pos 0
+		glLightfv(GL_LIGHT0, GL_POSITION, pos0);
+		break;
+	case '3':
+		// Luz global pos 1
+		glLightfv(GL_LIGHT0, GL_POSITION, pos1);
+		break;
+	case '4':
+		// Luz global pos 2
+		glLightfv(GL_LIGHT0, GL_POSITION, pos2);
+		break;
+	case '5':
+		// Luz global pos 3
+		glLightfv(GL_LIGHT0, GL_POSITION, pos3);
+		break;
+	case '6':
+		// Luz Tiovivo 1
+		luces[1].alternar();
+		luces[2].alternar();
+		break;
+	case '7':
 		// Activar/desactivar las luces de las farolas
 		for (int i = 4; i < 8; i++)
 		{
 			luces[i].alternar();
 		}
-		break;
-	case '2':
-		// Luz 0
-		luces[0].alternar();
-		break;
-	case '3':
-		// Luz 1
-		luces[1].alternar();
-		break;
-	case '4':
-		// Luz 2
-		luces[2].alternar();
-		break;
-	case '5':
-		// Luz 3
-		luces[3].alternar();
 		break;
 		// MOVIMIENTO DE LA CÁMARA
 	case 'w':
@@ -659,28 +680,33 @@ void initOblicua()
 void initLuces()
 {
 	GLfloat position0[] = { 0.0f, 50.0f, 0.0f, 0.0f };
-	GLfloat position1[] = { -70.0, 20.0f, 0.0f, 0.0f };
-	GLfloat position2[] = { 50.0f, 50.0f, 0.0f, 0.0f };
-	GLfloat position3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
+	GLfloat position1[] = { 2.0, 5.61f, 0.0f, 1.0f };
+	GLfloat position2[] = { -2.0f, 5.61f, 0.0f, 1.0f };
+	//GLfloat position3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
 	GLfloat position4[] = { 8.36f, 5.92f, -3.63f, 1.0f };
 	GLfloat position5[] = { 3.64f, 5.92f, 8.36f, 1.0f };
 	GLfloat position6[] = { -8.36f, 5.92f, 3.63f, 1.0f };
 	GLfloat position7[] = { -3.64f, 5.92f, -8.36f, 1.0f };
-	GLfloat spot_direction0[] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spot_direction1[] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spot_direction2[] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spot_direction3[] = { 0.0f, 0.0f, 0.0f };
+	GLfloat spot_direction0123[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat spot_direction4567[] = { 0.0f, -1.0f, 0.0f };
 	GLfloat cut1 = 180;
-	GLfloat cut2 = 30;
-	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, &cut1, false);
-	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, &cut1, false);
-	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, &cut1, false);
-	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, &cut1, true);
-	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4567, &cut2, false);
-	luces[5] = Luz((GLenum)GL_LIGHT5, position5, spot_direction4567, &cut2, false);
-	luces[6] = Luz((GLenum)GL_LIGHT6, position6, spot_direction4567, &cut2, false);
-	luces[7] = Luz((GLenum)GL_LIGHT7, position7, spot_direction4567, &cut2, false);
+	GLfloat cut2 = 35;
+	GLfloat cut3 = 42;
+	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0123, &cut1, true, true);
+	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction4567, &cut2, false, false);
+	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction4567, &cut2, false, false);
+	//luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction0123, &cut1, true, true);
+	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4567, &cut3, false, false);
+	luces[5] = Luz((GLenum)GL_LIGHT5, position5, spot_direction4567, &cut3, false, false);
+	luces[6] = Luz((GLenum)GL_LIGHT6, position6, spot_direction4567, &cut3, false, false);
+	luces[7] = Luz((GLenum)GL_LIGHT7, position7, spot_direction4567, &cut3, false, false);
+
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1.5f);
+	glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, 1.5f);
+	glLightf(GL_LIGHT4, GL_SPOT_EXPONENT, 2.5f);
+	glLightf(GL_LIGHT5, GL_SPOT_EXPONENT, 2.5f);
+	glLightf(GL_LIGHT6, GL_SPOT_EXPONENT, 2.5f);
+	glLightf(GL_LIGHT7, GL_SPOT_EXPONENT, 2.5f);
 }
 
 void initObjetos()
