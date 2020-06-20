@@ -49,17 +49,15 @@ void inputSpecialKeyboard(int key, int x, int y);
 void inputRaton(int posx, int posy);
 // Dibuja los planos y los ejes de referencia
 void dibujarReferencia();
+// Genera las texturas del cielo
+void dibujarSkyBox(void);
+// Genera las texturas del suelo
+void dibujarSuelo(GLuint nro_de_textura);
 // Cambia la proyeccion
 void initOblicua();
 // Inicializa los valores de las luces
 void initLuces();
 // Inicializa los objetos
 void initObjetos();
-// Inicializa algunos valores del dibujado de la escena
-void init();
-// Genera las texturas del cielo
-void CreaSkyBox(void);
-// Genera las texturas del suelo
-void creaSuelo(GLuint nro_de_textura);
 // Inicializa las texturas
 void initTexturas(void);

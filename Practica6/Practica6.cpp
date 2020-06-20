@@ -122,9 +122,9 @@ void display(void)
 	glColor3f(0.588f, 0.96f, 0.25f);
 	edificios[3].dibujar();
 	// Dibujar objetos secundarios
-	glColor3f(1.0f,1.0f,1.0f);
-	creaSuelo(texture_id[CINF]);
-	CreaSkyBox();
+	glColor3f(1.0f, 1.0f, 1.0f);
+	dibujarSuelo(texture_id[CINF]);
+	dibujarSkyBox();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor3f(0.3f, 0.3f, 0.3f); // Gris oscuro
 	for each (Objeto farola in farolas)
@@ -589,7 +589,7 @@ void dibujarReferencia()
 	glPopMatrix();
 }
 
-void CreaSkyBox(void)
+void dibujarSkyBox(void)
 {
 	glColor3f(1.0f, 1.0f, 1.0f);
 	// define qual das texturas usar
@@ -597,19 +597,19 @@ void CreaSkyBox(void)
 
 	glBegin(GL_QUADS);
 	// Front Face
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, 0.0f, 50.0f );
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f,  0.0f, 50.0f );
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f,  50.0f );
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 50.0f,  50.0f );
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 50.0f, 50.0f);
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
 	glBegin(GL_QUADS);
 	// Back Face
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, 0.0f, -50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -15.0f, -50.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -0.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -15.0f, -50.0f);
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
@@ -623,24 +623,24 @@ void CreaSkyBox(void)
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
 	glBegin(GL_QUADS);
-		// Right face
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -0.0f, -50.0f);
+	// Right face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -15.0f, -50.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(50.0f, 50.0f, 50.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -0.0f, 50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -15.0f, 50.0f);
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
 	glBegin(GL_QUADS);
 	// Left Face
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -0.0f, -50.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -0.0f, 50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -15.0f, 50.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(-50.0f, 50.0f, 50.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
 	glEnd();
 }
 
-void creaSuelo(GLuint n_de_textura) {
+void dibujarSuelo(GLuint n_de_textura) {
 
 	glBindTexture(GL_TEXTURE_2D, n_de_textura);
 
@@ -762,7 +762,6 @@ void initTexturas()
 	glDisable(GL_BLEND);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
 	glGenTextures(1, texture_id);
 	texture_id[CFRONT] = 1001;
 	texture_id[CLDER] = 1002;
@@ -773,16 +772,12 @@ void initTexturas()
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
 	tgaLoad("texturas/zpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
 	tgaLoad("texturas/xpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
 	tgaLoad("texturas/zneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
 	tgaLoad("texturas/xneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
 	tgaLoad("texturas/ypos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
 	glBindTexture(GL_TEXTURE_2D, texture_id[CINF]);
