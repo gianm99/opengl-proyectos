@@ -1,4 +1,4 @@
-// Practica1.cpp
+// Practica2.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
 #include <GL/glut.h>
