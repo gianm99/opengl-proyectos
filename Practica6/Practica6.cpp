@@ -4,7 +4,7 @@
 //Estados para el dibujo de planos/referencias
 enum estadoEjesPlanos { Ninguno, Ejes, Ejes_Planos };
 // Interruptores
-bool coordenadas;
+bool coordenadas = true;
 bool fullscreen;
 bool refEjes; // Dibujar los ejes de referencia
 bool refPlanos; // Dibujar los planos de referencia
@@ -109,7 +109,6 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	initOblicua(); // Activa o no la proyección oblicua
-	dibujarSuelo();
 	// Dibujar la trayectoria de la cámara y los objetos
 	glColor3f(1.0f, 1.0f, 1.0f); // Blanco
 	cam.dibujarTrayectoria();
@@ -123,9 +122,9 @@ void display(void)
 	glColor3f(0.588f, 0.96f, 0.25f);
 	edificios[3].dibujar();
 	// Dibujar objetos secundarios
-	glDepthMask(GL_FALSE);
-	dibujarSkyBox(texture_id[CDTR]);
-	glDepthMask(GL_TRUE);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	dibujarSuelo(texture_id[CINF]);
+	dibujarSkyBox();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor3f(0.3f, 0.3f, 0.3f); // Gris oscuro
 	for each (Objeto farola in farolas)
@@ -150,6 +149,14 @@ void display(void)
 	// Dibujar la escena
 	glPushMatrix();
 	glRotatef(rotacion, 0.0f, 1.0f, 0.0f);
+	if (luces[1].encendida) {
+		GLfloat position1[] = { 2.0, 5.61f, 0.0f, 1.0f };
+		glLightfv(GL_LIGHT1, GL_POSITION, position1);
+	}
+	if (luces[2].encendida) {
+		GLfloat position2[] = { -2.0f, 5.61f, 0.0f, 1.0f };
+		glLightfv(GL_LIGHT2, GL_POSITION, position2);
+	}
 	glColor3f(0.941f, 0.098f, 0.137f); // Rojo claro
 	tiovivo.dibujar();
 	glColor3f(0.901f, 0.650f, 0.560f); // Marrón claro
@@ -224,6 +231,10 @@ void inputKeyboard(unsigned char key, int x, int y)
 {
 	float speed = 10.0f * deltaTime;
 	glm::vec3 position;
+	GLfloat pos0[] = { 0.0f, 50.0f, 0.0f, 0.0f };
+	GLfloat pos1[] = { -70.0, 20.0f, 0.0f, 0.0f };
+	GLfloat pos2[] = { 50.0f, 50.0f, 0.0f, 0.0f };
+	GLfloat pos3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
 	switch (key)
 	{
 		// GENERAL
@@ -341,28 +352,37 @@ void inputKeyboard(unsigned char key, int x, int y)
 			glShadeModel(GL_FLAT);
 		}
 		break;
+	case 'g':
+		// Activar/desactivar luz global
+		luces[0].alternar();
+		break;
 	case '1':
+		// Luz global pos 0
+		glLightfv(GL_LIGHT0, GL_POSITION, pos0);
+		break;
+	case '2':
+		// Luz global pos 1
+		glLightfv(GL_LIGHT0, GL_POSITION, pos1);
+		break;
+	case '3':
+		// Luz global pos 2
+		glLightfv(GL_LIGHT0, GL_POSITION, pos2);
+		break;
+	case '4':
+		// Luz global pos 3
+		glLightfv(GL_LIGHT0, GL_POSITION, pos3);
+		break;
+	case '5':
+		// Activar/desactivar luces del tiovivo
+		luces[1].alternar();
+		luces[2].alternar();
+		break;
+	case '6':
 		// Activar/desactivar las luces de las farolas
 		for (int i = 4; i < 8; i++)
 		{
 			luces[i].alternar();
 		}
-		break;
-	case '2':
-		// Luz 0
-		luces[0].alternar();
-		break;
-	case '3':
-		// Luz 1
-		luces[1].alternar();
-		break;
-	case '4':
-		// Luz 2
-		luces[2].alternar();
-		break;
-	case '5':
-		// Luz 3
-		luces[3].alternar();
 		break;
 		// MOVIMIENTO DE LA CÁMARA
 	case 'w':
@@ -569,72 +589,72 @@ void dibujarReferencia()
 	glPopMatrix();
 }
 
-void dibujarSuelo() {
-	int GridSizeX = 80;
-	int GridSizeZ = 80;
-	float SizeX = 2.5f;
-	float SizeZ = 2.5f;
+void dibujarSkyBox(void)
+{
+	glColor3f(1.0f, 1.0f, 1.0f);
+	// define qual das texturas usar
+	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
+
 	glBegin(GL_QUADS);
+	// Front Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 50.0f, 50.0f);
+	glEnd();
 
+	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
+	glBegin(GL_QUADS);
+	// Back Face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -15.0f, -50.0f);
+	glEnd();
 
-	for (int x = -(GridSizeX / 2); x < (GridSizeX / 2); ++x)
-		for (int z = -(GridSizeZ / 2); z < (GridSizeZ / 2); ++z)
-		{
-			if (((x + z) % 2) == 0) //modulo 2
-				glColor3f(1.0f, 1.0f, 1.0f); //white
-			else
-				glColor3f(0.0f, 0.0f, 0.0f); //black
+	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
+	glBegin(GL_QUADS);
+	// Top Face
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, 50.0f, 50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
+	glEnd();
 
-			glVertex3f(x*SizeX, 0, z*SizeZ);
-			glVertex3f((x + 1)*SizeX, 0, z*SizeZ);
-			glVertex3f((x + 1)*SizeX, 0, (z + 1)*SizeZ);
-			glVertex3f(x*SizeX, 0, (z + 1)*SizeZ);
+	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
+	glBegin(GL_QUADS);
+	// Right face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(50.0f, 50.0f, -50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, -15.0f, 50.0f);
+	glEnd();
 
-		}
+	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
+	glBegin(GL_QUADS);
+	// Left Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-50.0f, -15.0f, -50.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-50.0f, -15.0f, 50.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-50.0f, 50.0f, 50.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-50.0f, 50.0f, -50.0f);
 	glEnd();
 }
 
-void dibujarSkyBox(GLuint n_de_textura)
-{
-	// Desenha Cubo 1
-	glColor3f(1.0f, 1.0f, 1.0f);
-	// define qual das texturas usar
+void dibujarSuelo(GLuint n_de_textura) {
+
 	glBindTexture(GL_TEXTURE_2D, n_de_textura);
 
 	glBegin(GL_QUADS);
-	// Delante
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, 100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
-	// Detrás
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	// Arriba
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, 100.0f, 100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	// Debajo
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
-	// Derecha
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 100.0f, 100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	// Izquierda
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-100.0f, 100.0f, -100.0f);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexCoord2f(100.0f, 100.0f); glVertex3f(-50.0f, 0.0f, -50.0f);
+	glTexCoord2f(0.0f, 100.0f); glVertex3f(50.0f, 0.0f, -50.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(50.0f, 0.0f, 50.0f);
+	glTexCoord2f(100.0f, 0.0f); glVertex3f(-50.0f, 0.0f, 50.0f);
 	glEnd();
 }
-
 // FUNCIONES DE INICIALIZACIÓN
 
 void initOblicua()
@@ -659,28 +679,33 @@ void initOblicua()
 void initLuces()
 {
 	GLfloat position0[] = { 0.0f, 50.0f, 0.0f, 0.0f };
-	GLfloat position1[] = { -70.0, 20.0f, 0.0f, 0.0f };
-	GLfloat position2[] = { 50.0f, 50.0f, 0.0f, 0.0f };
-	GLfloat position3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
+	GLfloat position1[] = { 2.0, 5.61f, 0.0f, 1.0f };
+	GLfloat position2[] = { -2.0f, 5.61f, 0.0f, 1.0f };
+	//GLfloat position3[] = { 50.0f, 50.0f, 50.0f, 0.0f };
 	GLfloat position4[] = { 8.36f, 5.92f, -3.63f, 1.0f };
 	GLfloat position5[] = { 3.64f, 5.92f, 8.36f, 1.0f };
 	GLfloat position6[] = { -8.36f, 5.92f, 3.63f, 1.0f };
 	GLfloat position7[] = { -3.64f, 5.92f, -8.36f, 1.0f };
-	GLfloat spot_direction0[] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spot_direction1[] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spot_direction2[] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spot_direction3[] = { 0.0f, 0.0f, 0.0f };
+	GLfloat spot_direction0123[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat spot_direction4567[] = { 0.0f, -1.0f, 0.0f };
 	GLfloat cut1 = 180;
-	GLfloat cut2 = 30;
-	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, &cut1, false);
-	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, &cut1, false);
-	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, &cut1, false);
-	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, &cut1, true);
-	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4567, &cut2, false);
-	luces[5] = Luz((GLenum)GL_LIGHT5, position5, spot_direction4567, &cut2, false);
-	luces[6] = Luz((GLenum)GL_LIGHT6, position6, spot_direction4567, &cut2, false);
-	luces[7] = Luz((GLenum)GL_LIGHT7, position7, spot_direction4567, &cut2, false);
+	GLfloat cut2 = 35;
+	GLfloat cut3 = 42;
+	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0123, &cut1, true, true);
+	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction4567, &cut2, false, false);
+	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction4567, &cut2, false, false);
+	//luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction0123, &cut1, true, true);
+	luces[4] = Luz((GLenum)GL_LIGHT4, position4, spot_direction4567, &cut3, false, false);
+	luces[5] = Luz((GLenum)GL_LIGHT5, position5, spot_direction4567, &cut3, false, false);
+	luces[6] = Luz((GLenum)GL_LIGHT6, position6, spot_direction4567, &cut3, false, false);
+	luces[7] = Luz((GLenum)GL_LIGHT7, position7, spot_direction4567, &cut3, false, false);
+
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1.5f);
+	glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, 1.5f);
+	glLightf(GL_LIGHT4, GL_SPOT_EXPONENT, 2.5f);
+	glLightf(GL_LIGHT5, GL_SPOT_EXPONENT, 2.5f);
+	glLightf(GL_LIGHT6, GL_SPOT_EXPONENT, 2.5f);
+	glLightf(GL_LIGHT7, GL_SPOT_EXPONENT, 2.5f);
 }
 
 void initObjetos()
@@ -737,26 +762,24 @@ void initTexturas()
 	glDisable(GL_BLEND);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
 	glGenTextures(1, texture_id);
 	texture_id[CFRONT] = 1001;
 	texture_id[CLDER] = 1002;
 	texture_id[CDTR] = 1003;
 	texture_id[CLIZQ] = 1004;
 	texture_id[CSUP] = 1005;
+	texture_id[CINF] = 1006;
 
 	glBindTexture(GL_TEXTURE_2D, texture_id[CFRONT]);
 	tgaLoad("texturas/zpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLDER]);
 	tgaLoad("texturas/xpos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CDTR]);
 	tgaLoad("texturas/zneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CLIZQ]);
 	tgaLoad("texturas/xneg.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
-
 	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
 	tgaLoad("texturas/ypos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
+	glBindTexture(GL_TEXTURE_2D, texture_id[CINF]);
+	tgaLoad("texturas/suelo.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
 }

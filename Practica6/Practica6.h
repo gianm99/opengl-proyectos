@@ -20,12 +20,14 @@
 #define CDTR   2
 #define CLIZQ  3
 #define CSUP   4
-#define N_TEXTURAS 5
+#define CINF   5
+#define N_TEXTURAS 6
+
 using namespace std;
 
 // Indican el tamano inicial de la ventana
-const GLsizei windowWidth = 1280;
-const GLsizei windowHeight = 720;
+const GLsizei windowWidth = 720;
+const GLsizei windowHeight = 480;
 // Indican propiedades de los objetos
 const float horseMax = 3.10403f; // altura máxima
 const float horseMin = 2.23712f; // altura mínima
@@ -47,10 +49,10 @@ void inputSpecialKeyboard(int key, int x, int y);
 void inputRaton(int posx, int posy);
 // Dibuja los planos y los ejes de referencia
 void dibujarReferencia();
-// Dibuja el suelo como un tablero de ajedrez
-void dibujarSuelo();
-// Dibuja el skybox
-void dibujarSkyBox(GLuint nro_de_textura);
+// Genera las texturas del cielo
+void dibujarSkyBox(void);
+// Genera las texturas del suelo
+void dibujarSuelo(GLuint nro_de_textura);
 // Cambia la proyeccion
 void initOblicua();
 // Inicializa los valores de las luces

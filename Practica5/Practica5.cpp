@@ -605,6 +605,8 @@ void initLuces()
 	GLfloat diffuse[] = { 1.0f,1.0f,1.0f,1.0f };
 	GLfloat specular[] = { 1.0f,1.0f,1.0f,1.0f };
 	luces[0] = Luz((GLenum)GL_LIGHT0, position0, spot_direction0, ambient, diffuse, specular);
+	luces[0].encendida=true;
+	glEnable(GL_LIGHT0);
 	luces[1] = Luz((GLenum)GL_LIGHT1, position1, spot_direction1, ambient, diffuse, specular);
 	luces[2] = Luz((GLenum)GL_LIGHT2, position2, spot_direction2, ambient, diffuse, specular);
 	luces[3] = Luz((GLenum)GL_LIGHT3, position3, spot_direction3, ambient, diffuse, specular);

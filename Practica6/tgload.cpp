@@ -50,7 +50,7 @@ void tgaGetExtensions(void)
 }
 
 
-void tgaSetTexParams(unsigned int min_filter, unsigned int mag_filter, unsigned int application)
+void tgaSetTexParams(unsigned int min_filter, unsigned int mag_filter, GLfloat application)
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
