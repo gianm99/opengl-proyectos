@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 		(glutGet(GLUT_SCREEN_HEIGHT) - W_HEIGHT) / 2);
 	// Usamos doble buffer
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutCreateWindow("Péndulo doble");
+	glutCreateWindow("Pendulo doble");
 
 	// Indicamos cuales son las funciones de redibujado y reshape
 	glutDisplayFunc(display);
