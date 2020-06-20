@@ -48,14 +48,7 @@ Objeto arboles2[3];
 float lastX = windowWidth / 2, lastY = windowHeight / 2;
 boolean firstMouse = true;
 
-#define CFRONT 0
-#define CLDER  1
-#define CDTR   2
-#define CLIZQ  3
-#define CSUP   4
 
-#define N_TEXTURAS 5
-GLuint texture_id[N_TEXTURAS];
 
 void display(void)
 {
@@ -83,6 +76,7 @@ void display(void)
 	// Negro
 	glDepthMask(GL_FALSE);
 	CreaSkyBox(texture_id[CDTR]);
+	creaSuelo(texture_id[CINF]);
 	glDepthMask(GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor3f(0.3f, 0.3f, 0.3f);
@@ -606,7 +600,6 @@ void dibujarSuelo() {
 
 void CreaSkyBox(GLuint n_de_textura)
 {
-	// Desenha Cubo 1
 	glColor3f(1.0f, 1.0f, 1.0f);
 	// define qual das texturas usar
 	glBindTexture(GL_TEXTURE_2D, n_de_textura);
@@ -628,11 +621,7 @@ void CreaSkyBox(GLuint n_de_textura)
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(-100.0f, 100.0f, 100.0f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, 100.0f, 100.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
-	// Bottom Face
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, -10.0f, -100.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, -10.0f, -100.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, -10.0f, 100.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, -10.0f, 100.0f);
+		
 	// Right face
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(100.0f, -10.0f, -100.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(100.0f, 100.0f, -100.0f);
@@ -646,6 +635,19 @@ void CreaSkyBox(GLuint n_de_textura)
 	glEnd();
 
 
+}
+
+void creaSuelo(GLuint n_de_textura) {
+
+	glBindTexture(GL_TEXTURE_2D, n_de_textura);
+
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-100.0f, 0.5f, -100.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(100.0f, 0.5f, -100.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(100.0f, 0.5f, 100.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-100.0f, 0.5f, 100.0f);
+	glEnd();
 }
 
 
@@ -769,6 +771,7 @@ void initTexture()
 	texture_id[CDTR] = 1003;
 	texture_id[CLIZQ] = 1004;
 	texture_id[CSUP] = 1005;
+	texture_id[CINF] = 1005;
 
 	
 
@@ -787,7 +790,8 @@ void initTexture()
 	glBindTexture(GL_TEXTURE_2D, texture_id[CSUP]);
 	tgaLoad("texturas/ypos.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
 
-
+	glBindTexture(GL_TEXTURE_2D, texture_id[CINF]);
+	tgaLoad("texturas/suelo.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);
 }
 
 int main(int argc, char **argv)

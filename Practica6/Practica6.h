@@ -17,6 +17,15 @@
 #define KEY_ESCAPE 27
 #define KEY_SPACE 32
 
+#define CFRONT 0
+#define CLDER  1
+#define CDTR   2
+#define CLIZQ  3
+#define CSUP   4
+#define CINF   5
+
+#define N_TEXTURAS 6
+GLuint texture_id[N_TEXTURAS];
 
 
 using namespace std;
@@ -54,7 +63,10 @@ void dibujarskybox();
 void camaraRaton(int posx, int posy);
 // Inicializa algunos valores del dibujado de la escena
 void init();
+// Genera las texturas del cielo
 void CreaSkyBox(GLuint nro_de_textura);
+// Genera las texturas del suelo
+void creaSuelo(GLuint nro_de_textura);
 // Inicializa las texturas
 void initTexture(void);
 
