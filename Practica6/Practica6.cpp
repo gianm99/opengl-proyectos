@@ -353,32 +353,32 @@ void inputKeyboard(unsigned char key, int x, int y)
 			glShadeModel(GL_FLAT);
 		}
 		break;
-	case '1':
+	case 'g':
 		// Activar/desactivar luz global
 		luces[0].alternar();
 		break;
-	case '2':
+	case '1':
 		// Luz global pos 0
 		glLightfv(GL_LIGHT0, GL_POSITION, pos0);
 		break;
-	case '3':
+	case '2':
 		// Luz global pos 1
 		glLightfv(GL_LIGHT0, GL_POSITION, pos1);
 		break;
-	case '4':
+	case '3':
 		// Luz global pos 2
 		glLightfv(GL_LIGHT0, GL_POSITION, pos2);
 		break;
-	case '5':
+	case '4':
 		// Luz global pos 3
 		glLightfv(GL_LIGHT0, GL_POSITION, pos3);
 		break;
-	case '6':
-		// Luz Tiovivo 1
+	case '5':
+		// Activar/desactivar luces del tiovivo
 		luces[1].alternar();
 		luces[2].alternar();
 		break;
-	case '7':
+	case '6':
 		// Activar/desactivar las luces de las farolas
 		for (int i = 4; i < 8; i++)
 		{
