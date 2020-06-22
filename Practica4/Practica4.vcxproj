@@ -71,14 +71,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\gianm\Documents\3-INFO\Informática Gráfica\Descargas\glm;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documentos\UIB\Tercero\Informatica_Grafica\GLM\glm;C:\Users\gianm\Documents\3-INFO\Informática Gráfica\Descargas\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Documentos\UIB\Tercero\Informatica_Grafica\GLM\glm;C:\Program Files (x86)\glm;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documentos\UIB\Tercero\Informatica_Grafica\GLM\glm;D:\Documentos\UIB\Tercero\Informatica_Grafica\GLM\glm;C:\Program Files (x86)\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -149,9 +149,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Objeto.cpp" />
     <ClCompile Include="Practica4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Objeto.h" />
     <ClInclude Include="Practica4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

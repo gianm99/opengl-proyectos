@@ -18,9 +18,15 @@
     <ClCompile Include="Practica4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Objeto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Practica4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objeto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
