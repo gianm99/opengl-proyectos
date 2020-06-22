@@ -46,7 +46,7 @@ void Camara::mirar()
 	glLoadIdentity();
 	if (perspectiva)
 	{
-		gluPerspective(80, 1.778, 0.1, 100);
+		gluPerspective(80, 1.778, 0.1, 200);
 	}
 	else
 	{
